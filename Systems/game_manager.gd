@@ -1,0 +1,94 @@
+# game_manager.gd - IMPROVED VERSION
+extends Node
+
+@export var starting_map: PackedScene
+@export var ending_map: PackedScene
+@export var level_1a: PackedScene
+@export var level_1b: PackedScene
+@export var level_1c: PackedScene
+@export var town_1: PackedScene
+
+@onready var map_container: Node3D = get_node("../MapContainer")
+@onready var player: CharacterBody3D = get_node("../Player")
+@onready var player_spawn: Marker3D = get_node("../PlayerSpawn")
+@onready var fade_rect = $"/root/World/BlackScreen/FadeRect"
+
+var current_map: Node3D = null
+var current_level_index: int = 0
+var level_sequence: Array[PackedScene] = []
+
+func _ready():
+	# Set up level sequence
+	level_sequence = [starting_map, level_1a, level_1b, level_1c, town_1, ending_map]
+	
+	if starting_map:
+		load_map(starting_map)
+
+func load_map(map_scene: PackedScene) -> void:
+	# Fade to black first
+	await fade_rect.fade_out_wait()
+	
+	var is_ending = (map_scene == ending_map)
+	
+	# Advance time (skip first map)
+	if current_map != null:
+		TimeManager.advance_time()
+	
+	# Clear old map
+	if current_map:
+		current_map.queue_free()
+	
+	# Clear all enemies and items
+	clear_level_entities()
+	
+	# Load new map
+	current_map = map_scene.instantiate()
+	map_container.add_child(current_map)
+	
+	await get_tree().process_frame
+	
+	var map_gen = current_map.get_node("GridMap")
+	
+	if map_gen and map_gen.has_method("start_generation"):
+		map_gen.player_reached_exit.connect(_on_player_reached_exit)
+		
+		map_gen.start_generation()
+		await map_gen.generation_complete
+		
+		# IMPORTANT: Move player IMMEDIATELY after generation completes
+		# This must happen BEFORE FOV initializes
+		if map_gen.has_method("get_entrance_zone_spawn_position"):
+			var spawn_pos = map_gen.get_entrance_zone_spawn_position()
+			print("GameManager: Spawning player at: ", spawn_pos)
+			
+			if player:
+				player.global_position = spawn_pos
+				print("GameManager: Player position set to: ", player.global_position)
+			if player_spawn:
+				player_spawn.global_position = spawn_pos
+		
+		# Wait a frame to ensure position is fully updated
+		await get_tree().process_frame
+	
+	if is_ending and player and player.hud:
+		player.hud.show_ending_message()
+	
+	# Finally fade back in
+	await fade_rect.fade_in_wait()
+
+func _on_player_reached_exit():
+	current_level_index += 1
+	
+	if current_level_index < level_sequence.size():
+		load_map(level_sequence[current_level_index])
+
+func clear_level_entities():
+	var world = get_parent()
+	
+	for child in world.get_children():
+		if child.is_in_group("enemy"):
+			child.queue_free()
+	
+	for child in world.get_children():
+		if child.is_in_group("item"):
+			child.queue_free()
