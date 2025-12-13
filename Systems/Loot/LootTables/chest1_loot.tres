@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="LootTable" load_steps=6 format=3 uid="uid://iq0gmn8r5k3c"]
+
+[ext_resource type="PackedScene" uid="uid://c7hd6lqn64rax" path="res://Assets/3D/Items/square.tscn" id="1_gi0cw"]
+[ext_resource type="PackedScene" uid="uid://byn6f4lsp4fd4" path="res://Assets/3D/Items/stick.tscn" id="2_03i18"]
+[ext_resource type="PackedScene" uid="uid://cfarmydfvqkvy" path="res://Assets/3D/Items/trapazoid.tscn" id="3_pgptq"]
+[ext_resource type="PackedScene" uid="uid://c14blxthgs2x4" path="res://Assets/3D/Items/gold.tscn" id="4_03i18"]
+[ext_resource type="Script" uid="uid://p7164pdllapm" path="res://Systems/Loot/loot_table.gd" id="4_k3meb"]
+
+[resource]
+script = ExtResource("4_k3meb")
+min_drops = 2
+max_drops = 5
+item_scenes = Array[PackedScene]([ExtResource("1_gi0cw"), ExtResource("2_03i18"), ExtResource("3_pgptq"), ExtResource("4_03i18")])
+drop_weights = Array[float]([1.0, 1.0, 1.0, 3.0])
+min_amounts = Array[int]([1, 1, 1, 10])
+max_amounts = Array[int]([1, 1, 1, 25])
+metadata/_custom_type_script = "uid://p7164pdllapm"
