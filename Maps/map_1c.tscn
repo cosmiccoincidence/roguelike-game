@@ -1,0 +1,27 @@
+[gd_scene load_steps=8 format=3 uid="uid://dkyaty4hl4h2d"]
+
+[ext_resource type="MeshLibrary" uid="uid://bwg1sja2mkwko" path="res://Assets/3D/Tiles/tilelibrary.tres" id="1_xknly"]
+[ext_resource type="Script" uid="uid://4bip1a0su263" path="res://Maps/MapGen/act1a_mapgen.gd" id="2_aeucc"]
+[ext_resource type="Script" uid="uid://rc6qhmcd5qi6" path="res://Characters/Enemies/enemy_spawn_data.gd" id="3_xknly"]
+[ext_resource type="PackedScene" uid="uid://mahss0budjch" path="res://Characters/Enemies/enemy1.tscn" id="4_e4sih"]
+[ext_resource type="PackedScene" uid="uid://ddi31cpnmidio" path="res://Characters/Enemies/enemy2.tscn" id="5_mblgw"]
+
+[sub_resource type="Resource" id="Resource_gb54u"]
+script = ExtResource("3_xknly")
+enemy_scene = ExtResource("4_e4sih")
+metadata/_custom_type_script = "uid://rc6qhmcd5qi6"
+
+[sub_resource type="Resource" id="Resource_8i1ca"]
+script = ExtResource("3_xknly")
+enemy_scene = ExtResource("5_mblgw")
+spawn_weight = 0.2
+metadata/_custom_type_script = "uid://rc6qhmcd5qi6"
+
+[node name="Map1c" type="Node3D"]
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("1_xknly")
+cell_size = Vector3(1, 1, 1)
+script = ExtResource("2_aeucc")
+enemy_spawn_list = Array[ExtResource("3_xknly")]([SubResource("Resource_gb54u"), SubResource("Resource_8i1ca")])
+metadata/_editor_floor_ = Vector3(0, 3, 0)
