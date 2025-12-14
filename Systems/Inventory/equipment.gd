@@ -6,19 +6,19 @@ var max_equipment_slots: int = 13  # 13 equipment slots
 
 # Define what item type each slot accepts
 var slot_restrictions: Array = [
-	"Helmet",   # Slot 0
-	"Amulet",   # Slot 1
-	"Bag",      # Slot 2
-	"Armor",    # Slot 3
-	"Ring",     # Slot 4
-	"Ring",     # Slot 5
-	"Belt",     # Slot 6
-	"Gloves",   # Slot 7
-	"Weapon",   # Slot 8
-	"Weapon",   # Slot 9
-	"Boots",    # Slot 10
-	"Weapon",   # Slot 11
-	"Weapon"    # Slot 12
+	"helmet",   # Slot 0
+	"amulet",   # Slot 1
+	"bag",      # Slot 2
+	"armor",    # Slot 3
+	"ring",     # Slot 4
+	"ring",     # Slot 5
+	"belt",     # Slot 6
+	"gloves",   # Slot 7
+	"weapon",   # Slot 8
+	"weapon",   # Slot 9
+	"boots",    # Slot 10
+	"weapon",   # Slot 11
+	"weapon"    # Slot 12
 ]
 
 signal equipment_changed
@@ -38,7 +38,7 @@ func can_equip_item_in_slot(item_data, slot_index: int) -> bool:
 		return false
 	
 	var item_type = item_data.item_type.to_lower()
-	var required_type = slot_restrictions[slot_index]
+	var required_type = slot_restrictions[slot_index].to_lower()
 	
 	return item_type == required_type
 
