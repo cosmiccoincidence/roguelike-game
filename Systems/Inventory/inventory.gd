@@ -49,7 +49,7 @@ func _update_weight_signals():
 # Store reference to item scenes for dropping
 var item_scene_lookup: Dictionary = {}
 
-func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene = null, item_weight: float = 1.0, item_value: int = 10, is_stackable: bool = false, max_stack: int = 99, amount: int = 1) -> bool:
+func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene = null, item_weight: float = 1.0, item_value: int = 10, is_stackable: bool = false, max_stack: int = 99, amount: int = 1, item_type: String = "") -> bool:
 	# Special handling for gold - add directly to gold counter
 	if item_name.to_lower() == "gold" or item_name.to_lower() == "coin":
 		add_gold(amount)
@@ -106,7 +106,8 @@ func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene
 			"value": item_value,
 			"stackable": is_stackable,
 			"max_stack_size": max_stack,
-			"stack_count": stack_size
+			"stack_count": stack_size,
+			"item_type": item_type
 		}
 		
 		amount -= stack_size

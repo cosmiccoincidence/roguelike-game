@@ -48,6 +48,7 @@ points = PackedVector3Array(-0.100059986, -0.04452324, -0.099999994, -0.10005998
 script = ExtResource("1_n8dup")
 item_name = "Trapazoid"
 item_icon = ExtResource("2_03c86")
+item_type = "belt"
 weight = 2.5
 value = 50
 

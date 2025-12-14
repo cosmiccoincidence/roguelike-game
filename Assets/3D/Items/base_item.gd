@@ -3,6 +3,7 @@ class_name BaseItem
 
 @export var item_name: String = "Item"
 @export var item_icon: Texture2D
+@export var item_type: String = ""  # Type: helmet, weapon, armor, ring, etc.
 @export var weight: float = 1.0
 @export var value: int = 10
 @export var stackable: bool = false
@@ -204,10 +205,10 @@ func pickup():
 	
 	being_picked_up = true  # Immediately mark as being picked up
 	
-	# Pass the scene reference AND weight/value/stackable so the item can be dropped later
+	# Pass the scene reference AND weight/value/stackable/item_type so the item can be dropped later
 	var item_scene = load(scene_file_path) if scene_file_path else null
 	
-	if Inventory.add_item(item_name, item_icon, item_scene, weight, value, stackable, max_stack_size, stack_count):
+	if Inventory.add_item(item_name, item_icon, item_scene, weight, value, stackable, max_stack_size, stack_count, item_type):
 		queue_free()
 	else:
 		being_picked_up = false  # Re-enable if inventory was full

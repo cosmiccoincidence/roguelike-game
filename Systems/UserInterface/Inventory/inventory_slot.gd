@@ -184,25 +184,64 @@ func _drop_on_slot():
 		return
 	
 	if original_is_equipment and target_is_equipment:
-		# Equipment to Equipment - swap in equipment system
-		Equipment.swap_items(dragged_from_slot_index, slot_index)
+		# Equipment to Equipment - check type restrictions before swapping
+		var item_from_slot = Equipment.get_item_at_slot(dragged_from_slot_index)
+		var item_to_slot = Equipment.get_item_at_slot(slot_index)
+		
+		# Check if dragged item can go to target slot
+		var can_move_to_target = true
+		if item_from_slot:
+			can_move_to_target = Equipment.can_equip_item_in_slot(item_from_slot, slot_index)
+		
+		# Check if target item can go to dragged slot (for swap)
+		var can_move_to_source = true
+		if item_to_slot:
+			can_move_to_source = Equipment.can_equip_item_in_slot(item_to_slot, dragged_from_slot_index)
+		
+		# Only allow swap if both items can fit in their new slots
+		if can_move_to_target and can_move_to_source:
+			Equipment.swap_items(dragged_from_slot_index, slot_index)
+		else:
+			# Can't swap - cancel the drag
+			dragged_from_slot.modulate = Color(1, 1, 1, 1)
+			_end_drag()
+			return
 	elif not original_is_equipment and not target_is_equipment:
 		# Inventory to Inventory - swap in inventory system
 		Inventory.swap_items(dragged_from_slot_index, slot_index)
 	elif not original_is_equipment and target_is_equipment:
-		# Inventory to Equipment - move item
+		# Inventory to Equipment - check if item type matches slot
 		var item_from_inventory = Inventory.get_item_at_slot(dragged_from_slot_index)
 		var item_from_equipment = Equipment.get_item_at_slot(slot_index)
 		
-		# Set items in new locations
+		# Check if the item can be equipped in this slot
+		if item_from_inventory and not Equipment.can_equip_item_in_slot(item_from_inventory, slot_index):
+			# Item type doesn't match - cancel the swap
+			dragged_from_slot.modulate = Color(1, 1, 1, 1)
+			_end_drag()
+			return
+		
+		# Check if the equipment item can go to inventory (if swapping)
+		if item_from_equipment and not Inventory.can_equip_item_in_slot(item_from_equipment, dragged_from_slot_index):
+			# Just allow it - inventory has no restrictions
+			pass
+		
+		# Perform the swap
 		Equipment.set_item_at_slot(slot_index, item_from_inventory)
 		Inventory.items[dragged_from_slot_index] = item_from_equipment
 		Inventory.inventory_changed.emit()
 		Inventory._update_weight_signals()
 	elif original_is_equipment and not target_is_equipment:
-		# Equipment to Inventory - move item
+		# Equipment to Inventory - move item (inventory has no restrictions)
 		var item_from_equipment = Equipment.get_item_at_slot(dragged_from_slot_index)
 		var item_from_inventory = Inventory.get_item_at_slot(slot_index)
+		
+		# Check if inventory item can be equipped in equipment slot (if swapping)
+		if item_from_inventory and not Equipment.can_equip_item_in_slot(item_from_inventory, dragged_from_slot_index):
+			# Item type doesn't match - cancel the swap
+			dragged_from_slot.modulate = Color(1, 1, 1, 1)
+			_end_drag()
+			return
 		
 		# Set items in new locations
 		Inventory.items[slot_index] = item_from_equipment

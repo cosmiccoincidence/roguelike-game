@@ -48,6 +48,7 @@ points = PackedVector3Array(0.055962205, 0.055962205, 0.57029116, 0.055962205, -
 script = ExtResource("1_nrb28")
 item_name = "Stick"
 item_icon = ExtResource("2_uoaee")
+item_type = "weapon"
 weight = 3.0
 
 [node name="ItemStick" type="MeshInstance3D" parent="."]

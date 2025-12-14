@@ -2,7 +2,24 @@ extends Node
 # Equipment System
 
 var equipped_items: Array = []
-var max_equipment_slots: int = 13  # 13 actual slots after gaps
+var max_equipment_slots: int = 13  # 13 equipment slots
+
+# Define what item type each slot accepts
+var slot_restrictions: Array = [
+	"helmet",   # Slot 0
+	"amulet",   # Slot 1
+	"bag",      # Slot 2
+	"armor",    # Slot 3
+	"ring",     # Slot 4
+	"ring",     # Slot 5
+	"belt",     # Slot 6
+	"gloves",   # Slot 7
+	"weapon",   # Slot 8
+	"weapon",   # Slot 9
+	"boots",    # Slot 10
+	"weapon",   # Slot 11
+	"weapon"    # Slot 12
+]
 
 signal equipment_changed
 
@@ -11,6 +28,19 @@ func _ready():
 	equipped_items.resize(max_equipment_slots)
 	for i in range(max_equipment_slots):
 		equipped_items[i] = null
+
+func can_equip_item_in_slot(item_data, slot_index: int) -> bool:
+	"""Check if an item can be equipped in a specific slot based on type"""
+	if slot_index < 0 or slot_index >= max_equipment_slots:
+		return false
+	
+	if not item_data or not item_data.has("item_type"):
+		return false
+	
+	var item_type = item_data.item_type.to_lower()
+	var required_type = slot_restrictions[slot_index]
+	
+	return item_type == required_type
 
 func swap_items(from_slot: int, to_slot: int):
 	"""Swap items between two equipment slots"""
@@ -29,12 +59,21 @@ func swap_items(from_slot: int, to_slot: int):
 	Inventory._update_weight_signals()
 
 func set_item_at_slot(slot_index: int, item_data):
-	"""Set an item at a specific equipment slot"""
+	"""Set an item at a specific equipment slot (with type checking)"""
 	if slot_index >= 0 and slot_index < max_equipment_slots:
-		equipped_items[slot_index] = item_data
-		equipment_changed.emit()
-		# Notify inventory system to update weight
-		Inventory._update_weight_signals()
+		# If item_data is null (clearing slot), allow it
+		if item_data == null or can_equip_item_in_slot(item_data, slot_index):
+			equipped_items[slot_index] = item_data
+			equipment_changed.emit()
+			# Notify inventory system to update weight
+			Inventory._update_weight_signals()
+			return true
+		else:
+			# Item type doesn't match slot requirement
+			if item_data.has("item_type"):
+				push_warning("Cannot equip %s in slot %d (requires %s)" % [item_data.item_type, slot_index, slot_restrictions[slot_index]])
+			return false
+	return false
 
 func get_item_at_slot(slot_index: int):
 	"""Get item at a specific equipment slot"""
