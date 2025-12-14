@@ -1,5 +1,5 @@
 extends Node3D
-class_name SimpleFogOfWar
+class_name FogOfWar
 
 ## Simple tile-based fog of war - tiles are revealed as you explore them
 
@@ -18,12 +18,13 @@ var fog_meshes: Dictionary = {}  # Key: Vector2i(x,z), Value: MeshInstance3D
 var update_timer: float = 0.0
 var fog_parent: Node3D
 var last_map_instance_id: int = -1  # Track which map we created fog for
+var is_passive_mode: bool = false  # Set when on passive maps
 var debug_disabled: bool = false  # Debug: disable system
 var debug_key_pressed: Dictionary = {}  # Debounce debug keys
 
 func _ready():
 	if not player or not map_container:
-		push_error("SimpleFogOfWar: Missing player or map_container!")
+		push_error("FogOfWar: Missing player or map_container!")
 		return
 	
 	# Create parent node for all fog tiles
@@ -38,6 +39,11 @@ func _ready():
 
 func find_map():
 	map_generator = find_gridmap_recursive(map_container)
+	if map_generator:
+		# Check if this is a passive map
+		is_passive_mode = map_generator.get("is_passive_map")
+		if is_passive_mode == null:
+			is_passive_mode = false
 
 func find_gridmap_recursive(node: Node) -> GridMap:
 	if node is GridMap:
@@ -108,6 +114,11 @@ func create_fog_tiles():
 			fog_meshes[tile_key] = mesh_instance
 			revealed_tiles[tile_key] = false
 			created_count += 1
+	
+		if is_passive_mode:
+			# Wait a frame then reveal
+			await get_tree().process_frame
+			reveal_all()
 
 func create_tile_quad() -> Mesh:
 	var surface_tool = SurfaceTool.new()
@@ -213,8 +224,8 @@ func _process(delta):
 	else:
 		debug_key_pressed["slash"] = false
 	
-	# If system disabled, skip updates
-	if debug_disabled:
+	# If system disabled OR passive map, skip updates
+	if debug_disabled or is_passive_mode:
 		return
 	
 	# If no map generator, try to find it

@@ -10,6 +10,7 @@ class_name EntityCullingSystem
 @export var update_interval: float = 0.1
 
 var map_generator: GridMap
+var is_passive_mode: bool = false  # Set when on passive maps
 var update_timer: float = 0.0
 var is_initialized: bool = false
 
@@ -25,12 +26,20 @@ func find_map():
 		if child is GridMap:
 			map_generator = child
 			is_initialized = true
+			# Check if this is a passive map
+			is_passive_mode = map_generator.get("is_passive_map")
+			if is_passive_mode == null:
+				is_passive_mode = false
 			return
 		# Search recursively
 		var gridmap = find_gridmap_recursive(child)
 		if gridmap:
 			map_generator = gridmap
 			is_initialized = true
+			# Check if this is a passive map
+			is_passive_mode = map_generator.get("is_passive_map")
+			if is_passive_mode == null:
+				is_passive_mode = false
 			return
 
 func find_gridmap_recursive(node: Node) -> GridMap:
@@ -53,6 +62,11 @@ func _process(delta):
 	if not is_instance_valid(map_generator):
 		is_initialized = false
 		map_generator = null
+		is_passive_mode = false  # Reset passive mode
+		return
+	
+	# Skip updates on passive maps - all entities always visible
+	if is_passive_mode:
 		return
 	
 	update_timer += delta
@@ -84,8 +98,8 @@ func update_entity_visibility():
 		if not entity is Node3D:
 			continue
 		
-		# If vision system is disabled, show all entities
-		if vision_disabled:
+		# If vision system is disabled OR passive map, show all entities
+		if vision_disabled or is_passive_mode:
 			entity.visible = true
 			continue
 		

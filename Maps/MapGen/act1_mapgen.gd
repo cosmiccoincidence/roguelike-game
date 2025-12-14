@@ -13,6 +13,8 @@ var buildings_generator: BuildingsMapGen
 # ACT 1 FEATURE SETTINGS
 # ============================================================================
 
+@export var is_passive_map: bool = false
+
 # Road settings for Act 1
 @export_group("Road Generation")
 @export var road_width: int = 2

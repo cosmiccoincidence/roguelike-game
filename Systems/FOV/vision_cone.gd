@@ -1,5 +1,5 @@
 extends Node3D
-class_name WorkingVisionCone
+class_name VisionCone
 
 ## Vision cone that ACTUALLY stops at walls
 ## Generates triangle fan geometry that raycasts to walls
@@ -15,12 +15,13 @@ class_name WorkingVisionCone
 
 var cone_mesh: MeshInstance3D
 var map_generator: GridMap
+var is_passive_mode: bool = false  # Set when on passive maps
 var debug_disabled: bool = false  # Debug: disable system
 var debug_slash_pressed: bool = false  # Debounce slash key
 
 func _ready():
 	if not player or not map_container:
-		push_error("WorkingVisionCone: Missing player or map_container!")
+		push_error("VisionCone: Missing player or map_container!")
 		return
 	
 	find_map()
@@ -37,6 +38,11 @@ func _on_child_added(node: Node):
 func find_map():
 	map_generator = find_gridmap_recursive(map_container)
 	if map_generator:
+		# Check if this is a passive map
+		is_passive_mode = map_generator.get("is_passive_map")
+		if is_passive_mode == null:
+			is_passive_mode = false
+			
 		# Listen for generation complete if it has that signal
 		if map_generator.has_signal("generation_complete"):
 			if not map_generator.generation_complete.is_connected(_on_map_generated):
@@ -82,8 +88,8 @@ func _process(_delta):
 	else:
 		debug_slash_pressed = false
 	
-	# If system disabled, hide cone and skip updates
-	if debug_disabled:
+	# If system disabled OR passive map, hide cone and skip updates
+	if debug_disabled or is_passive_mode:
 		cone_mesh.visible = false
 		return
 	else:

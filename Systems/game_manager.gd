@@ -1,4 +1,4 @@
-# game_manager.gd - IMPROVED VERSION
+# game_manager.gd
 extends Node
 
 @export var starting_map: PackedScene
