@@ -2,12 +2,15 @@ extends GridMap
 class_name ManualMap
 
 # Tile IDs from MeshLibrary
-@export var grass_tile_id: int = 4
-@export var exterior_wall_tile_id: int = 7
 @export var entrance_tile_id: int = 0
 @export var exit_tile_id: int = 1
+@export var grass_tile_id: int = 6
 @export var stone_road_tile_id: int = 2
-@export var interior_wall_tile_id: int = 6
+@export var interior_wall_tile_id: int = 8
+@export var exterior_wall_tile_id: int = 9
+@export var interior_floor_tile_id: int = 5
+@export var interior_door_tile_id: int = 4
+
 @export var is_passive_map: bool = false  # Disable fog/vision for towns
 
 var exit_triggered: bool = false  # Add this at the top with other variables

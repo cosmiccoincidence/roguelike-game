@@ -1,4 +1,4 @@
-[gd_scene load_steps=60 format=4 uid="uid://brm3gs0mrgg33"]
+[gd_scene load_steps=76 format=4 uid="uid://brm3gs0mrgg33"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rn51h"]
 resource_name = "Blue"
@@ -164,6 +164,88 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_dhfe8")
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_vq1pm"]
+points = PackedVector3Array(0.50793654, 0.007936508, 0.50793654, -0.50793654, -0.007936508, -0.50793654, -0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, -0.50793654, -0.50793654, -0.007936508, 0.50793654, -0.50793654, 0.007936508, 0.50793654, 0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, 0.50793654)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3bu83"]
+resource_name = "dark brown"
+cull_mode = 2
+albedo_color = Color(0.44935688, 0.33177137, 0.13306803, 1)
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ty3n2"]
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 1),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"name": "dark brown",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAP//AAD//wAAAAAAAP//AAD//wAAAAAAAAAAAAA=")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_7w54f"]
+resource_name = "Tile_Plane_006"
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 1),
+"attribute_data": PackedByteArray("AAD/////AAD/////AAAAAA=="),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"material": SubResource("StandardMaterial3D_3bu83"),
+"name": "dark brown",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAP///7///wAAAAD/v///AAD///+/AAAAAAAA/7////9/////f////3////9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_ty3n2")
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_s4fjx"]
+points = PackedVector3Array(0.50793654, 0.007936508, 0.50793654, -0.50793654, -0.007936508, -0.50793654, -0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, -0.50793654, -0.50793654, -0.007936508, 0.50793654, -0.50793654, 0.007936508, 0.50793654, 0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, 0.50793654)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rad50"]
+resource_name = "brown"
+cull_mode = 2
+albedo_color = Color(0.53159654, 0.4263009, 0.16494109, 1)
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_00f6v"]
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 1),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"name": "brown",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAP//AAD//wAAAAAAAP//AAD//wAAAAAAAAAAAAA=")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_x5o66"]
+resource_name = "Tile_Plane_007"
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 1),
+"attribute_data": PackedByteArray("AAD/////AAD/////AAAAAA=="),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"material": SubResource("StandardMaterial3D_rad50"),
+"name": "brown",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAP///7///wAAAAD/v///AAD///+/AAAAAAAA/7////9/////f////3////9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_00f6v")
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_d40ja"]
 points = PackedVector3Array(0.50793654, 0.007936508, 0.50793654, -0.50793654, -0.007936508, -0.50793654, -0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, -0.50793654, -0.50793654, -0.007936508, 0.50793654, -0.50793654, 0.007936508, 0.50793654, 0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, 0.50793654)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jkqv7"]
@@ -400,6 +482,88 @@ shadow_mesh = SubResource("ArrayMesh_qynw3")
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_j1dxu"]
 points = PackedVector3Array(0.5, 0.9998042, 0.5, -0.5, 0.00019579286, -0.5, -0.5, 0.00019579286, 0.5, -0.5, 0.9998042, -0.5, 0.5, 0.00019579286, -0.5, -0.5, 0.9998042, 0.5, 0.5, 0.00019579286, 0.5, 0.5, 0.9998042, -0.5)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bood8"]
+resource_name = "Pink"
+cull_mode = 2
+albedo_color = Color(0.9081923, 0, 0.7500648, 1)
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_k2y6k"]
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.13053927, 1, 1, 0.26107854),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAACAAEAAwAEAAEABQAAAAIAAwAAAAUABAAGAAIABQACAAYAAwAHAAQAAwAFAAcABwAGAAQABwAFAAYA"),
+"name": "Pink",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAAAAP//AAAAAP//AAAAAAAA/////wAAAAAAAAAAAAD/////AAAAAP//AAD//wAA////////AAD//wAAAAAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_fd01v"]
+resource_name = "Tile_Cube_004"
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.13053927, 1, 1, 0.26107854),
+"attribute_data": PackedByteArray("/1////+f/7//n////1//v/9f/7//n/9//5//v/9f/3//X/9//5//P/+f/3//X/8//1//P/+fAAD/n/8//18AAP8f/3//X/8//1//f/8f/z//n/9//9//P//f/3//n/8/"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkADAANAA4ADAAPAA0AEAARABIAEAATABEAFAAVABYAFAAXABUA"),
+"material": SubResource("StandardMaterial3D_bood8"),
+"name": "Pink",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AAAAAP//VNUAAP//AABU1QAA/////1TVAAAAAAAAVNUAAAAAAAD///////8AAP//AAD//wAA/////wAAAAD/////AAAAAFTV////////VNX/////AABU1f//AAD//1TV//8AAP///78AAP//////v/////////+/AAAAAP///78AAAAAAAD/v///AAD///+///8AAAAA/78AAAAA////v/////8AAP//AAD///////8AAP//AAD/////////////VNVU1VTVVNVU1VTVVNVU1f+//7//v/+//7//v/+//7+qKqoqqiqqKqoqqiqqKqoq/////////////////////wAA/38AAP9/AAD/fwAA/3//f/+//3//v/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_k2y6k")
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_twerp"]
+points = PackedVector3Array(-0.47805804, 0.022129226, -0.1305, 0.5, 0.99980414, 0.1292966, 0.5, 0.00019585152, 0.1292966, -0.5, 0.99980414, 0.1292966, 0.47805804, 0.97787076, -0.1305, -0.5, 0.00019585152, 0.1292966, 0.47805804, 0.022129226, -0.1305, -0.47805804, 0.97787076, -0.1305)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nyrbl"]
+resource_name = "tan"
+cull_mode = 2
+albedo_color = Color(0.9064027, 0.7029146, 0.43543044, 1)
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_bfgrq"]
+_surfaces = [{
+"aabb": AABB(-0.21961325, 0, -0.21961325, 0.4392265, 0.4392265, 0.4392265),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAACAAEAAwAEAAEABQAAAAIAAwAAAAUABAAGAAIABQACAAYAAwAHAAQAAwAFAAcABwAGAAQABwAFAAYA"),
+"name": "tan",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAAAAP//AAAAAP//AAAAAAAA/////wAAAAAAAAAAAAD/////AAAAAP//AAD//wAA////////AAD//wAAAAAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_iru5d"]
+resource_name = "Tile_Cube_012"
+_surfaces = [{
+"aabb": AABB(-0.21961325, 0, -0.21961325, 0.4392265, 0.4392265, 0.4392265),
+"attribute_data": PackedByteArray("/1////+f/7//n////1//v/9f/7//n/9//5//v/9f/3//X/9//5//P/+f/3//X/8//1//P/+fAAD/n/8//18AAP8f/3//X/8//1//f/8f/z//n/9//9//P//f/3//n/8/"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkADAANAA4ADAAPAA0AEAARABIAEAATABEAFAAVABYAFAAXABUA"),
+"material": SubResource("StandardMaterial3D_nyrbl"),
+"name": "tan",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AAAAAP//VNUAAP//AABU1QAA/////1TVAAAAAAAAVNUAAAAAAAD///////8AAP//AAD//wAA/////wAAAAD/////AAAAAFTV////////VNX/////AABU1f//AAD//1TV//8AAP///78AAP//////v/////////+/AAAAAP///78AAAAAAAD/v///AAD///+///8AAAAA/78AAAAA////v/////8AAP//AAD///////8AAP//AAD/////////////VNVU1VTVVNVU1VTVVNVU1f+//7//v/+//7//v/+//7+qKqoqqiqqKqoqqiqqKqoq/////////////////////wAA/38AAP9/AAD/fwAA/3//f/+//3//v/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_bfgrq")
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_631q7"]
+points = PackedVector3Array(-0.21959999, 7.986263e-08, -0.21959992, 0.21958984, 0.43919998, 0.21959999, 0.21958984, 0.43919998, -0.21959999, 0.21958984, 0, 0.21959999, -0.21959999, 0.4391999, 0.21959992, 0.21958984, 0, -0.21959999, -0.21959999, 7.986263e-08, 0.21959992, -0.21959999, 0.4391999, -0.21959992)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h5djv"]
 resource_name = "DarkGreen"
 cull_mode = 2
@@ -546,7 +710,7 @@ shadow_mesh = SubResource("ArrayMesh_iblhm")
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_qv6v7"]
 points = PackedVector3Array(0.0491, 0.29013333, 0.0491, -0.0491, 0.004460616, -0.0491, -0.0491, 0.004460616, 0.049033333, 0.0491, 0.0042666737, 0.0491, 0.049033333, 0.004460616, -0.0491, -0.0491, 0.2899394, -0.0491, -0.0491, 0.2899394, 0.049033333, 0.049033333, 0.2899394, -0.0491)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bood8"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_msv4c"]
 resource_name = "Pink"
 cull_mode = 2
 albedo_color = Color(0.9081923, 0, 0.7500648, 1)
@@ -574,7 +738,7 @@ _surfaces = [{
 "format": 34896613399,
 "index_count": 36,
 "index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkADAANAA4ADAAPAA0AEAARABIAEAATABEAFAAVABYAFAAXABUA"),
-"material": SubResource("StandardMaterial3D_bood8"),
+"material": SubResource("StandardMaterial3D_msv4c"),
 "name": "Pink",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
@@ -609,7 +773,7 @@ _surfaces = [{
 "format": 34896613399,
 "index_count": 36,
 "index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkADAANAA4ADAAPAA0AEAARABIAEAATABEAFAAVABYAFAAXABUA"),
-"material": SubResource("StandardMaterial3D_bood8"),
+"material": SubResource("StandardMaterial3D_msv4c"),
 "name": "Pink",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
@@ -668,6 +832,26 @@ skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TileDirtRoad/StaticBody3D"]
 shape = SubResource("ConvexPolygonShape3D_vq1pm")
+
+[node name="TileFlooringDoor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 0)
+mesh = SubResource("ArrayMesh_7w54f")
+skeleton = NodePath("")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="TileFlooringDoor"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TileFlooringDoor/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_s4fjx")
+
+[node name="TileFlooring" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+mesh = SubResource("ArrayMesh_x5o66")
+skeleton = NodePath("")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="TileFlooring"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TileFlooring/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_d40ja")
 
 [node name="TileGrass" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
@@ -728,6 +912,26 @@ skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallDoor/StaticBody3D"]
 shape = SubResource("ConvexPolygonShape3D_j1dxu")
+
+[node name="Door" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -1)
+mesh = SubResource("ArrayMesh_fd01v")
+skeleton = NodePath("")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Door"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Door/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_twerp")
+
+[node name="Chest" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -1)
+mesh = SubResource("ArrayMesh_iru5d")
+skeleton = NodePath("")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Chest"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Chest/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_631q7")
 
 [node name="Bush" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)

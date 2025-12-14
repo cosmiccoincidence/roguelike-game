@@ -14,6 +14,8 @@ var road_tiles: Array
 var grass_tile_id: int
 var interior_wall_tile_id: int
 var exterior_wall_tile_id: int
+var interior_floor_tile_id: int  # Special floor for inside buildings
+var interior_door_tile_id: int  # Special floor for building doorways
 
 # ============================================================================
 # SETTINGS
@@ -56,6 +58,8 @@ func setup(generator: CoreMapGen):
 	grass_tile_id = generator.grass_tile_id
 	interior_wall_tile_id = generator.interior_wall_tile_id
 	exterior_wall_tile_id = generator.exterior_wall_tile_id
+	interior_floor_tile_id = generator.interior_floor_tile_id
+	interior_door_tile_id = generator.interior_door_tile_id
 	
 	# Get road tiles from roads generator
 	if generator is Act1MapGen:
@@ -183,7 +187,7 @@ func place_building(start: Vector3i, width: int, length: int):
 		}]
 	}
 	
-	place_room_walls(start, width, length)
+	place_room_walls_and_floor(start, width, length)
 	
 	# Add additional rooms
 	var rooms_added = 1
@@ -201,16 +205,26 @@ func place_building(start: Vector3i, width: int, length: int):
 	place_exterior_door(building_data)
 	placed_buildings.append(building_data)
 
-func place_room_walls(start: Vector3i, width: int, length: int):
+func place_room_walls_and_floor(start: Vector3i, width: int, length: int):
+	"""Place walls on perimeter and floor tiles in interior"""
 	for x in range(width):
 		for z in range(length):
 			var pos = Vector3i(start.x + x, 0, start.z + z)
 			
+			# Check if this is a perimeter tile (wall)
 			if x == 0 or x == width - 1 or z == 0 or z == length - 1:
 				var existing_tile = map_generator.get_cell_item(pos)
 				
+				# Only place wall if it's grass or empty (don't overwrite other rooms' walls)
 				if existing_tile == grass_tile_id or existing_tile == -1:
 					map_generator.set_cell_item(pos, interior_wall_tile_id)
+			else:
+				# Interior - place floor tile
+				var existing_tile = map_generator.get_cell_item(pos)
+				
+				# Only place floor if it's grass or empty (allow floor to overwrite floor)
+				if existing_tile == grass_tile_id or existing_tile == -1 or existing_tile == interior_floor_tile_id:
+					map_generator.set_cell_item(pos, interior_floor_tile_id)
 
 func try_place_additional_room(building_data: Dictionary) -> bool:
 	for room in building_data.rooms:
@@ -224,7 +238,7 @@ func try_place_additional_room(building_data: Dictionary) -> bool:
 			var new_room = calculate_new_room_position(room.start, room.width, room.length, wall_side)
 			
 			if is_valid_additional_room(new_room.start, new_room.width, new_room.length, building_data):
-				place_room_walls(new_room.start, new_room.width, new_room.length)
+				place_room_walls_and_floor(new_room.start, new_room.width, new_room.length)
 				
 				var opposite_wall = get_opposite_wall(wall_side)
 				add_room_door(new_room.start, new_room.width, new_room.length, opposite_wall)
@@ -295,7 +309,8 @@ func is_valid_additional_room(start: Vector3i, width: int, length: int, building
 			var tile = map_generator.get_cell_item(check_pos)
 			
 			if x >= 0 and x < width and z >= 0 and z < length:
-				if tile != grass_tile_id and tile != interior_wall_tile_id:
+				# Allow grass, interior walls, and interior floors (for multi-room buildings)
+				if tile != grass_tile_id and tile != interior_wall_tile_id and tile != interior_floor_tile_id:
 					return false
 			else:
 				if tile == exterior_wall_tile_id:
@@ -334,7 +349,8 @@ func add_room_door(start: Vector3i, width: int, length: int, wall_side: int) -> 
 		2: door_pos = Vector3i(start.x, 0, start.z + length / 2)
 		3: door_pos = Vector3i(start.x + width - 1, 0, start.z + length / 2)
 	
-	map_generator.set_cell_item(door_pos, grass_tile_id)
+	# Place floor tile for doorway (so you can walk through)
+	map_generator.set_cell_item(door_pos, interior_door_tile_id)
 	return door_pos
 
 func get_opposite_wall(wall_side: int) -> int:
