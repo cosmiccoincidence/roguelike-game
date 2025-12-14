@@ -31,15 +31,15 @@ text = "Character Name"
 [node name="StatsPanel" type="Panel" parent="EquipmentPanel"]
 layout_mode = 0
 offset_left = 273.0
-offset_right = 542.0
-offset_bottom = 382.0
+offset_right = 540.0
+offset_bottom = 378.0
 
 [node name="InventoryPanel" type="Panel" parent="."]
 layout_mode = 0
 offset_left = 6.0
-offset_top = 427.0
+offset_top = 417.0
 offset_right = 46.0
-offset_bottom = 467.0
+offset_bottom = 457.0
 mouse_filter = 1
 
 [node name="InventoryGrid" type="GridContainer" parent="InventoryPanel"]

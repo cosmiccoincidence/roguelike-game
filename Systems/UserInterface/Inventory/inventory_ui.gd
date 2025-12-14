@@ -32,6 +32,23 @@ var equipment_skip_slots: Array = [
 	10, 11            # Row 3 positions 3 and 4 (slot 2 at index 9 already skipped)
 ]
 
+# Equipment slot names (in order of actual slots, not grid positions)
+var equipment_slot_names: Array = [
+	"Helmet",    # Slot 0
+	"Amulet",    # Slot 1
+	"Bag",       # Slot 2
+	"Armor",     # Slot 3
+	"Ring 1",    # Slot 4
+	"Ring 2",    # Slot 5
+	"Belt",      # Slot 6
+	"Gloves",    # Slot 7
+	"L Hand 1",  # Slot 8
+	"R Hand 1",  # Slot 9
+	"Boots",     # Slot 10
+	"L Hand 2",  # Slot 11
+	"R Hand 2"   # Slot 12
+]
+
 func _input(event):
 	"""Handle inventory toggle and drops outside the inventory grid"""
 	# Toggle inventory visibility
@@ -61,20 +78,30 @@ func _input(event):
 				var dragged_slot = any_slot.get("dragged_from_slot")
 				
 				if dragged_data != null and dragged_slot:
-					# Mouse released - check if it's outside the inventory
+					# Mouse released - check if it's outside both grids
 					var mouse_pos = get_global_mouse_position()
-					var grid_rect = grid_container.get_global_rect()
+					var inventory_rect = grid_container.get_global_rect()
+					var equipment_rect = equipment_grid.get_global_rect()
 					
-					if not grid_rect.has_point(mouse_pos):
-						# Check if dragged from inventory (not equipment)
-						if not dragged_slot.get_meta("is_equipment_slot", false):
-							# Dropped outside inventory - drop in world
-							var slot_idx = dragged_slot.get("dragged_from_slot_index")
-							Inventory.drop_item_at_slot(slot_idx)
-							
-							# Clean up drag state
-							dragged_slot.modulate = Color(1, 1, 1, 1)
+					# Check if mouse is outside BOTH grids
+					var outside_inventory = not inventory_rect.has_point(mouse_pos)
+					var outside_equipment = not equipment_rect.has_point(mouse_pos)
+					
+					if outside_inventory and outside_equipment:
+						# Dropped outside both grids - drop in world
+						var slot_idx = dragged_slot.get("dragged_from_slot_index")
+						var is_equipment = dragged_slot.get_meta("is_equipment_slot", false)
 						
+						if is_equipment:
+							# Drop from equipment - need to remove from Equipment system
+							# For now, just remove it (you can add world drop logic later)
+							Equipment.remove_item_at_slot(slot_idx)
+						else:
+							# Drop from inventory
+							Inventory.drop_item_at_slot(slot_idx)
+						
+						# Clean up drag state
+						dragged_slot.modulate = Color(1, 1, 1, 1)
 						any_slot.call("_end_drag")
 
 func _get_slot_by_index(index: int) -> Panel:
@@ -285,6 +312,29 @@ func _setup_equipment_grid():
 			slot.set_meta("is_equipment_slot", true)
 			slot.add_to_group("equipment_slots")
 			equipment_grid.add_child(slot)
+			
+			# Add slot name label
+			if equipment_slot_index < equipment_slot_names.size():
+				var slot_name_label = Label.new()
+				slot_name_label.name = "SlotNameLabel"
+				slot_name_label.text = equipment_slot_names[equipment_slot_index]
+				slot_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+				slot_name_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+				slot_name_label.add_theme_font_size_override("font_size", 10)
+				slot_name_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.5))  # White, 50% transparent
+				slot_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				
+				# Position at top of slot
+				slot_name_label.anchor_left = 0
+				slot_name_label.anchor_top = 0
+				slot_name_label.anchor_right = 1
+				slot_name_label.anchor_bottom = 0
+				slot_name_label.offset_left = 2
+				slot_name_label.offset_top = 2
+				slot_name_label.offset_right = -2
+				slot_name_label.offset_bottom = 14
+				
+				slot.add_child(slot_name_label)
 			
 			# Set tooltip manager reference
 			if slot.has_method("set_tooltip_manager") and slot_tooltip:
