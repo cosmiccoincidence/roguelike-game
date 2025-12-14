@@ -237,7 +237,7 @@ func raycast_to_wall(from: Vector3, direction: Vector2, max_dist: float) -> Vect
 		return Vector2(from.x, from.z) + direction * max_dist
 	
 	var from_2d = Vector2(from.x, from.z)
-	var step_size = 0.5  # Check every 0.5 units
+	var step_size = 0.4  # Smaller steps for better accuracy
 	
 	# Step along ray
 	var dist = step_size
@@ -248,11 +248,27 @@ func raycast_to_wall(from: Vector3, direction: Vector2, max_dist: float) -> Vect
 		var tile_pos = map_generator.local_to_map(check_pos_3d)
 		var tile_id = map_generator.get_cell_item(tile_pos)
 		
+		# Check current tile
 		if is_wall_tile(tile_id):
-			# Hit wall - return position just before it
 			hit_wall = true
 			var return_dist = max(0.1, dist - step_size)
 			return from_2d + direction * return_dist
+		
+		# NEW: Check for diagonal wall blocking
+		# If we're moving diagonally, check the two adjacent tiles
+		if abs(direction.x) > 0.1 and abs(direction.y) > 0.1:
+			# Moving diagonally - check the two orthogonal neighbors
+			var check_x = Vector3i(tile_pos.x + sign(direction.x), tile_pos.y, tile_pos.z)
+			var check_z = Vector3i(tile_pos.x, tile_pos.y, tile_pos.z + sign(direction.y))
+			
+			var tile_x = map_generator.get_cell_item(check_x)
+			var tile_z = map_generator.get_cell_item(check_z)
+			
+			# If BOTH adjacent tiles are walls, we can't see through the diagonal gap
+			if is_wall_tile(tile_x) and is_wall_tile(tile_z):
+				hit_wall = true
+				var return_dist = max(0.1, dist - step_size)
+				return from_2d + direction * return_dist
 		
 		dist += step_size
 	
