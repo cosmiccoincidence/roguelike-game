@@ -66,7 +66,7 @@ func _create_tooltip_ui():
 	
 	# Style the panel
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0.9)  # Less transparent (was 0.75)
+	style.bg_color = Color(0, 0, 0, 0.9)
 	style.border_color = Color(1, 1, 1, 0.3)
 	style.set_border_width_all(1)
 	style.set_corner_radius_all(4)
@@ -120,6 +120,10 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	# Value - gold color, above weight
 	var value = item_data.get("value", 0)
 	lines.append("[center][color=gold]Value: %d[/color][/center]" % value)
+	
+	# Type - gray color, above weight
+	var item_type = item_data.get("item_type", 0)
+	lines.append("[center][color=darkgray]Type: %s[/color][/center]" % str(item_type))
 	
 	# Weight - gray color (note: BBCode uses "gray" not "grey")
 	var weight = item_data.get("weight", 0.0)
