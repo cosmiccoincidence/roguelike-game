@@ -9,6 +9,9 @@ var player: CharacterBody3D = null
 var can_interact := true
 
 func _ready():
+	# Add to "door" group so vision cone can find us
+	add_to_group("door")
+	
 	# Try to get existing collision shape
 	collision_shape = get_node_or_null("CollisionShape3D")
 	

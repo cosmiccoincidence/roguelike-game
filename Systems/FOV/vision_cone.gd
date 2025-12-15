@@ -241,7 +241,6 @@ func raycast_to_wall(from: Vector3, direction: Vector2, max_dist: float) -> Vect
 	
 	# Step along ray
 	var dist = step_size
-	var hit_wall = false
 	while dist <= max_dist:
 		var check_pos_2d = from_2d + direction * dist
 		var check_pos_3d = Vector3(check_pos_2d.x, from.y, check_pos_2d.y)
@@ -250,30 +249,66 @@ func raycast_to_wall(from: Vector3, direction: Vector2, max_dist: float) -> Vect
 		
 		# Check current tile
 		if is_wall_tile(tile_id):
-			hit_wall = true
+			# Check if this is a door tile and if there's an open door here
+			var door_floor_id = map_generator.get("door_floor_tile_id")
+			if door_floor_id != null and tile_id == door_floor_id:
+				# This is a door tile - check if there's an open door at this position
+				if is_door_open_at_position(check_pos_3d):
+					# Door is open - treat as walkable, don't block vision
+					dist += step_size
+					continue
+			
 			var return_dist = max(0.1, dist - step_size)
 			return from_2d + direction * return_dist
 		
-		# NEW: Check for diagonal wall blocking
-		# If we're moving diagonally, check the two adjacent tiles
-		if abs(direction.x) > 0.1 and abs(direction.y) > 0.1:
-			# Moving diagonally - check the two orthogonal neighbors
-			var check_x = Vector3i(tile_pos.x + sign(direction.x), tile_pos.y, tile_pos.z)
-			var check_z = Vector3i(tile_pos.x, tile_pos.y, tile_pos.z + sign(direction.y))
+		# NEW IMPROVED: Check for diagonal wall corner gaps
+		# Only check if moving diagonally AND we're in an empty/walkable tile
+		if abs(direction.x) > 0.1 and abs(direction.y) > 0.1 and tile_id == -1:
+			# Get world position of current check point
+			var world_pos = map_generator.map_to_local(tile_pos)
 			
-			var tile_x = map_generator.get_cell_item(check_x)
-			var tile_z = map_generator.get_cell_item(check_z)
+			# Check how close we are to the tile center (the corner intersection)
+			var offset_x = abs(check_pos_2d.x - world_pos.x)
+			var offset_z = abs(check_pos_2d.y - world_pos.z)
 			
-			# If BOTH adjacent tiles are walls, we can't see through the diagonal gap
-			if is_wall_tile(tile_x) and is_wall_tile(tile_z):
-				hit_wall = true
-				var return_dist = max(0.1, dist - step_size)
-				return from_2d + direction * return_dist
+			# Only block if we're near the corner intersection point
+			if offset_x < 0.3 and offset_z < 0.3:
+				# Check the two orthogonal neighbors
+				var dir_x = int(sign(direction.x))
+				var dir_z = int(sign(direction.y))
+				
+				var check_x = Vector3i(tile_pos.x + dir_x, tile_pos.y, tile_pos.z)
+				var check_z = Vector3i(tile_pos.x, tile_pos.y, tile_pos.z + dir_z)
+				
+				var tile_x = map_generator.get_cell_item(check_x)
+				var tile_z = map_generator.get_cell_item(check_z)
+				
+				# If BOTH adjacent tiles are walls, block the diagonal gap
+				if is_wall_tile(tile_x) and is_wall_tile(tile_z):
+					var return_dist = max(0.1, dist - step_size)
+					return from_2d + direction * return_dist
 		
 		dist += step_size
 	
 	# No wall hit - return max distance
 	return from_2d + direction * max_dist
+
+func is_door_open_at_position(world_pos: Vector3) -> bool:
+	"""Check if there's an open door at the given world position"""
+	# Get all doors in the scene
+	var doors = get_tree().get_nodes_in_group("door")
+	
+	# Check if any door is close to this position and is open
+	for door in doors:
+		if door is Door:  # Make sure it's actually a Door
+			var door_pos = door.global_position
+			var distance = Vector2(world_pos.x - door_pos.x, world_pos.z - door_pos.z).length()
+			
+			# If door is within 1 unit and is open (collision disabled)
+			if distance < 1.0 and door.is_open:
+				return true
+	
+	return false
 
 func is_wall_tile(tile_id: int) -> bool:
 	if tile_id == -1:
