@@ -1,4 +1,6 @@
-[gd_scene load_steps=5 format=4 uid="uid://dm0j876b3mhs2"]
+[gd_scene load_steps=6 format=4 uid="uid://dm0j876b3mhs2"]
+
+[ext_resource type="Script" uid="uid://ceuuk36q355nf" path="res://Assets/3D/Furniture/door.gd" id="1_0x4w2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bood8"]
 resource_name = "Pink"
@@ -42,6 +44,7 @@ shadow_mesh = SubResource("ArrayMesh_k2y6k")
 points = PackedVector3Array(-0.47805804, 0.022129226, -0.1305, 0.5, 0.99980414, 0.1292966, 0.5, 0.00019585152, 0.1292966, -0.5, 0.99980414, 0.1292966, 0.47805804, 0.97787076, -0.1305, -0.5, 0.00019585152, 0.1292966, 0.47805804, 0.022129226, -0.1305, -0.47805804, 0.97787076, -0.1305)
 
 [node name="Door" type="StaticBody3D"]
+script = ExtResource("1_0x4w2")
 
 [node name="Door" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_q5v7d")
