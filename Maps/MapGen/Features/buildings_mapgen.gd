@@ -14,7 +14,8 @@ var road_tiles: Array
 var grass_tile_id: int
 var interior_wall_tile_id: int
 var exterior_wall_tile_id: int
-var interior_floor_tile_id: int  # NEW: Special floor for inside buildings
+var interior_floor_tile_id: int
+var door_floor_tile_id: int
 
 # ============================================================================
 # SETTINGS
@@ -45,7 +46,7 @@ var building_zone_buffer: int = 25
 # ============================================================================
 
 var placed_buildings: Array = []
-var furniture_placer: FurniturePlacer = null  # NEW: Furniture placement helper
+var furniture_placer: FurniturePlacer = null 
 
 # ============================================================================
 # SETUP
@@ -58,7 +59,8 @@ func setup(generator: CoreMapGen):
 	grass_tile_id = generator.grass_tile_id
 	interior_wall_tile_id = generator.interior_wall_tile_id
 	exterior_wall_tile_id = generator.exterior_wall_tile_id
-	interior_floor_tile_id = generator.interior_floor_tile_id  # NEW: Get interior floor tile
+	interior_floor_tile_id = generator.interior_floor_tile_id
+	door_floor_tile_id = generator.door_floor_tile_id
 	
 	# Get road tiles from roads generator
 	if generator is Act1MapGen:
@@ -69,6 +71,7 @@ func setup(generator: CoreMapGen):
 	furniture_placer.setup(map_generator, map_generator.get_parent())
 	
 	# Set furniture scenes
+	furniture_placer.set_furniture_scene("door", preload("res://Assets/3D/Furniture/door.tscn"))
 	furniture_placer.set_furniture_scene("chest", preload("res://Assets/3D/Furniture/chest.tscn"))
 
 # ============================================================================
@@ -256,7 +259,14 @@ func try_place_additional_room(building_data: Dictionary) -> bool:
 				var opposite_wall = get_opposite_wall(wall_side)
 				var door_position = add_room_door(new_room.start, new_room.width, new_room.length, opposite_wall)
 				
+				# Calculate where this door is on the ORIGINAL room's wall
+				var original_door_pos = calculate_door_on_wall(room.start, room.width, room.length, wall_side)
+				
+				# Mark wall as used and store door position for original room
 				room.used_walls.append(wall_side)
+				# Store the interior door position if this room doesn't have one yet
+				if room.door_pos == Vector3i(-999, 0, -999):
+					room.door_pos = original_door_pos
 				
 				building_data.rooms.append({
 					"start": new_room.start,
@@ -367,7 +377,19 @@ func add_room_door(start: Vector3i, width: int, length: int, wall_side: int) -> 
 		3: door_pos = Vector3i(start.x + width - 1, 0, start.z + length / 2)
 	
 	# Place floor tile for doorway (so you can walk through)
-	map_generator.set_cell_item(door_pos, interior_floor_tile_id)
+	map_generator.set_cell_item(door_pos, door_floor_tile_id)
+	return door_pos
+
+func calculate_door_on_wall(start: Vector3i, width: int, length: int, wall_side: int) -> Vector3i:
+	"""Calculate where a door would be on a specific wall (same logic as add_room_door)"""
+	var door_pos = Vector3i.ZERO
+	
+	match wall_side:
+		0: door_pos = Vector3i(start.x + width / 2, 0, start.z)
+		1: door_pos = Vector3i(start.x + width / 2, 0, start.z + length - 1)
+		2: door_pos = Vector3i(start.x, 0, start.z + length / 2)
+		3: door_pos = Vector3i(start.x + width - 1, 0, start.z + length / 2)
+	
 	return door_pos
 
 func get_opposite_wall(wall_side: int) -> int:

@@ -9,7 +9,8 @@ class_name ManualMap
 @export var interior_wall_tile_id: int = 8
 @export var exterior_wall_tile_id: int = 9
 @export var interior_floor_tile_id: int = 5
-@export var interior_door_tile_id: int = 4
+@export var door_tile_id: int = 12
+@export var door_floor_tile_id: int = 4
 
 @export var is_passive_map: bool = false  # Disable fog/vision for towns
 
