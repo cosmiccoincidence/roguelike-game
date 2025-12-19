@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bno3h4db5oos6"]
+[gd_scene load_steps=5 format=3 uid="uid://bno3h4db5oos6"]
 
 [ext_resource type="MeshLibrary" uid="uid://dsbedmleichpf" path="res://Assets/3D/Tiles/tile_library.tres" id="1_78qd2"]
 [ext_resource type="Script" uid="uid://dnfwdsx4pukaw" path="res://Maps/manual_map.gd" id="1_dkaby"]
 [ext_resource type="PackedScene" uid="uid://7jg1i280uwcy" path="res://Characters/NPCs/npc_hermit.tscn" id="2_dkaby"]
+[ext_resource type="Resource" uid="uid://cwn4875vg684d" path="res://Maps/MapGen/Connections/interior_wall_connector.tres" id="3_78qd2"]
 
 [node name="End" type="Node3D"]
 
@@ -14,6 +15,7 @@ data = {
 }
 script = ExtResource("1_dkaby")
 is_passive_map = true
+interior_wall_connector = ExtResource("3_78qd2")
 metadata/_editor_floor_ = Vector3(0, 0, 0)
 
 [node name="NPC_Hermit" parent="." instance=ExtResource("2_dkaby")]
