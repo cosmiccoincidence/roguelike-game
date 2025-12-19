@@ -156,6 +156,7 @@ func _generate_map_internal():
 	# PHASE 4: WALL PLACEMENT
 	print("\n--- PHASE 4: Wall Placement ---")
 	rebuild_perimeter_walls()
+	fix_diagonal_wall_gaps()
 	
 	# PHASE 5: SPECIAL ZONES
 	print("\n--- PHASE 5: Special Zones ---")
@@ -507,6 +508,62 @@ func rebuild_perimeter_walls():
 				walls_added += 1
 	
 	print("Added ", walls_added, " wall tiles")
+
+func fix_diagonal_wall_gaps():
+	"""Fix walls that only touch diagonally by adding a connecting wall"""
+	print("Fixing diagonal wall gaps...")
+	
+	var used_cells = get_used_cells()
+	var wall_positions = []
+	
+	# Find all exterior wall positions
+	for cell in used_cells:
+		if get_cell_item(cell) == exterior_wall_tile_id:
+			wall_positions.append(cell)
+	
+	var walls_added = 0
+	var checked_pairs = {}  # Track pairs we've already processed
+	
+	# Check each wall for diagonal-only connections
+	for wall_pos in wall_positions:
+		var x = wall_pos.x
+		var z = wall_pos.z
+		
+		# Check all 4 diagonal neighbors for walls
+		var diagonals = [
+			{"diag": Vector3i(x + 1, 0, z + 1), "bridge1": Vector3i(x + 1, 0, z), "bridge2": Vector3i(x, 0, z + 1)},
+			{"diag": Vector3i(x - 1, 0, z + 1), "bridge1": Vector3i(x - 1, 0, z), "bridge2": Vector3i(x, 0, z + 1)},
+			{"diag": Vector3i(x + 1, 0, z - 1), "bridge1": Vector3i(x + 1, 0, z), "bridge2": Vector3i(x, 0, z - 1)},
+			{"diag": Vector3i(x - 1, 0, z - 1), "bridge1": Vector3i(x - 1, 0, z), "bridge2": Vector3i(x, 0, z - 1)}
+		]
+		
+		for diag in diagonals:
+			# If diagonal position has a wall
+			if get_cell_item(diag.diag) == exterior_wall_tile_id:
+				# Create unique key for this pair (sort to avoid duplicates)
+				var pair_key = str(wall_pos) + "-" + str(diag.diag)
+				var reverse_key = str(diag.diag) + "-" + str(wall_pos)
+				
+				# Skip if we've already processed this pair
+				if checked_pairs.has(pair_key) or checked_pairs.has(reverse_key):
+					continue
+				
+				checked_pairs[pair_key] = true
+				
+				# Check both cardinal bridge positions
+				var bridge1_tile = get_cell_item(diag.bridge1)
+				var bridge2_tile = get_cell_item(diag.bridge2)
+				
+				# If BOTH cardinal bridges are NOT walls, they're only touching diagonally
+				if bridge1_tile != exterior_wall_tile_id and bridge2_tile != exterior_wall_tile_id:
+					# Randomly choose which bridge position to fill
+					var bridge_to_fill = diag.bridge1 if randf() < 0.5 else diag.bridge2
+					
+					# Fill it with a wall
+					set_cell_item(bridge_to_fill, exterior_wall_tile_id)
+					walls_added += 1
+	
+	print("Added ", walls_added, " bridge walls to fix diagonal gaps")
 
 # ============================================================================
 # PHASE 5: SPECIAL ZONES
