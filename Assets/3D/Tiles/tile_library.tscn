@@ -488,7 +488,7 @@ cull_mode = 2
 albedo_color = Color(0.6012659, 0.6012659, 0.6012659, 1)
 roughness = 0.5
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_stdkj"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_8l3uk"]
 _surfaces = [{
 "aabb": AABB(-0.25, 0, -0.5, 0.5, 1, 1),
 "format": 34896613377,
@@ -518,7 +518,7 @@ _surfaces = [{
 "vertex_data": PackedByteArray("AAAAAP//VNUAAP//AABU1QAA/////1TVAAAAAAAAVNUAAAAAAAD///////8AAP//AAD//wAA/////wAAAAD/////AAAAAFTV////////VNX/////AABU1f//AAD//1TV//8AAP///78AAP//////v/////////+/AAAAAP///78AAAAAAAD/v///AAD///+///8AAAAA/78AAAAA////v/////8AAP//AAD///////8AAP//AAD/////////////VNVU1VTVVNVU1VTVVNVU1f+//7//v/+//7//v/+//7+qKqoqqiqqKqoqqiqqKqoq/////////////////////wAA/38AAP9/AAD/fwAA/3//f/+//3//v/9//7//f/+/")
 }]
 blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_stdkj")
+shadow_mesh = SubResource("ArrayMesh_8l3uk")
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_hjqsc"]
 points = PackedVector3Array(0.25, 0.97715676, 0.47715378, -0.25, 0.0075000473, -0.49259794, -0.25, 0.9925029, -0.49259794, -0.25, 0.0075000473, 0.49259794, 0.25, 0.022849284, -0.47724718, -0.25, 0.9925029, 0.49259794, 0.24613354, 1, -0.49999928, 0.25, 0.022849284, 0.47724718, 0.24613354, 1, 0.49999928, 0.25, 0.97715676, -0.47715378)
@@ -1404,7 +1404,7 @@ points = PackedVector3Array(0.099999994, 0.590909, 0.099999994, -0.099999994, 0.
 [node name="TileLibrary" type="Node3D"]
 
 [node name="TileZoneEntry" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 mesh = SubResource("ArrayMesh_n7nym")
 skeleton = NodePath("")
 
@@ -1414,6 +1414,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_8l3uk")
 
 [node name="TileZoneExit" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
 mesh = SubResource("ArrayMesh_ch1lj")
 skeleton = NodePath("")
 
@@ -1429,7 +1430,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5098679, 0)
 shape = SubResource("BoxShape3D_8t5cb")
 
 [node name="TileStoneRoad" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 0)
 mesh = SubResource("ArrayMesh_3ehl2")
 skeleton = NodePath("")
 
@@ -1439,7 +1440,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_mjchx")
 
 [node name="TileDirtRoad" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
 mesh = SubResource("ArrayMesh_vu0qx")
 skeleton = NodePath("")
 
@@ -1449,7 +1450,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_vq1pm")
 
 [node name="TileFlooringDoor" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 0)
 mesh = SubResource("ArrayMesh_7w54f")
 skeleton = NodePath("")
 
@@ -1459,7 +1460,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_s4fjx")
 
 [node name="TileFlooring" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
 mesh = SubResource("ArrayMesh_x5o66")
 skeleton = NodePath("")
 
@@ -1469,7 +1470,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_d40ja")
 
 [node name="TileGrass" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 mesh = SubResource("ArrayMesh_myvuy")
 skeleton = NodePath("")
 
@@ -1479,7 +1480,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_ngmw5")
 
 [node name="TileWater" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
 mesh = SubResource("ArrayMesh_h25ll")
 skeleton = NodePath("")
 
@@ -1489,7 +1490,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_85vkr")
 
 [node name="WallInterior" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -2)
 mesh = SubResource("ArrayMesh_tbb2s")
 skeleton = NodePath("")
 
@@ -1499,7 +1500,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_5s0l2")
 
 [node name="WallExterior" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -2)
 mesh = SubResource("ArrayMesh_5w7pu")
 skeleton = NodePath("")
 
@@ -1509,7 +1510,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_830ve")
 
 [node name="WallWindow" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -2)
 mesh = SubResource("ArrayMesh_3gv7v")
 skeleton = NodePath("")
 
@@ -1519,7 +1520,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_u1583")
 
 [node name="WallDoor" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -2)
 mesh = SubResource("ArrayMesh_nf43o")
 skeleton = NodePath("")
 
@@ -1529,6 +1530,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_j1dxu")
 
 [node name="WallInteriorI" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -8)
 mesh = SubResource("ArrayMesh_5j7te")
 skeleton = NodePath("")
 
@@ -1538,6 +1540,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_hjqsc")
 
 [node name="WallInteriorL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -7)
 mesh = SubResource("ArrayMesh_pir58")
 skeleton = NodePath("")
 
@@ -1546,25 +1549,28 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorL/WallInteriorL1"]
 shape = SubResource("ConcavePolygonShape3D_7ngu3")
 
-[node name="WallInteriorL3" type="MeshInstance3D" parent="."]
+[node name="WallInteriorL2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -7)
 mesh = SubResource("ArrayMesh_3parj")
 skeleton = NodePath("")
 
-[node name="WallInteriorL2" type="StaticBody3D" parent="WallInteriorL3"]
+[node name="WallInteriorL2" type="StaticBody3D" parent="WallInteriorL2"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorL3/WallInteriorL2"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorL2/WallInteriorL2"]
 shape = SubResource("ConvexPolygonShape3D_wdlcu")
 
-[node name="WallInteriorO2" type="MeshInstance3D" parent="."]
+[node name="WallInteriorO" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -10)
 mesh = SubResource("ArrayMesh_qlqtk")
 skeleton = NodePath("")
 
-[node name="WallInteriorO" type="StaticBody3D" parent="WallInteriorO2"]
+[node name="WallInteriorO" type="StaticBody3D" parent="WallInteriorO"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorO2/WallInteriorO"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorO/WallInteriorO"]
 shape = SubResource("ConvexPolygonShape3D_i5lml")
 
 [node name="WallInteriorT" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -6)
 mesh = SubResource("ArrayMesh_ycw04")
 skeleton = NodePath("")
 
@@ -1573,43 +1579,48 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT/WallInteriorT1"]
 shape = SubResource("ConcavePolygonShape3D_8tr75")
 
-[node name="WallInteriorT5" type="MeshInstance3D" parent="."]
+[node name="WallInteriorT2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -6)
 mesh = SubResource("ArrayMesh_uokpx")
 skeleton = NodePath("")
 
-[node name="WallInteriorT2" type="StaticBody3D" parent="WallInteriorT5"]
+[node name="WallInteriorT2" type="StaticBody3D" parent="WallInteriorT2"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT5/WallInteriorT2"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT2/WallInteriorT2"]
 shape = SubResource("ConcavePolygonShape3D_s58a6")
 
-[node name="WallInteriorT6" type="MeshInstance3D" parent="."]
+[node name="WallInteriorT3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -6)
 mesh = SubResource("ArrayMesh_0kaqk")
 skeleton = NodePath("")
 
-[node name="WallInteriorT3" type="StaticBody3D" parent="WallInteriorT6"]
+[node name="WallInteriorT3" type="StaticBody3D" parent="WallInteriorT3"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT6/WallInteriorT3"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT3/WallInteriorT3"]
 shape = SubResource("ConcavePolygonShape3D_fay2v")
 
-[node name="WallInteriorT7" type="MeshInstance3D" parent="."]
+[node name="WallInteriorT4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -6)
 mesh = SubResource("ArrayMesh_2ksde")
 skeleton = NodePath("")
 
-[node name="WallInteriorT4" type="StaticBody3D" parent="WallInteriorT7"]
+[node name="WallInteriorT4" type="StaticBody3D" parent="WallInteriorT4"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT7/WallInteriorT4"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT4/WallInteriorT4"]
 shape = SubResource("ConvexPolygonShape3D_23bu5")
 
-[node name="WallInteriorU2" type="MeshInstance3D" parent="."]
+[node name="WallInteriorU" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -9)
 mesh = SubResource("ArrayMesh_st6uf")
 skeleton = NodePath("")
 
-[node name="WallInteriorU" type="StaticBody3D" parent="WallInteriorU2"]
+[node name="WallInteriorU" type="StaticBody3D" parent="WallInteriorU"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorU2/WallInteriorU"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorU/WallInteriorU"]
 shape = SubResource("ConvexPolygonShape3D_53l6b")
 
 [node name="WallInteriorX" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -5)
 mesh = SubResource("ArrayMesh_h7vtm")
 skeleton = NodePath("")
 
@@ -1618,53 +1629,58 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX/WallInteriorX1"]
 shape = SubResource("ConcavePolygonShape3D_6qsf6")
 
-[node name="WallInteriorX7" type="MeshInstance3D" parent="."]
+[node name="WallInteriorX2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -5)
 mesh = SubResource("ArrayMesh_qebkm")
 skeleton = NodePath("")
 
-[node name="WallInteriorX2" type="StaticBody3D" parent="WallInteriorX7"]
+[node name="WallInteriorX2" type="StaticBody3D" parent="WallInteriorX2"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX7/WallInteriorX2"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX2/WallInteriorX2"]
 shape = SubResource("ConcavePolygonShape3D_2h672")
 
-[node name="WallInteriorX8" type="MeshInstance3D" parent="."]
+[node name="WallInteriorX3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -5)
 mesh = SubResource("ArrayMesh_4ms1n")
 skeleton = NodePath("")
 
-[node name="WallInteriorX3" type="StaticBody3D" parent="WallInteriorX8"]
+[node name="WallInteriorX3" type="StaticBody3D" parent="WallInteriorX3"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX8/WallInteriorX3"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX3/WallInteriorX3"]
 shape = SubResource("ConcavePolygonShape3D_0o76t")
 
-[node name="WallInteriorX9" type="MeshInstance3D" parent="."]
+[node name="WallInteriorX4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -5)
 mesh = SubResource("ArrayMesh_ciffj")
 skeleton = NodePath("")
 
-[node name="WallInteriorX4" type="StaticBody3D" parent="WallInteriorX9"]
+[node name="WallInteriorX4" type="StaticBody3D" parent="WallInteriorX4"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX9/WallInteriorX4"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX4/WallInteriorX4"]
 shape = SubResource("ConcavePolygonShape3D_8ng45")
 
-[node name="WallInteriorX10" type="MeshInstance3D" parent="."]
+[node name="WallInteriorX5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -5)
 mesh = SubResource("ArrayMesh_51xi5")
 skeleton = NodePath("")
 
-[node name="WallInteriorX5" type="StaticBody3D" parent="WallInteriorX10"]
+[node name="WallInteriorX5" type="StaticBody3D" parent="WallInteriorX5"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX10/WallInteriorX5"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX5/WallInteriorX5"]
 shape = SubResource("ConcavePolygonShape3D_gkg0n")
 
-[node name="WallInteriorX11" type="MeshInstance3D" parent="."]
+[node name="WallInteriorX6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -5)
 mesh = SubResource("ArrayMesh_o30ah")
 skeleton = NodePath("")
 
-[node name="WallInteriorX6" type="StaticBody3D" parent="WallInteriorX11"]
+[node name="WallInteriorX6" type="StaticBody3D" parent="WallInteriorX6"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX11/WallInteriorX6"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX6/WallInteriorX6"]
 shape = SubResource("ConvexPolygonShape3D_7a28r")
 
 [node name="Door" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -1)
 mesh = SubResource("ArrayMesh_fd01v")
 skeleton = NodePath("")
 
@@ -1674,7 +1690,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_twerp")
 
 [node name="Chest" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
 mesh = SubResource("ArrayMesh_iru5d")
 skeleton = NodePath("")
 
@@ -1684,7 +1700,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_631q7")
 
 [node name="Bush" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -1)
 mesh = SubResource("ArrayMesh_h8dym")
 skeleton = NodePath("")
 
@@ -1694,7 +1710,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_nhpov")
 
 [node name="Tree" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -1)
 mesh = SubResource("ArrayMesh_la77o")
 skeleton = NodePath("")
 
@@ -1704,7 +1720,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_ajlsq")
 
 [node name="Rock" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -1)
 mesh = SubResource("ArrayMesh_531ho")
 skeleton = NodePath("")
 
@@ -1714,7 +1730,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_vd524")
 
 [node name="Flower" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -1)
 mesh = SubResource("ArrayMesh_7mgh8")
 skeleton = NodePath("")
 
@@ -1724,7 +1740,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_qv6v7")
 
 [node name="Fence" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -1)
 mesh = SubResource("ArrayMesh_7k2tv")
 skeleton = NodePath("")
 
@@ -1734,7 +1750,7 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_b6toq")
 
 [node name="Post" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -1)
 mesh = SubResource("ArrayMesh_sn4dl")
 skeleton = NodePath("")
 
