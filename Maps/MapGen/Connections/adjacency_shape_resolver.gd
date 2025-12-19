@@ -89,39 +89,70 @@ static func get_three_connection_shape(adjacency_map: Dictionary) -> AdjacencySh
 	var east = adjacency_map.get(Direction.EAST, false)
 	var west = adjacency_map.get(Direction.WEST, false)
 	
-	# Count corners based on which three directions are connected
-	var corner_count = 0
+	# Determine which direction is missing (the opening of the T)
+	var missing_direction = -1
+	if not north:
+		missing_direction = 0  # North missing = opening faces north
+	elif not south:
+		missing_direction = 1  # South missing = opening faces south
+	elif not east:
+		missing_direction = 2  # East missing = opening faces east
+	elif not west:
+		missing_direction = 3  # West missing = opening faces west
 	
-	if not north:  # South, East, West connected
-		if adjacency_map.get(Direction.SOUTH_EAST, false):
-			corner_count += 1
-		if adjacency_map.get(Direction.SOUTH_WEST, false):
-			corner_count += 1
-	elif not south:  # North, East, West connected
-		if adjacency_map.get(Direction.NORTH_EAST, false):
-			corner_count += 1
-		if adjacency_map.get(Direction.NORTH_WEST, false):
-			corner_count += 1
-	elif not east:  # North, South, West connected
-		if adjacency_map.get(Direction.NORTH_WEST, false):
-			corner_count += 1
-		if adjacency_map.get(Direction.SOUTH_WEST, false):
-			corner_count += 1
-	elif not west:  # North, South, East connected
-		if adjacency_map.get(Direction.NORTH_EAST, false):
-			corner_count += 1
-		if adjacency_map.get(Direction.SOUTH_EAST, false):
-			corner_count += 1
+	# Count corners and determine which ones are present
+	var corners = []
+	
+	match missing_direction:
+		0:  # North missing (South, East, West connected)
+			if adjacency_map.get(Direction.SOUTH_EAST, false):
+				corners.append("SE")
+			if adjacency_map.get(Direction.SOUTH_WEST, false):
+				corners.append("SW")
+		1:  # South missing (North, East, West connected)
+			if adjacency_map.get(Direction.NORTH_EAST, false):
+				corners.append("NE")
+			if adjacency_map.get(Direction.NORTH_WEST, false):
+				corners.append("NW")
+		2:  # East missing (North, South, West connected)
+			if adjacency_map.get(Direction.NORTH_WEST, false):
+				corners.append("NW")
+			if adjacency_map.get(Direction.SOUTH_WEST, false):
+				corners.append("SW")
+		3:  # West missing (North, South, East connected)
+			if adjacency_map.get(Direction.NORTH_EAST, false):
+				corners.append("NE")
+			if adjacency_map.get(Direction.SOUTH_EAST, false):
+				corners.append("SE")
+	
+	var corner_count = corners.size()
 	
 	match corner_count:
 		0:
 			return AdjacencyShape.T_NONE
 		1:
-			# Determine if it's left or right based on position
-			if not north:
-				return AdjacencyShape.T_SINGLE_RIGHT if adjacency_map.get(Direction.SOUTH_EAST, false) else AdjacencyShape.T_SINGLE_LEFT
-			else:
-				return AdjacencyShape.T_SINGLE_LEFT  # Simplified
+			# Determine if it's left or right based on which corner is present
+			# When looking at the T from the opening side:
+			# - RIGHT corner = clockwise from opening
+			# - LEFT corner = counter-clockwise from opening
+			
+			var corner = corners[0]
+			
+			match missing_direction:
+				0:  # North missing (opening faces north) - SWAPPED
+					# Looking north: SW is right, SE is left
+					return AdjacencyShape.T_SINGLE_RIGHT if corner == "SW" else AdjacencyShape.T_SINGLE_LEFT
+				1:  # South missing (opening faces south) - SWAPPED
+					# Looking south: NE is right, NW is left
+					return AdjacencyShape.T_SINGLE_RIGHT if corner == "NE" else AdjacencyShape.T_SINGLE_LEFT
+				2:  # East missing (opening faces east)
+					# Looking east: NW is right, SW is left
+					return AdjacencyShape.T_SINGLE_RIGHT if corner == "NW" else AdjacencyShape.T_SINGLE_LEFT
+				3:  # West missing (opening faces west)
+					# Looking west: SE is right, NE is left
+					return AdjacencyShape.T_SINGLE_RIGHT if corner == "SE" else AdjacencyShape.T_SINGLE_LEFT
+			
+			return AdjacencyShape.T_SINGLE_LEFT  # Fallback
 		2:
 			return AdjacencyShape.T_DOUBLE
 	
@@ -218,26 +249,28 @@ static func get_l_shape_rotation(adjacency_map: Dictionary) -> float:
 	return 0.0
 
 static func get_t_shape_rotation(adjacency_map: Dictionary) -> float:
-	# Find the single non-connection
+	# Find the single non-connection (the opening of the T)
+	# The rotation should point the opening toward the missing connection
 	if not adjacency_map.get(Direction.NORTH, false):
-		return 180.0
+		return 180.0  # Opening faces north (flipped from 0)
 	elif not adjacency_map.get(Direction.EAST, false):
-		return 90.0
+		return 90.0   # Opening faces east
 	elif not adjacency_map.get(Direction.SOUTH, false):
-		return 0.0
+		return 0.0    # Opening faces south (flipped from 180)
 	elif not adjacency_map.get(Direction.WEST, false):
-		return 270.0
+		return 270.0  # Opening faces west
 	return 0.0
 
 static func get_x_single_rotation(adjacency_map: Dictionary) -> float:
+	# X2 - one corner present
 	if adjacency_map.get(Direction.NORTH_EAST, false):
 		return 0.0
 	elif adjacency_map.get(Direction.SOUTH_EAST, false):
-		return 90.0
+		return 270.0  # Was 90°, add 180° for SE
 	elif adjacency_map.get(Direction.SOUTH_WEST, false):
 		return 180.0
 	elif adjacency_map.get(Direction.NORTH_WEST, false):
-		return 270.0
+		return 90.0   # Was 270°, add 180° for NW
 	return 0.0
 
 static func get_x_opposite_rotation(adjacency_map: Dictionary) -> float:
@@ -247,29 +280,31 @@ static func get_x_opposite_rotation(adjacency_map: Dictionary) -> float:
 		return 90.0
 
 static func get_x_side_rotation(adjacency_map: Dictionary) -> float:
+	# X3 - two adjacent corners present
 	var ne = adjacency_map.get(Direction.NORTH_EAST, false)
 	var se = adjacency_map.get(Direction.SOUTH_EAST, false)
 	var sw = adjacency_map.get(Direction.SOUTH_WEST, false)
 	var nw = adjacency_map.get(Direction.NORTH_WEST, false)
 	
 	if nw and ne:
-		return 0.0
+		return 0.0      # North side - correct
 	elif ne and se:
-		return 90.0
+		return 270.0    # East side - was 90°, add 180°
 	elif se and sw:
-		return 180.0
+		return 180.0    # South side - correct
 	elif sw and nw:
-		return 270.0
+		return 90.0     # West side - was 270°, add 180°
 	return 0.0
 
 static func get_x_triple_rotation(adjacency_map: Dictionary) -> float:
+	# X5 - three corners present (one missing)
 	# Find the single non-connection
 	if not adjacency_map.get(Direction.NORTH_EAST, false):
-		return 270.0
+		return 90.0     # NE missing - was 270°, add 180°
 	elif not adjacency_map.get(Direction.SOUTH_EAST, false):
-		return 0.0
+		return 0.0      # SE missing - correct
 	elif not adjacency_map.get(Direction.SOUTH_WEST, false):
-		return 90.0
+		return 270.0    # SW missing - was 90°, add 180°
 	elif not adjacency_map.get(Direction.NORTH_WEST, false):
-		return 180.0
+		return 180.0    # NW missing - correct
 	return 0.0
