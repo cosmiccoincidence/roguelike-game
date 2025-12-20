@@ -38,10 +38,10 @@ data = PackedVector3Array(-0.5, 0, 0, 0, 0, -0.5, 0, 0, 0, -0.5, 0, 0, -0.5, 0, 
 [node name="WallInteriorFloorThreeCorner" type="StaticBody3D"]
 
 [node name="WallInteriorFloorThreeQuarter" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49, 0)
 mesh = SubResource("ArrayMesh_61fuu")
 skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49, 0)
 shape = SubResource("ConcavePolygonShape3D_yh5hu")

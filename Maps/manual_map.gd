@@ -99,7 +99,7 @@ func register_wall_tiles():
 	wall_floor_manager.register_wall_tile(
 		interior_wall_connector.l_none_tile_id,
 		WallFloorManager.WallShape.L_NONE,
-		["WallInteriorFloorOneCorner", "WallInteriorFloorThreeCorner"]
+		["WallInteriorFloorNE", "WallInteriorFloorThreeCorner"]
 	)
 	
 	wall_floor_manager.register_wall_tile(
