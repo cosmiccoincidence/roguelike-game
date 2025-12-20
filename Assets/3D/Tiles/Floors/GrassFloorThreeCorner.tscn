@@ -1,4 +1,6 @@
-[gd_scene load_steps=5 format=4 uid="uid://dsb2o0vuak4xi"]
+[gd_scene load_steps=6 format=4 uid="uid://df0f10chqyr0q"]
+
+[ext_resource type="Material" uid="uid://chwwp0r1ll3b1" path="res://World/Materials/material_grass.tres" id="1_1qwxp"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_70a5l"]
 
@@ -39,6 +41,7 @@ data = PackedVector3Array(-0.5, 0, 0, 0, 0, -0.5, 0, 0, 0, -0.5, 0, 0, -0.5, 0, 
 
 [node name="WallInteriorFloorThreeQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49, 0)
+material_override = ExtResource("1_1qwxp")
 mesh = SubResource("ArrayMesh_61fuu")
 skeleton = NodePath("")
 

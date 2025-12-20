@@ -23,7 +23,7 @@ func setup(grid_map: GridMap):
 
 func assign_floor_scene_for_tile(tile_id: int, mesh_name: String, scene: PackedScene):
 	"""Assign a specific floor scene for a tile type and mesh name
-	   Example: assign_floor_scene_for_tile(grass_tile_id, 'WallInteriorFloorNE', grass_corner_scene)"""
+	   Example: assign_floor_scene_for_tile(grass_tile_id, 'FloorNE', grass_corner_scene)"""
 	if not floor_scenes_by_tile.has(tile_id):
 		floor_scenes_by_tile[tile_id] = {}
 	floor_scenes_by_tile[tile_id][mesh_name] = scene
@@ -78,6 +78,8 @@ func create_floor_mesh(mesh_name: String, world_pos: Vector3, rotation: float, g
 	if tile_to_match == -1:
 		tile_to_match = 5  # Interior floor tile ID
 	
+	print("[DEBUG CREATE] ", mesh_name, " at ", grid_pos, " matched tile: ", tile_to_match, " from neighbors: ", neighbor_positions)
+	
 	# Check if we have a scene for this tile type + mesh name
 	var scene_to_use: PackedScene = null
 	if tile_to_match != -1 and floor_scenes_by_tile.has(tile_to_match):
@@ -85,6 +87,7 @@ func create_floor_mesh(mesh_name: String, world_pos: Vector3, rotation: float, g
 			scene_to_use = floor_scenes_by_tile[tile_to_match][mesh_name]
 	
 	if not scene_to_use:
+		print("[DEBUG CREATE] WARNING: No scene for tile ", tile_to_match, " mesh ", mesh_name)
 		return null
 	
 	# Instantiate the scene
@@ -156,16 +159,15 @@ func find_mesh_instance_recursive(node: Node) -> MeshInstance3D:
 func get_floor_mesh_config(mesh_name: String) -> Dictionary:
 	"""Get position offset and size for a floor mesh type"""
 	var configs = {
-		"WallInteriorFloor": {"offset": Vector3(0, 0, 0), "size": Vector2(1, 1)},
-		"WallInteriorFloorE": {"offset": Vector3(0.25, 0, 0), "size": Vector2(0.5, 1)},
-		"WallInteriorFloorW": {"offset": Vector3(-0.25, 0, 0), "size": Vector2(0.5, 1)},
-		"WallInteriorFloorOneCorner": {"offset": Vector3(0.25, 0, -0.25), "size": Vector2(0.5, 0.5)},
-		"WallInteriorFloorThreeCorner": {"offset": Vector3(-0.125, 0, 0.125), "size": Vector2(0.75, 0.75)},
-		"WallInteriorFloorS": {"offset": Vector3(0, 0, 0.25), "size": Vector2(1, 0.5)},
-		"WallInteriorFloorNE": {"offset": Vector3(0.25, 0, -0.25), "size": Vector2(0.5, 0.5)},
-		"WallInteriorFloorNW": {"offset": Vector3(-0.25, 0, -0.25), "size": Vector2(0.5, 0.5)},
-		"WallInteriorFloorSE": {"offset": Vector3(0.25, 0, 0.25), "size": Vector2(0.5, 0.5)},
-		"WallInteriorFloorSW": {"offset": Vector3(-0.25, 0, 0.25), "size": Vector2(0.5, 0.5)}
+		"FloorWhole": {"offset": Vector3(0, 0, 0), "size": Vector2(1, 1)},
+		"FloorE": {"offset": Vector3(0.25, 0, 0), "size": Vector2(0.5, 1)},
+		"FloorW": {"offset": Vector3(-0.25, 0, 0), "size": Vector2(0.5, 1)},
+		"FloorThreeCorner": {"offset": Vector3(-0.125, 0, 0.125), "size": Vector2(0.75, 0.75)},
+		"FloorS": {"offset": Vector3(0, 0, 0.25), "size": Vector2(1, 0.5)},
+		"FloorNE": {"offset": Vector3(0.25, 0, -0.25), "size": Vector2(0.5, 0.5)},
+		"FloorNW": {"offset": Vector3(-0.25, 0, -0.25), "size": Vector2(0.5, 0.5)},
+		"FloorSE": {"offset": Vector3(0.25, 0, 0.25), "size": Vector2(0.5, 0.5)},
+		"FloorSW": {"offset": Vector3(-0.25, 0, 0.25), "size": Vector2(0.5, 0.5)}
 	}
 	return configs.get(mesh_name, {"offset": Vector3.ZERO, "size": Vector2(1, 1)})
 
@@ -192,38 +194,95 @@ func get_neighbor_positions_for_mesh(mesh_name: String, grid_pos: Vector3i, rota
 					neighbors.append(grid_pos + dir)
 		
 		WallShape.I:
-			# Check perpendicular sides
-			if mesh_name == "WallInteriorFloorE":
-				neighbors.append(grid_pos + get_rotated_direction(Vector3i(1, 0, 0), rotation))
-			elif mesh_name == "WallInteriorFloorW":
-				neighbors.append(grid_pos + get_rotated_direction(Vector3i(-1, 0, 0), rotation))
+			# I-shape has two floor meshes positioned on opposite sides of the tile
+			# Each mesh should check only its own adjacent neighbor
+			
+			var rotation_deg = rad_to_deg(rotation)
+			var normalized = fmod(rotation_deg, 360.0)
+			if normalized < 0:
+				normalized += 360.0
+			
+			# Determine if wall runs north-south or east-west
+			var is_north_south = (normalized < 45) or (normalized >= 135 and normalized < 225) or (normalized >= 315)
+			
+			if is_north_south:
+				# Wall runs north-south
+				if mesh_name == "FloorE":
+					neighbors.append(grid_pos + Vector3i(1, 0, 0))   # E checks east ONLY
+				elif mesh_name == "FloorW":
+					neighbors.append(grid_pos + Vector3i(-1, 0, 0))  # W checks west ONLY
+			else:
+				# Wall runs east-west
+				if mesh_name == "FloorE":
+					neighbors.append(grid_pos + Vector3i(0, 0, -1))  # E checks north ONLY
+				elif mesh_name == "FloorW":
+					neighbors.append(grid_pos + Vector3i(0, 0, 1))   # W checks south ONLY
+			
+			print("[DEBUG I-SHAPE] ", mesh_name, " at ", grid_pos, " checking only: ", neighbors[0] if neighbors.size() > 0 else "none", " = ", gridmap.get_cell_item(neighbors[0]) if neighbors.size() > 0 else -1)
 		
 		WallShape.L_NONE, WallShape.L_SINGLE:
-			if mesh_name == "WallInteriorFloorOneCorner":
-				# Inner corner - check diagonal
-				neighbors.append(grid_pos + get_rotated_direction(Vector3i(1, 0, -1), rotation))
-			elif mesh_name == "WallInteriorFloorThreeCorner":
-				# Covers SW, S, W corners - check multiple neighbors for better matching
-				neighbors.append(grid_pos + get_rotated_direction(Vector3i(0, 0, 1), rotation))  # South
-				neighbors.append(grid_pos + get_rotated_direction(Vector3i(-1, 0, 0), rotation)) # West
+			var rotation_deg = rad_to_deg(rotation)
+			var normalized = fmod(rotation_deg, 360.0)
+			if normalized < 0:
+				normalized += 360.0
+			
+			# At 90° and 270°, the meshes swap physical positions due to rotation
+			# So we need to swap which neighbors they check
+			var needs_swap = (normalized >= 45 and normalized < 135) or (normalized >= 225 and normalized < 315)
+			
+			if mesh_name == "FloorNE":
+				# Inner corner mesh
+				if needs_swap:
+					# At 90°/270°, FloorNE is physically where ThreeCorner should be
+					# So check ThreeCorner's neighbors (S, W, SW)
+					var south = get_rotated_direction(Vector3i(0, 0, 1), rotation)
+					var west = get_rotated_direction(Vector3i(-1, 0, 0), rotation)
+					var sw_diag = get_rotated_direction(Vector3i(-1, 0, 1), rotation)
+					neighbors.append(grid_pos + south)
+					neighbors.append(grid_pos + west)
+					neighbors.append(grid_pos + sw_diag)
+					print("[DEBUG L-SHAPE SWAPPED] FloorNE at ", grid_pos, " rot:", rotation_deg, "° checking S:", gridmap.get_cell_item(grid_pos + south), " W:", gridmap.get_cell_item(grid_pos + west), " SW:", gridmap.get_cell_item(grid_pos + sw_diag))
+				else:
+					# At 0°/180°, normal NE diagonal check
+					var ne_diag = get_rotated_direction(Vector3i(1, 0, -1), rotation)
+					neighbors.append(grid_pos + ne_diag)
+					print("[DEBUG L-SHAPE] FloorNE at ", grid_pos, " rot:", rotation_deg, "° checking NE:", gridmap.get_cell_item(grid_pos + ne_diag))
+					
+			elif mesh_name == "FloorThreeCorner":
+				# Three corner mesh
+				if needs_swap:
+					# At 90°/270°, ThreeCorner is physically where FloorNE should be
+					# So check FloorNE's neighbor (NE diagonal)
+					var ne_diag = get_rotated_direction(Vector3i(1, 0, -1), rotation)
+					neighbors.append(grid_pos + ne_diag)
+					print("[DEBUG L-SHAPE SWAPPED] ThreeCorner at ", grid_pos, " rot:", rotation_deg, "° checking NE:", gridmap.get_cell_item(grid_pos + ne_diag))
+				else:
+					# At 0°/180°, normal S/W/SW check
+					var south = get_rotated_direction(Vector3i(0, 0, 1), rotation)
+					var west = get_rotated_direction(Vector3i(-1, 0, 0), rotation)
+					var sw_diag = get_rotated_direction(Vector3i(-1, 0, 1), rotation)
+					neighbors.append(grid_pos + south)
+					neighbors.append(grid_pos + west)
+					neighbors.append(grid_pos + sw_diag)
+					print("[DEBUG L-SHAPE] ThreeCorner at ", grid_pos, " rot:", rotation_deg, "° checking S:", gridmap.get_cell_item(grid_pos + south), " W:", gridmap.get_cell_item(grid_pos + west), " SW:", gridmap.get_cell_item(grid_pos + sw_diag))
 				neighbors.append(grid_pos + get_rotated_direction(Vector3i(-1, 0, 1), rotation)) # SW diagonal
 		
 		WallShape.T_NONE, WallShape.T_SINGLE_LEFT, WallShape.T_SINGLE_RIGHT, WallShape.T_DOUBLE:
-			if mesh_name == "WallInteriorFloorS":
+			if mesh_name == "FloorS":
 				neighbors.append(grid_pos + get_rotated_direction(Vector3i(0, 0, 1), rotation))
-			elif mesh_name == "WallInteriorFloorNE":
+			elif mesh_name == "FloorNE":
 				neighbors.append(grid_pos + get_rotated_direction(Vector3i(1, 0, -1), rotation))
-			elif mesh_name == "WallInteriorFloorNW":
+			elif mesh_name == "FloorNW":
 				neighbors.append(grid_pos + get_rotated_direction(Vector3i(-1, 0, -1), rotation))
 		
 		WallShape.X_NONE, WallShape.X_SINGLE, WallShape.X_OPPOSITE, WallShape.X_SIDE, WallShape.X_TRIPLE, WallShape.X_QUAD:
-			if mesh_name == "WallInteriorFloorNE":
+			if mesh_name == "FloorNE":
 				neighbors.append(grid_pos + get_rotated_direction(Vector3i(1, 0, -1), rotation))
-			elif mesh_name == "WallInteriorFloorNW":
+			elif mesh_name == "FloorNW":
 				neighbors.append(grid_pos + get_rotated_direction(Vector3i(-1, 0, -1), rotation))
-			elif mesh_name == "WallInteriorFloorSE":
+			elif mesh_name == "FloorSE":
 				neighbors.append(grid_pos + get_rotated_direction(Vector3i(1, 0, 1), rotation))
-			elif mesh_name == "WallInteriorFloorSW":
+			elif mesh_name == "FloorSW":
 				neighbors.append(grid_pos + get_rotated_direction(Vector3i(-1, 0, 1), rotation))
 	
 	return neighbors

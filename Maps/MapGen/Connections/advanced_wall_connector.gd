@@ -34,18 +34,6 @@ func get_tile_and_rotation(adjacency_map: Dictionary) -> Dictionary:
 	var tile_id: int = -1
 	var rotation: float = 0.0
 	
-	# Debug: Print connector tile IDs on first call
-	if not has_meta("debug_printed"):
-		print("[AdvancedWallConnector] Tile ID configuration:")
-		print("  o_tile_id: ", o_tile_id)
-		print("  u_tile_id: ", u_tile_id)
-		print("  i_tile_id: ", i_tile_id)
-		print("  l_none_tile_id: ", l_none_tile_id)
-		print("  l_single_tile_id: ", l_single_tile_id)
-		print("  t_none_tile_id: ", t_none_tile_id)
-		print("  x_quad_tile_id: ", x_quad_tile_id)
-		set_meta("debug_printed", true)
-	
 	match shape:
 		AdjacencyShapeResolver.AdjacencyShape.O:
 			tile_id = o_tile_id

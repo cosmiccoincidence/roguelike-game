@@ -100,25 +100,27 @@ func setup(generator: CoreMapGen):
 		wall_floor_manager = WallFloorManager.new()
 		wall_floor_manager.setup(map_generator)
 		
-		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "WallInteriorFloorWhole", preload("res://Assets/3D/Tiles/WallInteriorFloorWhole.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "WallInteriorFloorE", preload("res://Assets/3D/Tiles/WallInteriorFloorE.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "WallInteriorFloorW", preload("res://Assets/3D/Tiles/WallInteriorFloorW.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "WallInteriorFloorS", preload("res://Assets/3D/Tiles/WallInteriorFloorS.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "WallInteriorFloorNE", preload("res://Assets/3D/Tiles/WallInteriorFloorNE.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "WallInteriorFloorNW", preload("res://Assets/3D/Tiles/WallInteriorFloorNW.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "WallInteriorFloorSW", preload("res://Assets/3D/Tiles/WallInteriorFloorSW.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "WallInteriorFloorSE", preload("res://Assets/3D/Tiles/WallInteriorFloorSE.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "WallInteriorFloorThreeCorner", preload("res://Assets/3D/Tiles/WallInteriorFloorThreeCorner.tscn"))
+		# Assign floor scenes for interior floor tiles (tile 5)
+		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "FloorWhole", preload("res://Assets/3D/Tiles/Floors/WallInteriorFloorWhole.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "FloorE", preload("res://Assets/3D/Tiles/Floors/WallInteriorFloorE.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "FloorW", preload("res://Assets/3D/Tiles/Floors/WallInteriorFloorW.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "FloorS", preload("res://Assets/3D/Tiles/Floors/WallInteriorFloorS.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "FloorNE", preload("res://Assets/3D/Tiles/Floors/WallInteriorFloorNE.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "FloorNW", preload("res://Assets/3D/Tiles/Floors/WallInteriorFloorNW.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "FloorSW", preload("res://Assets/3D/Tiles/Floors/WallInteriorFloorSW.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "FloorSE", preload("res://Assets/3D/Tiles/Floors/WallInteriorFloorSE.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(interior_floor_tile_id, "FloorThreeCorner", preload("res://Assets/3D/Tiles/Floors/WallInteriorFloorThreeCorner.tscn"))
 		
-		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "WallInteriorFloorWhole", preload("res://Assets/3D/Tiles/WallInteriorFloorWhole.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "WallInteriorFloorE", preload("res://Assets/3D/Tiles/WallInteriorFloorE.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "WallInteriorFloorW", preload("res://Assets/3D/Tiles/WallInteriorFloorW.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "WallInteriorFloorS", preload("res://Assets/3D/Tiles/WallInteriorFloorS.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "WallInteriorFloorNE", preload("res://Assets/3D/Tiles/WallInteriorFloorNE.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "WallInteriorFloorNW", preload("res://Assets/3D/Tiles/WallInteriorFloorNW.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "WallInteriorFloorSW", preload("res://Assets/3D/Tiles/WallInteriorFloorSW.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "WallInteriorFloorSE", preload("res://Assets/3D/Tiles/WallInteriorFloorSE.tscn"))
-		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "WallInteriorFloorThreeCorner", preload("res://Assets/3D/Tiles/WallInteriorFloorThreeCorner.tscn"))
+		# Assign floor scenes for grass tiles (tile 6)
+		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "FloorWhole", preload("res://Assets/3D/Tiles/Floors/GrassFloorWhole.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "FloorE", preload("res://Assets/3D/Tiles/Floors/GrassFloorE.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "FloorW", preload("res://Assets/3D/Tiles/Floors/GrassFloorW.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "FloorS", preload("res://Assets/3D/Tiles/Floors/GrassFloorS.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "FloorNE", preload("res://Assets/3D/Tiles/Floors/GrassFloorNE.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "FloorNW", preload("res://Assets/3D/Tiles/Floors/GrassFloorNW.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "FloorSW", preload("res://Assets/3D/Tiles/Floors/GrassFloorSW.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "FloorSE", preload("res://Assets/3D/Tiles/Floors/GrassFloorSE.tscn"))
+		wall_floor_manager.assign_floor_scene_for_tile(grass_tile_id, "FloorThreeCorner", preload("res://Assets/3D/Tiles/Floors/GrassFloorThreeCorner.tscn"))
 		
 		# Register all wall tile types with their shapes and required floor meshes
 		register_wall_tiles()
@@ -482,94 +484,94 @@ func register_wall_tiles():
 	wall_floor_manager.register_wall_tile(
 		wall_connector.o_tile_id,
 		WallFloorManager.WallShape.O,
-		["WallInteriorFloorWhole"]
+		["FloorWhole"]
 	)
 	
 	# U shape - one connection
 	wall_floor_manager.register_wall_tile(
 		wall_connector.u_tile_id,
 		WallFloorManager.WallShape.U,
-		["WallInteriorFloorWhole"]
+		["FloorWhole"]
 	)
 	
 	# I shape - straight
 	wall_floor_manager.register_wall_tile(
 		wall_connector.i_tile_id,
 		WallFloorManager.WallShape.I,
-		["WallInteriorFloorE", "WallInteriorFloorW"]
+		["FloorE", "FloorW"]
 	)
 	
 	# L shapes
 	wall_floor_manager.register_wall_tile(
 		wall_connector.l_none_tile_id,
 		WallFloorManager.WallShape.L_NONE,
-		["WallInteriorFloorNE", "WallInteriorFloorThreeCorner"]
+		["FloorNE", "FloorThreeCorner"]
 	)
 	
 	wall_floor_manager.register_wall_tile(
 		wall_connector.l_single_tile_id,
 		WallFloorManager.WallShape.L_SINGLE,
-		["WallInteriorFloorThreeCorner"]
+		["FloorThreeCorner"]
 	)
 	
 	# T shapes
 	wall_floor_manager.register_wall_tile(
 		wall_connector.t_none_tile_id,
 		WallFloorManager.WallShape.T_NONE,
-		["WallInteriorFloorS", "WallInteriorFloorNE", "WallInteriorFloorNW"]
+		["FloorS", "FloorNE", "FloorNW"]
 	)
 	
 	wall_floor_manager.register_wall_tile(
 		wall_connector.t_single_left_tile_id,
 		WallFloorManager.WallShape.T_SINGLE_LEFT,
-		["WallInteriorFloorS", "WallInteriorFloorNE", "WallInteriorFloorNW"]
+		["FloorS", "FloorNE", "FloorNW"]
 	)
 	
 	wall_floor_manager.register_wall_tile(
 		wall_connector.t_single_right_tile_id,
 		WallFloorManager.WallShape.T_SINGLE_RIGHT,
-		["WallInteriorFloorS", "WallInteriorFloorNE", "WallInteriorFloorNW"]
+		["FloorS", "FloorNE", "FloorNW"]
 	)
 	
 	wall_floor_manager.register_wall_tile(
 		wall_connector.t_double_tile_id,
 		WallFloorManager.WallShape.T_DOUBLE,
-		["WallInteriorFloorS", "WallInteriorFloorNE", "WallInteriorFloorNW"]
+		["FloorS", "FloorNE", "FloorNW"]
 	)
 	
 	# X shapes
 	wall_floor_manager.register_wall_tile(
 		wall_connector.x_none_tile_id,
 		WallFloorManager.WallShape.X_NONE,
-		["WallInteriorFloorNE", "WallInteriorFloorNW", "WallInteriorFloorSE", "WallInteriorFloorSW"]
+		["FloorNE", "FloorNW", "FloorSE", "FloorSW"]
 	)
 	
 	wall_floor_manager.register_wall_tile(
 		wall_connector.x_single_tile_id,
 		WallFloorManager.WallShape.X_SINGLE,
-		["WallInteriorFloorNE", "WallInteriorFloorNW", "WallInteriorFloorSE", "WallInteriorFloorSW"]
+		["FloorNE", "FloorNW", "FloorSE", "FloorSW"]
 	)
 	
 	wall_floor_manager.register_wall_tile(
 		wall_connector.x_opposite_tile_id,
 		WallFloorManager.WallShape.X_OPPOSITE,
-		["WallInteriorFloorNE", "WallInteriorFloorNW", "WallInteriorFloorSE", "WallInteriorFloorSW"]
+		["FloorNE", "FloorNW", "FloorSE", "FloorSW"]
 	)
 	
 	wall_floor_manager.register_wall_tile(
 		wall_connector.x_side_tile_id,
 		WallFloorManager.WallShape.X_SIDE,
-		["WallInteriorFloorNE", "WallInteriorFloorNW", "WallInteriorFloorSE", "WallInteriorFloorSW"]
+		["FloorNE", "FloorNW", "FloorSE", "FloorSW"]
 	)
 	
 	wall_floor_manager.register_wall_tile(
 		wall_connector.x_triple_tile_id,
 		WallFloorManager.WallShape.X_TRIPLE,
-		["WallInteriorFloorNE", "WallInteriorFloorNW", "WallInteriorFloorSE", "WallInteriorFloorSW"]
+		["FloorNE", "FloorNW", "FloorSE", "FloorSW"]
 	)
 	
 	wall_floor_manager.register_wall_tile(
 		wall_connector.x_quad_tile_id,
 		WallFloorManager.WallShape.X_QUAD,
-		["WallInteriorFloorNE", "WallInteriorFloorNW", "WallInteriorFloorSE", "WallInteriorFloorSW"]
+		["FloorNE", "FloorNW", "FloorSE", "FloorSW"]
 	)
