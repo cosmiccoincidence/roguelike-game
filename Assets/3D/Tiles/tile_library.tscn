@@ -1,4 +1,4 @@
-[gd_scene load_steps=197 format=4 uid="uid://brm3gs0mrgg33"]
+[gd_scene load_steps=185 format=4 uid="uid://brm3gs0mrgg33"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rn51h"]
 resource_name = "Blue"
@@ -564,70 +564,6 @@ shadow_mesh = SubResource("ArrayMesh_fw57f")
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_7ngu3"]
 data = PackedVector3Array(0.25, 0, -0.25, 0.5, 1, -0.25, 0.25, 1, -0.25, 0.25, 0, -0.25, 0.5, 0, -0.25, 0.5, 1, -0.25, 0.5, 0, -0.25, 0.5, 1, 0.25, 0.5, 1, -0.25, 0.5, 0, -0.25, 0.5, 0, 0.25, 0.5, 1, 0.25, 0.5, 0, 0.25, -0.25, 1, 0.25, 0.5, 1, 0.25, 0.5, 0, 0.25, -0.25, 0, 0.25, -0.25, 1, 0.25, 0.25, 1, -0.25, 0.5, 1, 0.25, -0.25, 1, 0.25, 0.25, 1, -0.25, 0.5, 1, -0.25, 0.5, 1, 0.25, 0.5, 0, -0.25, -0.25, 0, 0.25, 0.5, 0, 0.25, 0.5, 0, -0.25, 0.25, 0, -0.25, -0.25, 0, 0.25, -0.25, 0, 0.25, -0.25, 1, -0.5, -0.25, 1, 0.25, -0.25, 0, 0.25, -0.25, 0, -0.5, -0.25, 1, -0.5, -0.25, 0, -0.5, 0.25, 1, -0.5, -0.25, 1, -0.5, -0.25, 0, -0.5, 0.25, 0, -0.5, 0.25, 1, -0.5, 0.25, 0, -0.5, 0.25, 1, -0.25, 0.25, 1, -0.5, 0.25, 0, -0.5, 0.25, 0, -0.25, 0.25, 1, -0.25, -0.25, 0, -0.5, 0.25, 0, -0.25, 0.25, 0, -0.5, -0.25, 0, -0.5, -0.25, 0, 0.25, 0.25, 0, -0.25, 0.25, 1, -0.25, -0.25, 1, -0.5, 0.25, 1, -0.5, 0.25, 1, -0.25, -0.25, 1, 0.25, -0.25, 1, -0.5)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_70a5l"]
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_5cy2p"]
-_surfaces = [{
-"aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 1),
-"format": 34896613377,
-"index_count": 18,
-"index_data": PackedByteArray("AAABAAIAAAADAAEABAAAAAIABAACAAUABQACAAYABQAGAAcA"),
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 8,
-"vertex_data": PackedByteArray("AAAAAP9/AAD/fwAAAAAAAP9/AAD/fwAAAAAAAAAAAAAAAAAA//8AAP9/AAD//wAA//8AAP9/AAD//wAA//8AAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_61fuu"]
-resource_name = "Tile_Plane_023"
-_surfaces = [{
-"aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 1),
-"attribute_data": PackedByteArray("AAD/f/9/AAD/f/9/AAAAAAAA////f///////f/////8="),
-"format": 34896613399,
-"index_count": 18,
-"index_data": PackedByteArray("AAABAAIAAAADAAEABAAAAAIABAACAAUABQACAAYABQAGAAcA"),
-"material": SubResource("StandardMaterial3D_70a5l"),
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 8,
-"vertex_data": PackedByteArray("AAAAAP9//7//fwAAAAD/v/9/AAD/f/+/AAAAAAAA/78AAAAA////v/9/AAD///+///8AAP9//7///wAA////v////3////9/////f////3////9/////f////3////9/")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_5cy2p")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tovti"]
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_x36pd"]
-_surfaces = [{
-"aabb": AABB(0, 0, -0.5, 0.5, 1e-05, 0.5),
-"format": 34896613377,
-"index_count": 6,
-"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 4,
-"vertex_data": PackedByteArray("AAAAAP//AAD//wAAAAAAAP//AAD//wAAAAAAAAAAAAA=")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_s33hc"]
-resource_name = "Tile_Plane_021"
-_surfaces = [{
-"aabb": AABB(0, 0, -0.5, 0.5, 1e-05, 0.5),
-"attribute_data": PackedByteArray("/3//f///AAD///9//38AAA=="),
-"format": 34896613399,
-"index_count": 6,
-"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
-"material": SubResource("StandardMaterial3D_tovti"),
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 4,
-"vertex_data": PackedByteArray("AAAAAP///7///wAAAAD/v///AAD///+/AAAAAAAA/7////9/////f////3////9/")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_x36pd")
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o508f"]
 resource_name = "light grey"
 cull_mode = 2
@@ -710,38 +646,6 @@ shadow_mesh = SubResource("ArrayMesh_o23hb")
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_i5lml"]
 points = PackedVector3Array(-0.2499604, 0.0076484084, -0.25, 0.2499892, 0.97696567, 0.25, 0.25, 0.9769866, -0.24207433, -0.2499604, 0.9923516, -0.25, -0.2420247, 0.97696567, 0.25, 0.2499892, 0.023034338, 0.25, 0.25, 0.023013404, -0.24207433, -0.2420247, 0.023034338, 0.25)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e17oo"]
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_n71g0"]
-_surfaces = [{
-"aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 1),
-"format": 34896613377,
-"index_count": 6,
-"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 4,
-"vertex_data": PackedByteArray("AAAAAP//AAD//wAAAAAAAP//AAD//wAAAAAAAAAAAAA=")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_cpobq"]
-resource_name = "Tile_Plane_013"
-_surfaces = [{
-"aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 1),
-"attribute_data": PackedByteArray("AAD/////AAD/////AAAAAA=="),
-"format": 34896613399,
-"index_count": 6,
-"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
-"material": SubResource("StandardMaterial3D_e17oo"),
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 4,
-"vertex_data": PackedByteArray("AAAAAP///7///wAAAAD/v///AAD///+/AAAAAAAA/7////9/////f////3////9/")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_n71g0")
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vq1pm"]
 resource_name = "light grey"
 cull_mode = 2
@@ -782,38 +686,6 @@ shadow_mesh = SubResource("ArrayMesh_hpg8q")
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_8tr75"]
 data = PackedVector3Array(0.25, 0, -0.25, 0.5, 1, -0.25, 0.25, 1, -0.25, 0.25, 0, -0.25, 0.5, 0, -0.25, 0.5, 1, -0.25, 0.5, 0, -0.25, 0.5, 1, 0.25, 0.5, 1, -0.25, 0.5, 0, -0.25, 0.5, 0, 0.25, 0.5, 1, 0.25, 0.5, 1, -0.25, -0.5, 1, 0.25, -0.5, 1, -0.25, 0.5, 1, -0.25, 0.5, 1, 0.25, -0.5, 1, 0.25, -0.25, 0, -0.5, 0.25, 1, -0.5, -0.25, 1, -0.5, -0.25, 0, -0.5, 0.25, 0, -0.5, 0.25, 1, -0.5, 0.25, 0, -0.5, 0.25, 1, -0.25, 0.25, 1, -0.5, 0.25, 0, -0.5, 0.25, 0, -0.25, 0.25, 1, -0.25, -0.25, 0, -0.5, 0.25, 0, -0.25, 0.25, 0, -0.5, -0.25, 0, -0.5, -0.25, 0, -0.25, 0.25, 0, -0.25, -0.25, 0, -0.25, -0.25, 1, -0.5, -0.25, 1, -0.25, -0.25, 0, -0.25, -0.25, 0, -0.5, -0.25, 1, -0.5, 0.5, 0, 0.25, -0.5, 1, 0.25, 0.5, 1, 0.25, 0.5, 0, 0.25, -0.5, 0, 0.25, -0.5, 1, 0.25, 0.5, 0, 0.25, -0.5, 0, -0.25, -0.5, 0, 0.25, 0.5, 0, 0.25, 0.5, 0, -0.25, -0.5, 0, -0.25, -0.5, 0, 0.25, -0.5, 1, -0.25, -0.5, 1, 0.25, -0.5, 0, 0.25, -0.5, 0, -0.25, -0.5, 1, -0.25, -0.5, 0, -0.25, -0.25, 1, -0.25, -0.5, 1, -0.25, -0.5, 0, -0.25, -0.25, 0, -0.25, -0.25, 1, -0.25, 0.25, 1, -0.5, -0.25, 1, -0.25, -0.25, 1, -0.5, 0.25, 1, -0.5, 0.25, 1, -0.25, -0.25, 1, -0.25)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l3hkh"]
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_ixk56"]
-_surfaces = [{
-"aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 0.5),
-"format": 34896613377,
-"index_count": 6,
-"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 4,
-"vertex_data": PackedByteArray("AAAAAAAAAAD//wAA//8AAAAAAAD+/wAA//8AAAAAAAA=")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_suiam"]
-resource_name = "Tile_Plane_008"
-_surfaces = [{
-"aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 0.5),
-"attribute_data": PackedByteArray("AAD///9/AAD/f///AAAAAA=="),
-"format": 34896613399,
-"index_count": 6,
-"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
-"material": SubResource("StandardMaterial3D_l3hkh"),
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 4,
-"vertex_data": PackedByteArray("AAAAAAAAVNX//wAA//9U1QAAAAD+/1TV//8AAAAAVNWqqqqqqqqqqqqqqqqqqqqq")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_ixk56")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ngmw5"]
 resource_name = "light grey"
@@ -2245,14 +2117,6 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorL/WallInteriorL1"]
 shape = SubResource("ConcavePolygonShape3D_7ngu3")
 
-[node name="WallInteriorFloorThreeCorner" type="MeshInstance3D" parent="WallInteriorL/WallInteriorL1"]
-mesh = SubResource("ArrayMesh_61fuu")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorOneCorner" type="MeshInstance3D" parent="WallInteriorL/WallInteriorL1"]
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
 [node name="WallInteriorL2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -7)
 mesh = SubResource("ArrayMesh_3parj")
@@ -2262,10 +2126,6 @@ skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorL2/WallInteriorL2"]
 shape = SubResource("ConvexPolygonShape3D_wdlcu")
-
-[node name="WallInteriorFloorThreeQuarter" type="MeshInstance3D" parent="WallInteriorL2"]
-mesh = SubResource("ArrayMesh_61fuu")
-skeleton = NodePath("")
 
 [node name="WallInteriorO" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -10)
@@ -2277,10 +2137,6 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorO/WallInteriorO"]
 shape = SubResource("ConvexPolygonShape3D_i5lml")
 
-[node name="WallInteriorFloor" type="MeshInstance3D" parent="WallInteriorO"]
-mesh = SubResource("ArrayMesh_cpobq")
-skeleton = NodePath("")
-
 [node name="WallInteriorT" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -6)
 mesh = SubResource("ArrayMesh_ycw04")
@@ -2290,20 +2146,6 @@ skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT/WallInteriorT1"]
 shape = SubResource("ConcavePolygonShape3D_8tr75")
-
-[node name="WallInteriorFloorS" type="MeshInstance3D" parent="WallInteriorT"]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-mesh = SubResource("ArrayMesh_suiam")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorNE" type="MeshInstance3D" parent="WallInteriorT"]
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorNW" type="MeshInstance3D" parent="WallInteriorT"]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
 
 [node name="WallInteriorT2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -6)
@@ -2315,16 +2157,6 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT2/WallInteriorT2"]
 shape = SubResource("ConcavePolygonShape3D_s58a6")
 
-[node name="WallInteriorFloorS" type="MeshInstance3D" parent="WallInteriorT2"]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-mesh = SubResource("ArrayMesh_suiam")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorNW" type="MeshInstance3D" parent="WallInteriorT2"]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
 [node name="WallInteriorT3" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -6)
 mesh = SubResource("ArrayMesh_0kaqk")
@@ -2334,15 +2166,6 @@ skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT3/WallInteriorT3"]
 shape = SubResource("ConcavePolygonShape3D_fay2v")
-
-[node name="WallInteriorFloorS" type="MeshInstance3D" parent="WallInteriorT3"]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-mesh = SubResource("ArrayMesh_suiam")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorNE" type="MeshInstance3D" parent="WallInteriorT3"]
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
 
 [node name="WallInteriorT4" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -6)
@@ -2354,11 +2177,6 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorT4/WallInteriorT4"]
 shape = SubResource("ConvexPolygonShape3D_23bu5")
 
-[node name="WallInteriorFloorS" type="MeshInstance3D" parent="WallInteriorT4"]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-mesh = SubResource("ArrayMesh_suiam")
-skeleton = NodePath("")
-
 [node name="WallInteriorU" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -9)
 mesh = SubResource("ArrayMesh_st6uf")
@@ -2368,10 +2186,6 @@ skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorU/WallInteriorU"]
 shape = SubResource("ConvexPolygonShape3D_53l6b")
-
-[node name="WallInteriorFloor" type="MeshInstance3D" parent="WallInteriorU"]
-mesh = SubResource("ArrayMesh_cpobq")
-skeleton = NodePath("")
 
 [node name="WallInteriorX" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -5)
@@ -2383,25 +2197,6 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX/WallInteriorX1"]
 shape = SubResource("ConcavePolygonShape3D_6qsf6")
 
-[node name="WallInteriorFloorNE" type="MeshInstance3D" parent="WallInteriorX"]
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorNW" type="MeshInstance3D" parent="WallInteriorX"]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorSW" type="MeshInstance3D" parent="WallInteriorX"]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorSE" type="MeshInstance3D" parent="WallInteriorX"]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
 [node name="WallInteriorX2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -5)
 mesh = SubResource("ArrayMesh_qebkm")
@@ -2411,21 +2206,6 @@ skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX2/WallInteriorX2"]
 shape = SubResource("ConcavePolygonShape3D_2h672")
-
-[node name="WallInteriorFloorNW" type="MeshInstance3D" parent="WallInteriorX2"]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorSW" type="MeshInstance3D" parent="WallInteriorX2"]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorSE" type="MeshInstance3D" parent="WallInteriorX2"]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
 
 [node name="WallInteriorX3" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -5)
@@ -2437,16 +2217,6 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX3/WallInteriorX3"]
 shape = SubResource("ConcavePolygonShape3D_0o76t")
 
-[node name="WallInteriorFloorSW" type="MeshInstance3D" parent="WallInteriorX3"]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorSE" type="MeshInstance3D" parent="WallInteriorX3"]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
 [node name="WallInteriorX4" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -5)
 mesh = SubResource("ArrayMesh_ciffj")
@@ -2457,16 +2227,6 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX4/WallInteriorX4"]
 shape = SubResource("ConcavePolygonShape3D_8ng45")
 
-[node name="WallInteriorFloorNW" type="MeshInstance3D" parent="WallInteriorX4"]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
-[node name="WallInteriorFloorSE" type="MeshInstance3D" parent="WallInteriorX4"]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
-
 [node name="WallInteriorX5" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -5)
 mesh = SubResource("ArrayMesh_51xi5")
@@ -2476,11 +2236,6 @@ skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallInteriorX5/WallInteriorX5"]
 shape = SubResource("ConcavePolygonShape3D_gkg0n")
-
-[node name="WallInteriorFloorSE" type="MeshInstance3D" parent="WallInteriorX5"]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 0, 0, 0)
-mesh = SubResource("ArrayMesh_s33hc")
-skeleton = NodePath("")
 
 [node name="WallInteriorX6" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -5)

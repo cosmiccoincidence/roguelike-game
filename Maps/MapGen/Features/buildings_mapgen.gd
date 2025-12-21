@@ -124,6 +124,13 @@ func setup(generator: CoreMapGen):
 		
 		# Register all wall tile types with their shapes and required floor meshes
 		register_wall_tiles()
+		
+		# Also register exterior wall as a wall tile (no floor meshes needed)
+		wall_floor_manager.register_wall_tile(
+			exterior_wall_tile_id,
+			WallFloorManager.WallShape.O,  # Doesn't matter, it won't spawn meshes
+			[]  # No floor meshes
+		)
 	else:
 		print("[BuildingsMapGen] No wall connector, using simple walls")
 

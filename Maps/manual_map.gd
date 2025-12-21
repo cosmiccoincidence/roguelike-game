@@ -70,6 +70,13 @@ func setup_wall_floor_manager():
 	
 	# Register all wall tile types
 	register_wall_tiles()
+	
+	# Also register exterior wall as a wall tile (no floor meshes needed)
+	wall_floor_manager.register_wall_tile(
+		exterior_wall_tile_id,
+		WallFloorManager.WallShape.O,  # Doesn't matter, it won't spawn meshes
+		[]  # No floor meshes
+	)
 
 func register_wall_tiles():
 	"""Register all wall tile IDs with the floor manager"""

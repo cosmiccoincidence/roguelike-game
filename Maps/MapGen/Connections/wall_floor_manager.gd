@@ -7,6 +7,7 @@ class_name WallFloorManager
 var gridmap: GridMap
 var wall_tile_configs: Dictionary = {}  # tile_id -> {shape: WallShape, floor_meshes: [names]}
 var spawned_floor_meshes: Array = []  # Track for cleanup
+var spawned_mesh_tiles: Dictionary = {}  # wall_grid_pos -> {mesh_name -> tile_type}
 
 # Floor scenes mapped by tile ID - e.g. grass_tile_id -> {mesh_name -> scene}
 var floor_scenes_by_tile: Dictionary = {}
@@ -72,7 +73,15 @@ func create_floor_mesh(mesh_name: String, world_pos: Vector3, rotation: float, g
 	
 	# Determine which tile type to match
 	var neighbor_positions = get_neighbor_positions_for_mesh(mesh_name, grid_pos, rotation, shape)
-	var tile_to_match = get_most_common_tile(neighbor_positions)
+	var tile_to_match = get_most_common_tile(neighbor_positions, grid_pos)  # Pass grid_pos for directional weighting
+	
+	# Debug only FloorThreeCorner
+	if mesh_name == "FloorThreeCorner":
+		print("[DEBUG ThreeCorner] at ", grid_pos, " checked: ", neighbor_positions)
+		for pos in neighbor_positions:
+			var tile_at_pos = gridmap.get_cell_item(pos)
+			print("  -> ", pos, " has tile ", tile_at_pos)
+		print("  Final tile_to_match: ", tile_to_match)
 	
 	# Fallback: if no valid floor tile found, use interior floor (tile 5) as default
 	if tile_to_match == -1:
@@ -85,6 +94,8 @@ func create_floor_mesh(mesh_name: String, world_pos: Vector3, rotation: float, g
 			scene_to_use = floor_scenes_by_tile[tile_to_match][mesh_name]
 	
 	if not scene_to_use:
+		if mesh_name == "FloorThreeCorner":
+			print("[DEBUG ThreeCorner] NO SCENE for tile ", tile_to_match, "! Available: ", floor_scenes_by_tile.keys())
 		return null
 	
 	# Instantiate the scene
@@ -93,6 +104,11 @@ func create_floor_mesh(mesh_name: String, world_pos: Vector3, rotation: float, g
 		return null
 	
 	instance.name = mesh_name + "_" + str(grid_pos)
+	
+	# Track which tile type this mesh is using
+	if not spawned_mesh_tiles.has(grid_pos):
+		spawned_mesh_tiles[grid_pos] = {}
+	spawned_mesh_tiles[grid_pos][mesh_name] = tile_to_match
 	
 	# Add to GridMap first
 	gridmap.add_child(instance)
@@ -106,40 +122,113 @@ func create_floor_mesh(mesh_name: String, world_pos: Vector3, rotation: float, g
 	
 	return instance
 
-func get_most_common_tile(positions: Array) -> int:
+func get_most_common_tile(positions: Array, mesh_grid_pos: Vector3i = Vector3i.ZERO) -> int:
 	"""Get the most common floor tile ID from a list of positions (excludes walls)"""
 	var tile_counts = {}
+	var wall_positions = []  # Track wall positions for backup search
 	
 	for pos in positions:
 		var tile_id = gridmap.get_cell_item(pos)
 		
-		# Skip empty tiles and wall tiles
+		# Skip empty tiles
 		if tile_id == -1:
 			continue
 		
-		# Get wall tile IDs from wall_tile_configs
+		# Check if this is a wall tile
 		var is_wall = false
 		for wall_tile_id in wall_tile_configs.keys():
 			if tile_id == wall_tile_id:
 				is_wall = true
+				wall_positions.append(pos)  # Save for backup search
 				break
 		
 		# Only count non-wall tiles
 		if not is_wall:
 			tile_counts[tile_id] = tile_counts.get(tile_id, 0) + 1
 	
-	if tile_counts.size() == 0:
-		return -1
+	# If we found floor tiles, return the most common
+	if tile_counts.size() > 0:
+		var most_common = -1
+		var max_count = 0
+		for tile_id in tile_counts.keys():
+			var count = tile_counts[tile_id]
+			# Prefer this tile if: (1) higher count, or (2) same count but it's grass (tile 6)
+			if count > max_count or (count == max_count and tile_id == 6):
+				max_count = count
+				most_common = tile_id
+		return most_common
 	
-	# Find most common
-	var most_common = -1
-	var max_count = 0
-	for tile_id in tile_counts.keys():
-		if tile_counts[tile_id] > max_count:
-			max_count = tile_counts[tile_id]
-			most_common = tile_id
+	# BACKUP SEARCH: If only walls found, check adjacent tiles for floor tiles
+	if wall_positions.size() > 0 and mesh_grid_pos != Vector3i.ZERO:
+		var backup_tile_counts = {}
+		
+		# For each wall we found, determine what to check
+		for wall_pos in wall_positions:
+			var check_dir = wall_pos - mesh_grid_pos  # Direction from mesh to wall
+			
+			# Determine if this is a diagonal or cardinal check
+			var is_diagonal = abs(check_dir.x) > 0 and abs(check_dir.z) > 0
+			
+			if is_diagonal:
+				# DIAGONAL CHECK: Look around the wall for floor tiles
+				var expected_floor_pos = mesh_grid_pos + (check_dir * 2)
+				
+				var directions = [
+					Vector3i(1, 0, 0), Vector3i(-1, 0, 0),   # East, West
+					Vector3i(0, 0, 1), Vector3i(0, 0, -1),   # South, North
+					Vector3i(1, 0, 1), Vector3i(-1, 0, 1),   # SE, SW
+					Vector3i(1, 0, -1), Vector3i(-1, 0, -1)  # NE, NW
+				]
+				
+				for dir in directions:
+					var check_pos = wall_pos + dir
+					var check_tile = gridmap.get_cell_item(check_pos)
+					
+					if check_tile == -1:
+						continue
+					
+					var is_wall_tile = false
+					for wall_tile_id in wall_tile_configs.keys():
+						if check_tile == wall_tile_id:
+							is_wall_tile = true
+							break
+					
+					if not is_wall_tile:
+						var weight = 100 if check_pos == expected_floor_pos else 1
+						backup_tile_counts[check_tile] = backup_tile_counts.get(check_tile, 0) + weight
+			else:
+				# CARDINAL CHECK: Look at perpendicular walls and use their floor meshes in the same direction
+				var perpendicular_dirs = []
+				if check_dir.x == 0:  # Checking north/south, check east/west walls
+					perpendicular_dirs = [Vector3i(1, 0, 0), Vector3i(-1, 0, 0)]
+				else:  # Checking east/west, check north/south walls
+					perpendicular_dirs = [Vector3i(0, 0, 1), Vector3i(0, 0, -1)]
+				
+				for perp_dir in perpendicular_dirs:
+					var neighbor_wall_pos = mesh_grid_pos + perp_dir
+					
+					# Check if this neighboring position has spawned meshes
+					if spawned_mesh_tiles.has(neighbor_wall_pos):
+						var neighbor_meshes = spawned_mesh_tiles[neighbor_wall_pos]
+						
+						# Look for any mesh in that wall that points in the same direction
+						# For example, if we're checking FloorS, look for FloorS or FloorThreeCorner or any south-facing mesh
+						for neighbor_mesh_name in neighbor_meshes.keys():
+							var neighbor_tile = neighbor_meshes[neighbor_mesh_name]
+							# Use this tile type with high priority
+							backup_tile_counts[neighbor_tile] = backup_tile_counts.get(neighbor_tile, 0) + 100
+		
+		# Return most common floor tile found around walls
+		if backup_tile_counts.size() > 0:
+			var most_common = -1
+			var max_count = 0
+			for tile_id in backup_tile_counts.keys():
+				if backup_tile_counts[tile_id] > max_count:
+					max_count = backup_tile_counts[tile_id]
+					most_common = tile_id
+			return most_common
 	
-	return most_common
+	return -1
 
 func find_mesh_instance_recursive(node: Node) -> MeshInstance3D:
 	"""Recursively find MeshInstance3D in a scene"""
@@ -222,41 +311,28 @@ func get_neighbor_positions_for_mesh(mesh_name: String, grid_pos: Vector3i, rota
 				normalized += 360.0
 			
 			# At 90° and 270°, the meshes swap physical positions due to rotation
-			# So we need to swap which neighbors they check
 			var needs_swap = (normalized >= 45 and normalized < 135) or (normalized >= 225 and normalized < 315)
 			
 			if mesh_name == "FloorNE":
-				# Inner corner mesh
+				# Inner corner mesh - always checks its diagonal
 				if needs_swap:
-					# At 90°/270°, FloorNE is physically where ThreeCorner should be
-					# So check ThreeCorner's neighbors (S, W, SW)
-					var south = get_rotated_direction(Vector3i(0, 0, 1), rotation)
-					var west = get_rotated_direction(Vector3i(-1, 0, 0), rotation)
-					var sw_diag = get_rotated_direction(Vector3i(-1, 0, 1), rotation)
-					neighbors.append(grid_pos + south)
-					neighbors.append(grid_pos + west)
-					neighbors.append(grid_pos + sw_diag)
+					var diag = get_rotated_direction(Vector3i(-1, 0, 1), rotation)  # SW at 0°
+					neighbors.append(grid_pos + diag)
 				else:
-					# At 0°/180°, normal NE diagonal check
-					var ne_diag = get_rotated_direction(Vector3i(1, 0, -1), rotation)
-					neighbors.append(grid_pos + ne_diag)
+					var diag = get_rotated_direction(Vector3i(1, 0, -1), rotation)
+					neighbors.append(grid_pos + diag)
 					
 			elif mesh_name == "FloorThreeCorner":
-				# Three corner mesh
+				# Three corner mesh: Only check the two cardinal neighbors (not the diagonal)
+				# The diagonal often goes into walls or off-map, cardinals are more reliable
 				if needs_swap:
-					# At 90°/270°, ThreeCorner is physically where FloorNE should be
-					# So check FloorNE's neighbor (NE diagonal)
-					var ne_diag = get_rotated_direction(Vector3i(1, 0, -1), rotation)
-					neighbors.append(grid_pos + ne_diag)
+					# At 90°/270°: Check N and E cardinals only
+					neighbors.append(grid_pos + get_rotated_direction(Vector3i(0, 0, -1), rotation))  # Cardinal 1
+					neighbors.append(grid_pos + get_rotated_direction(Vector3i(1, 0, 0), rotation))   # Cardinal 2
 				else:
-					# At 0°/180°, normal S/W/SW check
-					var south = get_rotated_direction(Vector3i(0, 0, 1), rotation)
-					var west = get_rotated_direction(Vector3i(-1, 0, 0), rotation)
-					var sw_diag = get_rotated_direction(Vector3i(-1, 0, 1), rotation)
-					neighbors.append(grid_pos + south)
-					neighbors.append(grid_pos + west)
-					neighbors.append(grid_pos + sw_diag)
-				neighbors.append(grid_pos + get_rotated_direction(Vector3i(-1, 0, 1), rotation)) # SW diagonal
+					# At 0°/180°: Check S and W cardinals only
+					neighbors.append(grid_pos + get_rotated_direction(Vector3i(0, 0, 1), rotation))   # Cardinal 1
+					neighbors.append(grid_pos + get_rotated_direction(Vector3i(-1, 0, 0), rotation))  # Cardinal 2
 		
 		WallShape.T_NONE, WallShape.T_SINGLE_LEFT, WallShape.T_SINGLE_RIGHT, WallShape.T_DOUBLE:
 			var rotation_deg = rad_to_deg(rotation)
@@ -337,8 +413,6 @@ func get_neighbor_positions_for_mesh(mesh_name: String, grid_pos: Vector3i, rota
 					neighbors.append(grid_pos + Vector3i(-1, 0, 1))  # SW (FloorSE → SW position)
 				elif mesh_name == "FloorSW":
 					neighbors.append(grid_pos + Vector3i(-1, 0, -1))  # NW (FloorSW → NW position)
-			
-			print("[DEBUG X-SHAPE] ", mesh_name, " at ", grid_pos, " rot:", int(rotation_deg), "° checking:", neighbors[0] if neighbors.size() > 0 else "none", " = ", gridmap.get_cell_item(neighbors[0]) if neighbors.size() > 0 else -1)
 	
 	return neighbors
 
