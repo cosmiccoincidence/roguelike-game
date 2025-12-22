@@ -17,6 +17,10 @@ class_name ManualMap
 # Advanced wall connections
 @export var interior_wall_connector: AdvancedWallConnector
 
+# Dual-Grid system
+@onready var primary_grid = $PrimaryGridMap
+@onready var floor_grid = $FloorGridMap
+
 var exit_triggered: bool = false
 
 signal generation_complete
