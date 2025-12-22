@@ -71,11 +71,17 @@ signal player_reached_exit
 # Tile connections
 @export var interior_wall_connector: AdvancedWallConnector
 
+# Dual-Grid system
+@onready var primary_grid = $PrimaryGridMap
+@onready var floor_grid = $FloorGridMap
+
 # ============================================================================
 # MAIN GENERATION FLOW
 # ============================================================================
 
 func _ready():
+	# Offset the floor grid
+	floor_grid.position = Vector3(0.5, 0, 0.5)
 	pass
 
 func start_generation():

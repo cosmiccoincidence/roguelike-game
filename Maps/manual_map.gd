@@ -20,12 +20,19 @@ class_name ManualMap
 # Floor mesh spawning
 var wall_floor_manager: WallFloorManager = null
 
+# Dual-Grid system
+@onready var primary_grid = $PrimaryGridMap
+@onready var floor_grid = $FloorGridMap
+
 var exit_triggered: bool = false
 
 signal generation_complete
 signal player_reached_exit
 
 func _ready():
+	# Offset the floor grid
+	floor_grid.position = Vector3(0.5, 0, 0.5)
+	
 	# Setup wall floor manager if wall connector is available
 	if interior_wall_connector:
 		setup_wall_floor_manager()
