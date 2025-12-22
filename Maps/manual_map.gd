@@ -1,7 +1,7 @@
 extends GridMap
 class_name ManualMap
 
-# Tile IDs from MeshLibrary
+# Tile IDs from MeshLibrary (Primary Grid)
 @export var entrance_tile_id: int = 0
 @export var exit_tile_id: int = 1
 @export var grass_tile_id: int = 6
@@ -17,31 +17,135 @@ class_name ManualMap
 # Advanced wall connections
 @export var interior_wall_connector: AdvancedWallConnector
 
-# Dual-Grid system
-@onready var primary_grid = $PrimaryGridMap
-@onready var floor_grid = $FloorGridMap
+# Floor Grid Tile IDs - add these for your dual-grid floor meshes
+@export_group("Dual-Grid Floor Tiles")
+@export_subgroup("Floor Types")
 
+@export var grass_quarter: int = 0
+@export var grass_threequarter: int = 1
+@export var grass_half: int = 2
+@export var grass_whole: int = 3
+
+@export var interior_floor_quarter: int = 4
+@export var interior_floor_threequarter: int = 5
+@export var interior_floor_half: int = 6
+@export var interior_floor_whole: int = 7
+
+@export var water_quarter: int = 8
+@export var water_threequarter: int = 9
+@export var water_half: int = 10
+@export var water_whole: int = 11
+
+@export var stone_road_quarter: int = 12
+@export var stone_road_threequarter: int = 13
+@export var stone_road_half: int = 14
+@export var stone_road_whole: int = 15
+
+@export var dirt_road_quarter: int = 16
+@export var dirt_road_threequarter: int = 17
+@export var dirt_road_half: int = 18
+@export var dirt_road_whole: int = 19
+
+# Dual-Grid system
+@export_subgroup("Dual-Grid Settings")
+@export var enable_dual_grid_floors: bool = true
+@export var clear_simple_floors_after_processing: bool = true
+@export var floor_mesh_library: MeshLibrary  # Separate MeshLibrary for floor tiles
+
+@onready var floor_grid: GridMap = $FloorGridMap
+
+var dual_grid_processor: DualGridFloor
 var exit_triggered: bool = false
 
 signal generation_complete
 signal player_reached_exit
 
+
 func _ready():
-	# Offset the floor grid
-	floor_grid.position = Vector3(0.5, 0, 0.5)
+	# Offset the floor grid for dual-grid system
+	if floor_grid:
+		floor_grid.position = Vector3(0.5, 0, 0.5)
+		
+		# Assign the separate floor MeshLibrary if provided
+		if floor_mesh_library:
+			floor_grid.mesh_library = floor_mesh_library
+			print("[ManualMap] Floor grid using separate MeshLibrary")
+		else:
+			push_warning("[ManualMap] No floor_mesh_library assigned! Floor grid will use default MeshLibrary")
+		
+		print("[ManualMap] Floor grid offset set to (0.5, 0, 0.5)")
 	
 	# Apply advanced wall connections if available
 	if interior_wall_connector:
 		apply_wall_connections()
 	
+	# Apply dual-grid floor system if enabled
+	if enable_dual_grid_floors and floor_grid:
+		setup_and_process_dual_grid_floors()
+	
 	# Set up exit detection
 	setup_exit_detection()
+
 
 # This gets called by GameManager
 func start_generation():
 	# Wait one frame then emit (map is already ready)
 	await get_tree().process_frame
 	generation_complete.emit()
+
+
+func setup_and_process_dual_grid_floors():
+	"""Set up and process the dual-grid floor system"""
+	print("[ManualMap] Setting up dual-grid floor system...")
+	
+	# Create the processor
+	dual_grid_processor = DualGridFloor.new(self, floor_grid)
+	
+	# Map primary grid tile IDs to floor type names
+	dual_grid_processor.map_tile_to_type(interior_floor_tile_id, "interior_floor")
+	dual_grid_processor.map_tile_to_type(grass_tile_id, "grass")
+	dual_grid_processor.map_tile_to_type(stone_road_tile_id, "stone_road")
+	dual_grid_processor.map_tile_to_type(dirt_road_tile_id, "dirt_road")
+	
+	# Register floor types with their tile IDs from the floor grid MeshLibrary
+	dual_grid_processor.register_floor_type("interior_floor", {
+		"whole": interior_floor_whole,
+		"half": interior_floor_half,
+		"threequarter": interior_floor_threequarter,
+		"quarter": interior_floor_quarter
+	})
+	
+	dual_grid_processor.register_floor_type("grass", {
+		"whole": grass_whole,
+		"half": grass_half,
+		"threequarter": grass_threequarter,
+		"quarter": grass_quarter
+	})
+	
+	dual_grid_processor.register_floor_type("stone_road", {
+		"whole": stone_road_whole,
+		"half": stone_road_half,
+		"threequarter": stone_road_threequarter,
+		"quarter": stone_road_quarter
+	})
+	
+	dual_grid_processor.register_floor_type("dirt_road", {
+		"whole": dirt_road_whole,
+		"half": dirt_road_half,
+		"threequarter": dirt_road_threequarter,
+		"quarter": dirt_road_quarter
+	})
+	
+	# Process the dual-grid floors
+	dual_grid_processor.process_dual_grid_floors()
+	
+	# Optionally clear simple floor tiles from primary grid
+	if clear_simple_floors_after_processing:
+		dual_grid_processor.clear_primary_grid_floors()
+		print("[ManualMap] Simple floor tiles cleared from primary grid")
+	
+	print("[ManualMap] Dual-grid floor processing complete!")
+
 
 func apply_wall_connections():
 	"""Apply advanced wall mesh connections to all interior walls"""
@@ -86,6 +190,7 @@ func apply_wall_connections():
 	
 	print("[ManualMap] Updated ", walls_updated, " wall tiles with advanced connections")
 
+
 func get_adjacency_map(pos: Vector3i) -> Dictionary:
 	"""Get adjacency map for a wall position"""
 	var adjacency = {}
@@ -104,6 +209,7 @@ func get_adjacency_map(pos: Vector3i) -> Dictionary:
 	
 	return adjacency
 
+
 func is_wall_or_door(pos: Vector3i) -> bool:
 	"""Check if a tile is a wall OR a door (for seamless connections)"""
 	var tile_id = get_cell_item(pos)
@@ -117,6 +223,7 @@ func is_wall_or_door(pos: Vector3i) -> bool:
 		return true
 	
 	return false
+
 
 func get_orientation_from_rotation(rotation_degrees: float) -> int:
 	"""Convert rotation (degrees) to GridMap orientation"""
@@ -140,6 +247,7 @@ func get_orientation_from_rotation(rotation_degrees: float) -> int:
 		return 10  # 180°
 	else:
 		return 22  # 270°
+
 
 func setup_exit_detection():
 	var used_cells = get_used_cells()
@@ -166,6 +274,7 @@ func setup_exit_detection():
 			
 			exit_area.body_entered.connect(_on_exit_area_entered)
 
+
 func _on_exit_area_entered(body: Node3D):
 	if exit_triggered:
 		return  # Already triggered, ignore
@@ -174,6 +283,7 @@ func _on_exit_area_entered(body: Node3D):
 		print("Player reached exit! Emitting signal...")
 		exit_triggered = true  # Set flag
 		player_reached_exit.emit()
+
 
 func get_entrance_zone_spawn_position() -> Vector3:
 	var used_cells = get_used_cells()

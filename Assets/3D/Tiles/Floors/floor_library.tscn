@@ -150,9 +150,10 @@ points = PackedVector3Array(0.50793654, 0.007936508, 0.50793654, -0.50793654, -0
 
 [node name="GrassQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
-material_override = ExtResource("1_kaoya")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_x7hb3")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_kaoya")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="GrassQuarter"]
 
@@ -161,9 +162,10 @@ shape = SubResource("ConvexPolygonShape3D_8m0r1")
 
 [node name="GrassHalf" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
-material_override = ExtResource("1_kaoya")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_kej4t")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_kaoya")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="GrassHalf"]
 
@@ -171,9 +173,10 @@ skeleton = NodePath("")
 shape = SubResource("ConvexPolygonShape3D_eyf2n")
 
 [node name="GrassThreeQuarter" type="MeshInstance3D" parent="."]
-material_override = ExtResource("1_kaoya")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_ck12w")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_kaoya")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="GrassThreeQuarter"]
 
@@ -182,9 +185,10 @@ shape = SubResource("ConvexPolygonShape3D_e400x")
 
 [node name="GrassWhole" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
-material_override = ExtResource("1_kaoya")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_dhtlf")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_kaoya")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="GrassWhole"]
 
@@ -193,9 +197,10 @@ shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="FloorQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 2)
-material_override = ExtResource("2_rq4f2")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_x7hb3")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("2_rq4f2")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="FloorQuarter"]
 
@@ -204,9 +209,10 @@ shape = SubResource("ConvexPolygonShape3D_8m0r1")
 
 [node name="FloorHalf" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 2)
-material_override = ExtResource("2_rq4f2")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_kej4t")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("2_rq4f2")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="FloorHalf"]
 
@@ -215,9 +221,10 @@ shape = SubResource("ConvexPolygonShape3D_eyf2n")
 
 [node name="FloorThreeQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
-material_override = ExtResource("2_rq4f2")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_ck12w")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("2_rq4f2")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="FloorThreeQuarter"]
 
@@ -226,9 +233,10 @@ shape = SubResource("ConvexPolygonShape3D_e400x")
 
 [node name="FloorWhole" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 2)
-material_override = ExtResource("2_rq4f2")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_dhtlf")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("2_rq4f2")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="FloorWhole"]
 
@@ -237,9 +245,10 @@ shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="WaterQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -2)
-material_override = ExtResource("3_rq4f2")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_x7hb3")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("3_rq4f2")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="WaterQuarter"]
 
@@ -248,9 +257,10 @@ shape = SubResource("ConvexPolygonShape3D_8m0r1")
 
 [node name="WaterHalf" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -2)
-material_override = ExtResource("3_rq4f2")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_kej4t")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("3_rq4f2")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="WaterHalf"]
 
@@ -259,9 +269,10 @@ shape = SubResource("ConvexPolygonShape3D_eyf2n")
 
 [node name="WaterThreeQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
-material_override = ExtResource("3_rq4f2")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_ck12w")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("3_rq4f2")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="WaterThreeQuarter"]
 
@@ -270,9 +281,10 @@ shape = SubResource("ConvexPolygonShape3D_e400x")
 
 [node name="WaterWhole" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -2)
-material_override = ExtResource("3_rq4f2")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_dhtlf")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("3_rq4f2")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="WaterWhole"]
 
@@ -281,9 +293,10 @@ shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="RoadStoneQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -4)
-material_override = ExtResource("4_eyf2n")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_x7hb3")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("4_eyf2n")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadStoneQuarter"]
 
@@ -292,9 +305,10 @@ shape = SubResource("ConvexPolygonShape3D_8m0r1")
 
 [node name="RoadStoneHalf" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -4)
-material_override = ExtResource("4_eyf2n")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_kej4t")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("4_eyf2n")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadStoneHalf"]
 
@@ -303,9 +317,10 @@ shape = SubResource("ConvexPolygonShape3D_eyf2n")
 
 [node name="RoadStoneThreeQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
-material_override = ExtResource("4_eyf2n")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_ck12w")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("4_eyf2n")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadStoneThreeQuarter"]
 
@@ -314,9 +329,10 @@ shape = SubResource("ConvexPolygonShape3D_e400x")
 
 [node name="RoadStoneWhole" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -4)
-material_override = ExtResource("4_eyf2n")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_dhtlf")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("4_eyf2n")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadStoneWhole"]
 
@@ -325,9 +341,10 @@ shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="RoadDirtQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -6)
-material_override = ExtResource("5_e400x")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_x7hb3")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("5_e400x")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadDirtQuarter"]
 
@@ -336,9 +353,10 @@ shape = SubResource("ConvexPolygonShape3D_8m0r1")
 
 [node name="RoadDirtHalf" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -6)
-material_override = ExtResource("5_e400x")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_kej4t")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("5_e400x")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadDirtHalf"]
 
@@ -347,9 +365,10 @@ shape = SubResource("ConvexPolygonShape3D_eyf2n")
 
 [node name="RoadDirtThreeQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
-material_override = ExtResource("5_e400x")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_ck12w")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("5_e400x")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadDirtThreeQuarter"]
 
@@ -358,9 +377,10 @@ shape = SubResource("ConvexPolygonShape3D_e400x")
 
 [node name="RoadDirtWhole" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -6)
-material_override = ExtResource("5_e400x")
+cast_shadow = 0
 mesh = SubResource("ArrayMesh_dhtlf")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("5_e400x")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadDirtWhole"]
 
