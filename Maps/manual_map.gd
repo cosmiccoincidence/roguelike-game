@@ -49,15 +49,18 @@ class_name ManualMap
 
 # Dual-Grid system
 @export_subgroup("Dual-Grid Settings")
-@export var enable_dual_grid_floors: bool = true
+@export var enable_multi_grid_floors: bool = true
 @export var clear_simple_floors_after_processing: bool = true
 @export var floor_mesh_library: MeshLibrary  # Separate MeshLibrary for floor tiles
-@export var debug_dual_grid_floors: bool = false  # Enable debug output for troubleshooting
+@export var debug_multi_grid_floors: bool = false  # Enable debug output for troubleshooting
 
-# FIXED: FloorGridMap is a sibling, not a child - use ../FloorGridMap
-@onready var floor_grid: GridMap = get_node("../FloorGridMap")
+# Floor grids for dual-grid system (need 4 for multi-layer support)
+@onready var floor_grid_1: GridMap = get_node("../FloorGridMap1")
+@onready var floor_grid_2: GridMap = get_node("../FloorGridMap2")
+@onready var floor_grid_3: GridMap = get_node("../FloorGridMap3")
+@onready var floor_grid_4: GridMap = get_node("../FloorGridMap4")
 
-var dual_grid_processor: DualGridFloor
+var multi_grid_processor: MultiGridFloor
 var exit_triggered: bool = false
 
 # Cached entry/exit positions (stored before clearing tiles)
@@ -70,26 +73,37 @@ signal player_reached_exit
 
 
 func _ready():
-	# Offset the floor grid for dual-grid system
-	if floor_grid:
-		floor_grid.position = Vector3(0.5, 0, 0.5)
-		
-		# Assign the separate floor MeshLibrary if provided
-		if floor_mesh_library:
-			floor_grid.mesh_library = floor_mesh_library
-			print("[ManualMap] Floor grid using separate MeshLibrary")
+	# Offset all floor grids for dual-grid system
+	var floor_grids = [floor_grid_1, floor_grid_2, floor_grid_3, floor_grid_4]
+	
+	for i in range(floor_grids.size()):
+		var grid = floor_grids[i]
+		if grid:
+			grid.position = Vector3(0.5, 0, 0.5)
+			
+			# Assign the separate floor MeshLibrary if provided
+			if floor_mesh_library:
+				grid.mesh_library = floor_mesh_library
+			
+			# Only enable collision on the first grid to avoid overlapping collisions
+			if i > 0:
+				grid.collision_layer = 0
+				grid.collision_mask = 0
+				print("[ManualMap] Floor grid %d - collision DISABLED" % (i + 1))
+			else:
+				print("[ManualMap] Floor grid %d - collision ENABLED" % (i + 1))
+			
+			print("[ManualMap] Floor grid %d offset set to (0.5, 0, 0.5)" % (i + 1))
 		else:
-			push_warning("[ManualMap] No floor_mesh_library assigned! Floor grid will use default MeshLibrary")
-		
-		print("[ManualMap] Floor grid offset set to (0.5, 0, 0.5)")
+			push_warning("[ManualMap] Floor grid %d not found!" % (i + 1))
 	
 	# Apply advanced wall connections if available
 	if interior_wall_connector:
 		apply_wall_connections()
 	
-	# Apply dual-grid floor system if enabled
-	if enable_dual_grid_floors and floor_grid:
-		setup_and_process_dual_grid_floors()
+	# Apply multi-grid floor system if enabled
+	if enable_multi_grid_floors and floor_grid_1:
+		setup_and_process_multi_grid_floors()
 	
 	# Set up exit detection
 	setup_exit_detection()
@@ -119,7 +133,7 @@ func _cache_entry_exit_positions():
 	has_cached_positions = true
 
 
-func setup_and_process_dual_grid_floors():
+func setup_and_process_multi_grid_floors():
 	"""Set up and process the dual-grid floor system"""
 	print("[ManualMap] Setting up dual-grid floor system...")
 	
@@ -127,67 +141,60 @@ func setup_and_process_dual_grid_floors():
 	_cache_entry_exit_positions()
 	
 	# Create the processor
-	dual_grid_processor = DualGridFloor.new(self, floor_grid)
-	
-	# Enable debug mode if requested
-	if debug_dual_grid_floors:
-		dual_grid_processor.enable_debug_mode()
+	# Create dual grid processor with all 4 floor grids
+	var floor_grids = [floor_grid_1, floor_grid_2, floor_grid_3, floor_grid_4]
+	multi_grid_processor = MultiGridFloor.new(self, floor_grids)
 	
 	# Map primary grid tile IDs to floor type names
 	# Entry/exit zones should use stone road floor tiles
-	dual_grid_processor.map_tile_to_type(entrance_tile_id, "stone_road")  # 0 -> stone_road
-	dual_grid_processor.map_tile_to_type(exit_tile_id, "stone_road")      # 1 -> stone_road
-	dual_grid_processor.map_tile_to_type(stone_road_tile_id, "stone_road") # 2 -> stone_road
-	dual_grid_processor.map_tile_to_type(dirt_road_tile_id, "dirt_road")   # 3 -> dirt_road
-	dual_grid_processor.map_tile_to_type(interior_floor_tile_id, "interior_floor") # 5 -> interior_floor
-	dual_grid_processor.map_tile_to_type(grass_tile_id, "grass")           # 6 -> grass
-	dual_grid_processor.map_tile_to_type(water_tile_id, "water")           # 7 -> water
+	multi_grid_processor.map_tile_to_type(entrance_tile_id, "stone_road")  # 0 -> stone_road
+	multi_grid_processor.map_tile_to_type(exit_tile_id, "stone_road")      # 1 -> stone_road
+	multi_grid_processor.map_tile_to_type(stone_road_tile_id, "stone_road") # 2 -> stone_road
+	multi_grid_processor.map_tile_to_type(dirt_road_tile_id, "dirt_road")   # 3 -> dirt_road
+	multi_grid_processor.map_tile_to_type(interior_floor_tile_id, "interior_floor") # 5 -> interior_floor
+	multi_grid_processor.map_tile_to_type(grass_tile_id, "grass")           # 6 -> grass
+	multi_grid_processor.map_tile_to_type(water_tile_id, "water")           # 7 -> water
 	
 	# Register floor types with their tile IDs from the floor grid MeshLibrary
-	dual_grid_processor.register_floor_type("interior_floor", {
+	multi_grid_processor.register_floor_type("interior_floor", {
 		"whole": interior_floor_whole,
 		"half": interior_floor_half,
 		"threequarter": interior_floor_threequarter,
 		"quarter": interior_floor_quarter
 	})
 	
-	dual_grid_processor.register_floor_type("grass", {
+	multi_grid_processor.register_floor_type("grass", {
 		"whole": grass_whole,
 		"half": grass_half,
 		"threequarter": grass_threequarter,
 		"quarter": grass_quarter
 	})
 	
-	dual_grid_processor.register_floor_type("stone_road", {
+	multi_grid_processor.register_floor_type("stone_road", {
 		"whole": stone_road_whole,
 		"half": stone_road_half,
 		"threequarter": stone_road_threequarter,
 		"quarter": stone_road_quarter
 	})
 	
-	dual_grid_processor.register_floor_type("dirt_road", {
+	multi_grid_processor.register_floor_type("dirt_road", {
 		"whole": dirt_road_whole,
 		"half": dirt_road_half,
 		"threequarter": dirt_road_threequarter,
 		"quarter": dirt_road_quarter
 	})
 	
-	dual_grid_processor.register_floor_type("water", {
+	multi_grid_processor.register_floor_type("water", {
 		"whole": water_whole,
 		"half": water_half,
 		"threequarter": water_threequarter,
 		"quarter": water_quarter
 	})
 	
-	# Process the dual-grid floors
-	dual_grid_processor.process_dual_grid_floors()
+	# Process the multi-grid floors (this also clears primary grid automatically)
+	multi_grid_processor.process_multi_grid_floors()
 	
-	# Optionally clear simple floor tiles from primary grid
-	if clear_simple_floors_after_processing:
-		dual_grid_processor.clear_primary_grid_floors()
-		print("[ManualMap] Simple floor tiles cleared from primary grid")
-	
-	print("[ManualMap] Dual-grid floor processing complete!")
+	print("[ManualMap] Multi-grid floor processing complete!")
 
 
 func apply_wall_connections():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://b3n7lmyku1iva"]
+[gd_scene load_steps=19 format=4 uid="uid://b3n7lmyku1iva"]
 
 [ext_resource type="Material" uid="uid://chwwp0r1ll3b1" path="res://World/Materials/material_grass.tres" id="1_kaoya"]
 [ext_resource type="Material" uid="uid://cfrw8bqg7k6ll" path="res://World/Materials/material_floor_wood.tres" id="2_rq4f2"]
@@ -38,8 +38,8 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_du6rm")
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_8m0r1"]
-points = PackedVector3Array(0.0038688183, 0.003968254, 0.0038688183, -0.5038688, -0.003968254, -0.5038688, -0.5038688, 0.003968254, -0.5038688, 0.0038688183, -0.003968254, -0.5038688, -0.5038688, -0.003968254, 0.0038688183, -0.5038688, 0.003968254, 0.0038688183, 0.0038688183, 0.003968254, -0.5038688, 0.0038688183, -0.003968254, 0.0038688183)
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_pu76k"]
+points = PackedVector3Array(0.50793654, 0.007936508, 0.50793654, -0.50793654, -0.007936508, -0.50793654, -0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, -0.50793654, -0.50793654, -0.007936508, 0.50793654, -0.50793654, 0.007936508, 0.50793654, 0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, 0.50793654)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qnngv"]
 
@@ -73,9 +73,6 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_ao8jk")
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_eyf2n"]
-points = PackedVector3Array(0.50793654, 0.007936508, 0.015873015, -0.50793654, -0.007936508, -0.50793654, -0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, -0.50793654, -0.50793654, -0.007936508, 0.015873015, -0.50793654, 0.007936508, 0.015873015, 0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, 0.015873015)
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aqvxv"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_er0s4"]
@@ -107,9 +104,6 @@ _surfaces = [{
 }]
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_er0s4")
-
-[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_e400x"]
-points = PackedVector3Array(0.50793654, 0.007936508, 0.50793654, -0.015810866, -0.007936508, -0.50793654, -0.50793654, -0.007936508, -0.015810866, -0.015810866, 0.007936508, -0.50793654, -0.50793654, 0.007936508, 0.50793654, 0.50793654, -0.007936508, 0.50793654, 0.50793654, 0.007936508, -0.50793654, -0.50793654, -0.007936508, 0.50793654, 0.50793654, -0.007936508, -0.50793654, -0.50793654, 0.007936508, -0.015810866)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3c8eq"]
 
@@ -143,9 +137,6 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_egdtn")
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_pu76k"]
-points = PackedVector3Array(0.50793654, 0.007936508, 0.50793654, -0.50793654, -0.007936508, -0.50793654, -0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, -0.50793654, -0.50793654, -0.007936508, 0.50793654, -0.50793654, 0.007936508, 0.50793654, 0.50793654, 0.007936508, -0.50793654, 0.50793654, -0.007936508, 0.50793654)
-
 [node name="FloorLibrary" type="Node3D"]
 
 [node name="GrassQuarter" type="MeshInstance3D" parent="."]
@@ -158,7 +149,7 @@ surface_material_override/0 = ExtResource("1_kaoya")
 [node name="StaticBody3D" type="StaticBody3D" parent="GrassQuarter"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GrassQuarter/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_8m0r1")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="GrassHalf" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
@@ -170,7 +161,7 @@ surface_material_override/0 = ExtResource("1_kaoya")
 [node name="StaticBody3D" type="StaticBody3D" parent="GrassHalf"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GrassHalf/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_eyf2n")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="GrassThreeQuarter" type="MeshInstance3D" parent="."]
 cast_shadow = 0
@@ -181,7 +172,7 @@ surface_material_override/0 = ExtResource("1_kaoya")
 [node name="StaticBody3D" type="StaticBody3D" parent="GrassThreeQuarter"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GrassThreeQuarter/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_e400x")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="GrassWhole" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
@@ -205,7 +196,7 @@ surface_material_override/0 = ExtResource("2_rq4f2")
 [node name="StaticBody3D" type="StaticBody3D" parent="FloorQuarter"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="FloorQuarter/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_8m0r1")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="FloorHalf" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 2)
@@ -217,7 +208,7 @@ surface_material_override/0 = ExtResource("2_rq4f2")
 [node name="StaticBody3D" type="StaticBody3D" parent="FloorHalf"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="FloorHalf/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_eyf2n")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="FloorThreeQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
@@ -229,7 +220,7 @@ surface_material_override/0 = ExtResource("2_rq4f2")
 [node name="StaticBody3D" type="StaticBody3D" parent="FloorThreeQuarter"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="FloorThreeQuarter/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_e400x")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="FloorWhole" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 2)
@@ -253,10 +244,10 @@ surface_material_override/0 = ExtResource("3_rq4f2")
 [node name="StaticBody3D" type="StaticBody3D" parent="WaterQuarter"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WaterQuarter/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_8m0r1")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="WaterHalf" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.8, -1, 0, -2)
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_kej4t")
 skeleton = NodePath("")
@@ -265,7 +256,7 @@ surface_material_override/0 = ExtResource("3_rq4f2")
 [node name="StaticBody3D" type="StaticBody3D" parent="WaterHalf"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WaterHalf/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_eyf2n")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="WaterThreeQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
@@ -277,7 +268,7 @@ surface_material_override/0 = ExtResource("3_rq4f2")
 [node name="StaticBody3D" type="StaticBody3D" parent="WaterThreeQuarter"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WaterThreeQuarter/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_e400x")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="WaterWhole" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -2)
@@ -301,7 +292,7 @@ surface_material_override/0 = ExtResource("4_eyf2n")
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadStoneQuarter"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoadStoneQuarter/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_8m0r1")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="RoadStoneHalf" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -4)
@@ -313,7 +304,7 @@ surface_material_override/0 = ExtResource("4_eyf2n")
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadStoneHalf"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoadStoneHalf/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_eyf2n")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="RoadStoneThreeQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
@@ -325,7 +316,7 @@ surface_material_override/0 = ExtResource("4_eyf2n")
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadStoneThreeQuarter"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoadStoneThreeQuarter/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_e400x")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="RoadStoneWhole" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -4)
@@ -349,7 +340,7 @@ surface_material_override/0 = ExtResource("5_e400x")
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadDirtQuarter"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoadDirtQuarter/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_8m0r1")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="RoadDirtHalf" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -6)
@@ -361,7 +352,7 @@ surface_material_override/0 = ExtResource("5_e400x")
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadDirtHalf"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoadDirtHalf/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_eyf2n")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="RoadDirtThreeQuarter" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
@@ -373,7 +364,7 @@ surface_material_override/0 = ExtResource("5_e400x")
 [node name="StaticBody3D" type="StaticBody3D" parent="RoadDirtThreeQuarter"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoadDirtThreeQuarter/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_e400x")
+shape = SubResource("ConvexPolygonShape3D_pu76k")
 
 [node name="RoadDirtWhole" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -6)
