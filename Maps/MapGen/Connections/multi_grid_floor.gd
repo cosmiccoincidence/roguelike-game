@@ -17,6 +17,9 @@ var floor_tile_sets: Dictionary = {}
 # Map tile IDs from primary grid to floor type names
 var tile_id_to_type: Dictionary = {}
 
+# Door tile IDs that act like walls but get cleared after processing
+var door_tile_ids: Array = []
+
 # Y level to process in primary grid (usually 0 for floors)
 var floor_y_level: int = 0
 
@@ -40,6 +43,11 @@ func register_floor_type(floor_type: String, tile_ids: Dictionary) -> void:
 ## Map a primary grid tile ID to a floor type name
 func map_tile_to_type(tile_id: int, type_name: String) -> void:
 	tile_id_to_type[tile_id] = type_name
+
+
+## Register door tile IDs (treated like walls but cleared after processing)
+func register_door_tiles(tile_ids: Array) -> void:
+	door_tile_ids = tile_ids
 
 
 ## Main processing function
@@ -158,8 +166,14 @@ func _get_floor_type_for_quadrant(x: int, y: int, z: int, quadrant: int):
 		# This is a floor tile, return its type
 		return floor_type
 	
-	# This is a wall - add debug
-	print("[Wall] Cell (%d,%d) quadrant %d is a wall (ID %d)" % [x, z, quadrant, tile_id])
+	# Check if this is a door tile (also acts like a wall)
+	var is_door = door_tile_ids.has(tile_id)
+	
+	# This is a wall or door - add debug
+	if is_door:
+		print("[Door] Cell (%d,%d) quadrant %d is a door (ID %d)" % [x, z, quadrant, tile_id])
+	else:
+		print("[Wall] Cell (%d,%d) quadrant %d is a wall (ID %d)" % [x, z, quadrant, tile_id])
 	
 	# For each quadrant, check OPPOSITE directions (into the room)
 	# Q0 (top-left): look RIGHT and DOWN (away from top-left edge)
@@ -296,9 +310,12 @@ func _clear_floor_tiles_from_primary() -> void:
 		if tile_id == GridMap.INVALID_CELL_ITEM:
 			continue
 		
+		# Clear if it's a registered floor type OR a door tile
 		var type_name = tile_id_to_type.get(tile_id)
-		if type_name != null:
+		var is_door = door_tile_ids.has(tile_id)
+		
+		if type_name != null or is_door:
 			primary_grid.set_cell_item(cell_pos, GridMap.INVALID_CELL_ITEM)
 			cleared_count += 1
 	
-	print("[MultiGridFloor] Cleared %d floor tiles from primary grid" % cleared_count)
+	print("[MultiGridFloor] Cleared %d floor/door tiles from primary grid" % cleared_count)

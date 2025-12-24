@@ -185,6 +185,9 @@ func setup_and_process_multi_grid_floors():
 		"quarter": water_quarter
 	})
 	
+	# Register door tiles (treated like walls but cleared after processing)
+	multi_grid_processor.register_door_tiles([door_floor_tile_id])
+	
 	# Process the multi-grid floors (this also clears primary grid automatically)
 	multi_grid_processor.process_multi_grid_floors()
 
