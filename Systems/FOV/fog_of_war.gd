@@ -306,38 +306,27 @@ func update_fog():
 					tile_exists = true
 					is_wall = is_wall_tile(tile_id)
 				else:
-					# Tile is empty (-1) - check if it's a cleared floor
+					# Tile is empty (-1) - check if it's a cleared floor or door
 					if map_generator.has_method("is_position_walkable"):
 						var is_walkable = map_generator.is_position_walkable(check_pos.x, check_pos.z)
 						if is_walkable:
 							# This is a cleared floor
 							tile_exists = true
 							is_wall = false
+					
+					# Check if it's a door position (treat as wall for discovery)
+					if map_generator.has_method("has_door_at_position"):
+						if map_generator.has_door_at_position(check_pos.x, check_pos.z):
+							tile_exists = true
+							is_wall = true  # Treat doors like walls for discovery
 				
 				if not tile_exists:
 					# No tile here, don't reveal
 					continue
 				
-				# Check if this is a door position
-				var is_door_position = false
-				if map_generator.has_method("has_door_at_position"):
-					is_door_position = map_generator.has_door_at_position(check_pos.x, check_pos.z)
-				
 				# Check line of sight
 				var can_reveal = false
-				if is_door_position:
-					# Door positions use special logic: check if we have line of sight to adjacent tiles
-					# This allows doors to be discovered from either side
-					var adjacent_visible = false
-					var offsets = [Vector3i(1,0,0), Vector3i(-1,0,0), Vector3i(0,0,1), Vector3i(0,0,-1)]
-					for offset in offsets:
-						var adjacent_pos = check_pos + offset
-						var adjacent_world = map_generator.map_to_local(adjacent_pos)
-						if has_line_of_sight(player.global_position, adjacent_world):
-							adjacent_visible = true
-							break
-					can_reveal = adjacent_visible
-				elif is_wall:
+				if is_wall:
 					can_reveal = has_line_of_sight_to_wall(player.global_position, world_pos)
 				else:
 					can_reveal = has_line_of_sight(player.global_position, world_pos)
