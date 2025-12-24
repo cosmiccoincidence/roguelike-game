@@ -114,11 +114,6 @@ func _process_dual_grid_cell(x: int, z: int, cell_usage: Dictionary) -> bool:
 			types_dict[type_name] = []
 		types_dict[type_name].append(quadrants[i])
 	
-	# Debug output - show all cells
-	print("[MultiGridFloor] Cell (%d,%d) has %d types:" % [x, z, types_dict.size()])
-	for type_name in types_dict.keys():
-		print("  - %s: quadrants %s" % [type_name, types_dict[type_name]])
-	
 	# Place each floor type on a separate GridMap layer
 	var layer = 0
 	for type_name in types_dict.keys():
@@ -131,25 +126,19 @@ func _process_dual_grid_cell(x: int, z: int, cell_usage: Dictionary) -> bool:
 		
 		# Check if we have 2 non-adjacent quadrants - need to split into separate layers
 		if quads.size() == 2 and not _are_quadrants_adjacent(quads[0], quads[1]):
-			print("  - %s has non-adjacent quadrants %s, splitting..." % [type_name, quads])
 			# Place each quarter on its own layer
 			for quad in quads:
 				if layer >= floor_grids.size():
-					print("    [ERROR] No GridMap available for quadrant %d" % quad)
 					continue
 				
 				_place_floor_at_layer(x, z, layer, [quad], tile_set)
-				print("    Placed Q%d on GridMap layer %d" % [quad, layer])
 				layer += 1
 		else:
 			# Normal placement
 			if layer >= floor_grids.size():
-				print("[MultiGridFloor] WARNING: More than %d floor types at cell (%d,%d)" % [floor_grids.size(), x, z])
-				print("[MultiGridFloor]   Skipping type '%s' with quadrants %s" % [type_name, quads])
 				continue
 			
 			_place_floor_at_layer(x, z, layer, quads, tile_set)
-			print("    Placed on GridMap layer %d" % layer)
 			layer += 1
 	
 	return true

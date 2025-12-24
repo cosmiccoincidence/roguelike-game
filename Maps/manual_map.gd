@@ -89,11 +89,6 @@ func _ready():
 			if i > 0:
 				grid.collision_layer = 0
 				grid.collision_mask = 0
-				print("[ManualMap] Floor grid %d - collision DISABLED" % (i + 1))
-			else:
-				print("[ManualMap] Floor grid %d - collision ENABLED" % (i + 1))
-			
-			print("[ManualMap] Floor grid %d offset set to (0.5, 0, 0.5)" % (i + 1))
 		else:
 			push_warning("[ManualMap] Floor grid %d not found!" % (i + 1))
 	
@@ -135,7 +130,6 @@ func _cache_entry_exit_positions():
 
 func setup_and_process_multi_grid_floors():
 	"""Set up and process the dual-grid floor system"""
-	print("[ManualMap] Setting up dual-grid floor system...")
 	
 	# IMPORTANT: Store entry/exit positions BEFORE clearing tiles
 	_cache_entry_exit_positions()
@@ -193,8 +187,6 @@ func setup_and_process_multi_grid_floors():
 	
 	# Process the multi-grid floors (this also clears primary grid automatically)
 	multi_grid_processor.process_multi_grid_floors()
-	
-	print("[ManualMap] Multi-grid floor processing complete!")
 
 
 func apply_wall_connections():
