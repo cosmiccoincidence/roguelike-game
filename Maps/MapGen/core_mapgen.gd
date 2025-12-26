@@ -148,6 +148,15 @@ func setup_floor_grids():
 		else:
 			push_warning("[CoreMapGen] Floor grid %d not found!" % (i + 1))
 
+## Clear the map and floor grids
+func clear_map():
+	# Clear the primary grid
+	clear()
+	
+	# Clear the floor grids if multi-grid is enabled
+	if enable_multi_grid_floors and multi_grid_processor:
+		multi_grid_processor.clear_all_floors()
+
 func start_generation():
 	generate_map()
 
@@ -169,7 +178,7 @@ func generate_map():
 		
 		if not map_valid:
 			print("Map validation failed - regenerating...")
-			clear()
+			clear_map()
 	
 	if not map_valid:
 		print("ERROR: Failed to generate valid map after ", max_attempts, " attempts!")

@@ -104,6 +104,16 @@ func _ready():
 	setup_exit_detection()
 
 
+## Clear the map and floor grids
+func clear_map():
+	# Clear the primary grid
+	clear()
+	
+	# Clear the floor grids if multi-grid is enabled
+	if enable_multi_grid_floors and multi_grid_processor:
+		multi_grid_processor.clear_all_floors()
+
+
 # This gets called by GameManager
 func start_generation():
 	# Wait one frame then emit (map is already ready)

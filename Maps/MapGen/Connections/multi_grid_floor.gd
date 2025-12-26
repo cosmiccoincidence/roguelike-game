@@ -58,6 +58,21 @@ func register_door_tiles(tile_ids: Array) -> void:
 	door_tile_ids = tile_ids
 
 
+## Clear all floor grids (for map regeneration)
+func clear_all_floors() -> void:
+	print("[MultiGridFloor] Clearing all floor grids...")
+	
+	for grid in floor_grids:
+		if grid:
+			grid.clear()
+	
+	# Clear preserved data
+	floor_type_map.clear()
+	door_positions.clear()
+	
+	print("[MultiGridFloor] All floor grids cleared")
+
+
 ## Main processing function
 func process_multi_grid_floors() -> void:
 	print("[MultiGridFloor] Starting multi-grid floor processing with %d GridMaps..." % floor_grids.size())
