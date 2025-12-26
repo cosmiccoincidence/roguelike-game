@@ -4,5 +4,5 @@
 
 [resource]
 script = ExtResource("1_sd4o3")
-level_range = 1
+level_range = 10
 metadata/_custom_type_script = "uid://dly44gmovhexn"
