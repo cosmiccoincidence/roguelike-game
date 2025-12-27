@@ -18,28 +18,29 @@ offset_bottom = 45.0
 
 [node name="EquipmentGrid" type="GridContainer" parent="EquipmentPanel"]
 layout_mode = 0
-offset_top = 40.0
-offset_bottom = 40.0
+offset_top = 23.0
+offset_bottom = 23.0
 
 [node name="HeroNameLabel" type="Label" parent="EquipmentPanel"]
 layout_mode = 0
+offset_top = -5.0
 offset_right = 159.0
-offset_bottom = 28.0
+offset_bottom = 23.0
 theme_override_font_sizes/font_size = 20
 text = "Hero Name"
 
 [node name="StatsPanel" type="Panel" parent="EquipmentPanel"]
 layout_mode = 0
-offset_left = 273.0
-offset_right = 540.0
+offset_left = 335.0
+offset_right = 602.0
 offset_bottom = 378.0
 
 [node name="InventoryPanel" type="Panel" parent="."]
 layout_mode = 0
 offset_left = 6.0
-offset_top = 417.0
+offset_top = 391.0
 offset_right = 46.0
-offset_bottom = 457.0
+offset_bottom = 431.0
 mouse_filter = 1
 
 [node name="InventoryGrid" type="GridContainer" parent="InventoryPanel"]

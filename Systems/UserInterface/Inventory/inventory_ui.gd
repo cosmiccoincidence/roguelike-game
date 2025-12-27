@@ -11,8 +11,8 @@ extends Control
 const SLOT_SCENE_PATH = "res://Systems/UserInterface/Inventory/inventory_slot.tscn"
 
 var slot_size: int = 64  # Size of each slot in pixels
-var columns: int = 0  # Will be calculated from Inventory.max_slots
-var rows: int = 5  # Fixed number of rows
+var rows: int = 0  # Will be calculated from Inventory.max_slots
+var columns: int = 5  # Fixed number of columns
 
 # Player reference for stats
 var player_ref: CharacterBody3D = null
@@ -145,8 +145,8 @@ func _get_slot_by_index(index: int) -> Panel:
 	return null
 
 func _ready():
-	# Calculate columns based on Inventory.max_slots
-	columns = Inventory.max_slots / rows
+	# Calculate rows based on Inventory.max_slots
+	rows = Inventory.max_slots / columns
 	
 	# Create tooltip manager if it doesn't exist
 	if not slot_tooltip:
@@ -196,7 +196,7 @@ func _ready():
 	grid_container.mouse_filter = Control.MOUSE_FILTER_PASS
 	
 	# Create all the slots based on calculated grid size
-	for i in range(columns * rows):
+	for i in range(rows * columns):
 		var slot = slot_scene.instantiate()
 		if not slot:
 			continue
