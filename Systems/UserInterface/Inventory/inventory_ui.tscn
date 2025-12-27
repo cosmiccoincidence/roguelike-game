@@ -21,12 +21,12 @@ layout_mode = 0
 offset_top = 40.0
 offset_bottom = 40.0
 
-[node name="CharacterNameLabel" type="Label" parent="EquipmentPanel"]
+[node name="HeroNameLabel" type="Label" parent="EquipmentPanel"]
 layout_mode = 0
 offset_right = 159.0
 offset_bottom = 28.0
 theme_override_font_sizes/font_size = 20
-text = "Character Name"
+text = "Hero Name"
 
 [node name="StatsPanel" type="Panel" parent="EquipmentPanel"]
 layout_mode = 0
@@ -47,13 +47,12 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="WeightLabel" type="Label" parent="InventoryPanel"]
+[node name="MassLabel" type="Label" parent="InventoryPanel"]
 layout_mode = 0
 offset_top = -26.0
 offset_right = 132.0
 offset_bottom = -3.0
-text = "Weight: 0.0 / 10.0"
-horizontal_alignment = 2
+text = "Mass: 0.0 / 10.0"
 
 [node name="GoldLabel" type="Label" parent="InventoryPanel"]
 layout_mode = 1

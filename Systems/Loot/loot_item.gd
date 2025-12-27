@@ -10,7 +10,7 @@ class_name LootItem
 # Base item properties (before level/quality scaling)
 @export_group("Base Properties")
 @export var base_value: int = 10
-@export var weight: float = 1.0
+@export var mass: float = 1.0
 @export var stackable: bool = false
 @export var max_stack_size: int = 99
 

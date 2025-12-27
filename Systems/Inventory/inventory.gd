@@ -5,22 +5,22 @@ var items: Array = []
 var max_slots: int = 40  # Match the UI grid (8 columns × 5 rows)
 var player_ref: Node3D = null  # Reference to player for drop position
 
-# Weight system
-var soft_max_weight: float = 10.0
-var hard_max_weight: float = 11.0  # Will be calculated
+# Mass system
+var soft_max_mass: float = 10.0
+var hard_max_mass: float = 11.0  # Will be calculated
 
 # Gold system
 var gold: int = 0
 
 signal inventory_changed
 signal item_dropped(item_data, position)
-signal weight_changed(current_weight, max_weight)
+signal mass_changed(current_mass, max_mass)
 signal gold_changed(amount)
 signal encumbered_status_changed(is_encumbered)
 
 func _ready():
 	# Calculate hard max weight
-	hard_max_weight = soft_max_weight * 1.1
+	hard_max_mass = soft_max_mass * 1.1
 	
 	# Initialize items array with nulls for all slots
 	items.resize(max_slots)
@@ -41,29 +41,29 @@ func swap_items(from_slot: int, to_slot: int):
 	
 	inventory_changed.emit()
 
-func _update_weight_signals():
-	"""Update weight-related signals and encumbrance status"""
-	var current_weight = get_total_weight()
-	weight_changed.emit(current_weight, soft_max_weight)
+func _update_mass_signals():
+	"""Update mass-related signals and encumbrance status"""
+	var current_mass = get_total_mass()
+	mass_changed.emit(current_mass, soft_max_mass)
 	encumbered_status_changed.emit(is_encumbered())
 
 # Store reference to item scenes for dropping
 var item_scene_lookup: Dictionary = {}
 
-func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene = null, item_weight: float = 1.0, item_value: int = 10, is_stackable: bool = false, max_stack: int = 99, amount: int = 1, item_type: String = "", item_level: int = 1, item_quality: int = 1) -> bool:
+func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene = null, item_mass: float = 1.0, item_value: int = 10, is_stackable: bool = false, max_stack: int = 99, amount: int = 1, item_type: String = "", item_level: int = 1, item_quality: int = 1) -> bool:
 	# Special handling for gold - add directly to gold counter
 	if item_name.to_lower() == "gold" or item_name.to_lower() == "coin":
 		add_gold(amount)
 		return true
 	
-	# Calculate what the weight would be if we add this item
-	var current_weight = get_total_weight()
-	var new_item_weight = item_weight * amount
-	var projected_weight = current_weight + new_item_weight
+	# Calculate what the mass would be if we add this item
+	var current_mass = get_total_mass()
+	var new_item_mass = item_mass * amount
+	var projected_mass = current_mass + new_item_mass
 	
-	# Check if adding would exceed hard max weight
-	if projected_weight > hard_max_weight:
-		print("Cannot add item: Would exceed maximum carry weight (", projected_weight, "/", hard_max_weight, ")")
+	# Check if adding would exceed hard max mass
+	if projected_mass > hard_max_mass:
+		print("Cannot add item: Would exceed maximum carry mass (", projected_mass, "/", hard_max_mass, ")")
 		return false
 	
 	# If stackable, try to add to existing stack first
@@ -78,7 +78,7 @@ func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene
 					item.stack_count += amount_to_add
 					amount -= amount_to_add
 					inventory_changed.emit()
-					_update_weight_signals()
+					_update_mass_signals()
 					
 					# If we added everything, we're done
 					if amount <= 0:
@@ -103,7 +103,7 @@ func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene
 			"name": item_name,
 			"icon": icon,
 			"scene": item_scene,
-			"weight": item_weight,
+			"mass": item_mass,
 			"value": item_value,
 			"stackable": is_stackable,
 			"max_stack_size": max_stack,
@@ -116,7 +116,7 @@ func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene
 		amount -= stack_size
 	
 	inventory_changed.emit()
-	_update_weight_signals()
+	_update_mass_signals()
 	return true
 
 func add_gold(amount: int):
@@ -137,7 +137,7 @@ func remove_item_at_slot(slot_index: int) -> bool:
 	if slot_index >= 0 and slot_index < max_slots and items[slot_index] != null:
 		items[slot_index] = null
 		inventory_changed.emit()
-		_update_weight_signals()
+		_update_mass_signals()
 		return true
 	return false
 
@@ -196,7 +196,7 @@ func drop_item_at_slot(slot_index: int):
 		# Remove from inventory by setting slot to null
 		items[slot_index] = null
 		inventory_changed.emit()
-		_update_weight_signals()
+		_update_mass_signals()
 
 func set_player(player: Node3D):
 	player_ref = player
@@ -212,26 +212,26 @@ func get_items() -> Array:
 func clear():
 	items.clear()
 	inventory_changed.emit()
-	weight_changed.emit(get_total_weight(), soft_max_weight)
+	mass_changed.emit(get_total_mass(), soft_max_mass)
 
-func get_total_weight() -> float:
+func get_total_mass() -> float:
 	var total: float = 0.0
 	
-	# Add weight from inventory items
+	# Add mass from inventory items
 	for item in items:
-		if item != null and item.has("weight"):
-			var item_weight = item.weight
+		if item != null and item.has("mass"):
+			var item_mass = item.mass
 			var count = item.get("stack_count", 1)
-			total += item_weight * count
+			total += item_mass * count
 	
-	# Add weight from equipped items
+	# Add mass from equipped items
 	if has_node("/root/Equipment"):
 		var equipped_items = Equipment.get_items()
 		for item in equipped_items:
-			if item != null and item.has("weight"):
-				var item_weight = item.weight
+			if item != null and item.has("mass"):
+				var item_mass = item.mass
 				var count = item.get("stack_count", 1)
-				total += item_weight * count
+				total += item_mass * count
 	
 	return total
 
@@ -246,4 +246,4 @@ func get_total_value() -> int:
 
 # Check if player is encumbered
 func is_encumbered() -> bool:
-	return get_total_weight() > soft_max_weight
+	return get_total_mass() > soft_max_mass

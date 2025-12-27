@@ -55,8 +55,8 @@ func swap_items(from_slot: int, to_slot: int):
 	equipped_items[to_slot] = temp
 	
 	equipment_changed.emit()
-	# Notify inventory system to update weight
-	Inventory._update_weight_signals()
+	# Notify inventory system to update mass
+	Inventory._update_mass_signals()
 
 func set_item_at_slot(slot_index: int, item_data):
 	"""Set an item at a specific equipment slot (with type checking)"""
@@ -65,8 +65,8 @@ func set_item_at_slot(slot_index: int, item_data):
 		if item_data == null or can_equip_item_in_slot(item_data, slot_index):
 			equipped_items[slot_index] = item_data
 			equipment_changed.emit()
-			# Notify inventory system to update weight
-			Inventory._update_weight_signals()
+			# Notify inventory system to update mass
+			Inventory._update_mass_signals()
 			return true
 		else:
 			# Item type doesn't match slot requirement
@@ -86,8 +86,8 @@ func remove_item_at_slot(slot_index: int):
 	if slot_index >= 0 and slot_index < max_equipment_slots:
 		equipped_items[slot_index] = null
 		equipment_changed.emit()
-		# Notify inventory system to update weight
-		Inventory._update_weight_signals()
+		# Notify inventory system to update mass
+		Inventory._update_mass_signals()
 
 func get_items() -> Array:
 	"""Get all equipped items"""

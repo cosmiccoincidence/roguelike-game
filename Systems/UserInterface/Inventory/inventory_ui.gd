@@ -2,7 +2,7 @@ extends Control
 
 @onready var grid_container: GridContainer = $InventoryPanel/InventoryGrid
 @onready var equipment_grid: GridContainer = $EquipmentPanel/EquipmentGrid
-@onready var weight_label: Label = $InventoryPanel/WeightLabel
+@onready var mass_label: Label = $InventoryPanel/MassLabel
 @onready var gold_label: Label = $InventoryPanel/GoldLabel
 @onready var slot_tooltip: Control = $SlotTooltip  # Tooltip manager
 @onready var stats_panel: Panel = $EquipmentPanel/StatsPanel
@@ -211,10 +211,10 @@ func _ready():
 	
 	# Connect to inventory changes
 	Inventory.inventory_changed.connect(_update_inventory)
-	Inventory.weight_changed.connect(_update_weight_display)
+	Inventory.mass_changed.connect(_update_mass_display)
 	Inventory.gold_changed.connect(_update_gold_display)
 	_update_inventory()
-	_update_weight_display(Inventory.get_total_weight(), Inventory.soft_max_weight)
+	_update_mass_display(Inventory.get_total_mass(), Inventory.soft_max_mass)
 	_update_gold_display(Inventory.get_gold())
 	
 	# Set up equipment grid
@@ -472,21 +472,21 @@ func _update_equipment():
 		else:
 			slot.clear_item()
 
-func _update_weight_display(current_weight: float, max_weight: float):
-	if weight_label:
-		# Format: "Weight: 5.5 / 10.0"
-		weight_label.text = "Weight: %.1f / %.1f" % [current_weight, max_weight]
+func _update_mass_display(current_mass: float, max_mass: float):
+	if mass_label:
+		# Format: "Mass: 5.5 / 10.0"
+		mass_label.text = "Mass: %.1f / %.1f" % [current_mass, max_mass]
 		
-		# Optional: Change color based on weight
-		var weight_percent = current_weight / max_weight
-		if weight_percent >= 1.0:
-			weight_label.modulate = Color.DARK_RED  # Over soft limit
-		elif weight_percent >= 0.9:
-			weight_label.modulate = Color.RED  # High warning
-		elif weight_percent >= 0.75:
-			weight_label.modulate = Color.YELLOW  # Low warning
+		# Optional: Change color based on massv
+		var mass_percent = current_mass / max_mass
+		if mass_percent >= 1.0:
+			mass_label.modulate = Color.DARK_RED  # Over soft limit
+		elif mass_percent >= 0.9:
+			mass_label.modulate = Color.RED  # High warning
+		elif mass_percent >= 0.75:
+			mass_label.modulate = Color.YELLOW  # Low warning
 		else:
-			weight_label.modulate = Color.WHITE  # Normal
+			mass_label.modulate = Color.WHITE  # Normal
 
 func _update_gold_display(amount: int):
 	if gold_label:

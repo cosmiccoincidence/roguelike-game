@@ -117,7 +117,7 @@ func _spawn_loot_item(item_data: Dictionary):
 		loot_instance.item_name = item.item_name
 		loot_instance.item_icon = item.icon
 		loot_instance.item_type = item.item_type
-		loot_instance.weight = item.weight
+		loot_instance.mass = item.mass
 		loot_instance.stackable = item.stackable
 		loot_instance.max_stack_size = item.max_stack_size
 		

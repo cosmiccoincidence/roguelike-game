@@ -4,7 +4,7 @@ class_name BaseItem
 @export var item_name: String = "Item"
 @export var item_icon: Texture2D
 @export var item_type: String = ""  # Type: helmet, weapon, armor, ring, etc.
-@export var weight: float = 1.0
+@export var mass: float = 1.0
 @export var value: int = 10
 @export var stackable: bool = false
 @export var max_stack_size: int = 99
@@ -241,7 +241,7 @@ func pickup():
 		item_name, 
 		item_icon, 
 		item_scene, 
-		weight, 
+		mass, 
 		value, 
 		stackable, 
 		max_stack_size, 

@@ -96,11 +96,11 @@ func debug_check_loot_manager():
 	for i in range(min(10, loot_manager.all_items.size())):
 		var item = loot_manager.all_items[i]
 		if item:
-			print("  %2d. %-20s (Lv.%2d, Weight:%.1f, Type:%s)" % [
+			print("  %2d. %-20s (Lv.%2d, Mass:%.1f, Type:%s)" % [
 				i + 1,
 				item.item_name,
 				item.base_item_level,
-				item.base_weight,
+				item.base_mass,
 				item.item_type
 			])
 			if not item.item_scene:
@@ -161,19 +161,19 @@ func debug_preview_loot(enemy_level: int = 5):
 	
 	print("\n✓ Found %d eligible items:\n" % preview.size())
 	
-	var total_weight = 0.0
+	var total_mass = 0.0
 	for entry in preview:
-		total_weight += entry.weight
+		total_mass += entry.mass
 	
 	for i in range(preview.size()):
 		var entry = preview[i]
-		var drop_chance = (entry.weight / total_weight) * 100
-		print("%2d. %-20s (Base Lv.%-2d → Target Lv.%-2d) Weight:%.3f (%.1f%%)" % [
+		var drop_chance = (entry.mass / total_mass) * 100
+		print("%2d. %-20s (Base Lv.%-2d → Target Lv.%-2d) Mass:%.3f (%.1f%%)" % [
 			i + 1,
 			entry.item.item_name,
 			entry.base_item_level,
 			entry.target_item_level,
-			entry.weight,
+			entry.mass,
 			drop_chance
 		])
 	
@@ -232,7 +232,7 @@ func debug_spawn_test_loot():
 			instance.item_name = item.item_name
 			instance.item_icon = item.icon
 			instance.item_type = item.item_type
-			instance.weight = item.weight
+			instance.mass = item.mass
 			instance.value = item.base_value
 			instance.stackable = item.stackable
 			instance.max_stack_size = item.max_stack_size
