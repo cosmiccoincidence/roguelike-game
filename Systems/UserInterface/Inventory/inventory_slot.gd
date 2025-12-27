@@ -108,6 +108,13 @@ func set_item(item):
 			label.text = "%s (x%d)" % [item.name, item.stack_count]
 		else:
 			label.text = item.name
+		
+		# NEW: Set label color based on item quality
+		if item.has("item_quality"):
+			label.modulate = ItemQuality.get_quality_color(item.item_quality)
+		else:
+			label.modulate = Color.WHITE  # Default to white if no quality
+		
 		label.show()
 	else:
 		label.hide()

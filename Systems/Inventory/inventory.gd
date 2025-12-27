@@ -1,4 +1,5 @@
 extends Node
+# inventory.gd
 
 var items: Array = []
 var max_slots: int = 40  # Match the UI grid (8 columns × 5 rows)
@@ -49,7 +50,7 @@ func _update_weight_signals():
 # Store reference to item scenes for dropping
 var item_scene_lookup: Dictionary = {}
 
-func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene = null, item_weight: float = 1.0, item_value: int = 10, is_stackable: bool = false, max_stack: int = 99, amount: int = 1, item_type: String = "") -> bool:
+func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene = null, item_weight: float = 1.0, item_value: int = 10, is_stackable: bool = false, max_stack: int = 99, amount: int = 1, item_type: String = "", item_level: int = 1, item_quality: int = 1) -> bool:
 	# Special handling for gold - add directly to gold counter
 	if item_name.to_lower() == "gold" or item_name.to_lower() == "coin":
 		add_gold(amount)
@@ -107,7 +108,9 @@ func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene
 			"stackable": is_stackable,
 			"max_stack_size": max_stack,
 			"stack_count": stack_size,
-			"item_type": item_type
+			"item_type": item_type,
+			"item_level": item_level,  # NEW: Store item level
+			"item_quality": item_quality  # NEW: Store item quality
 		}
 		
 		amount -= stack_size
@@ -158,12 +161,28 @@ func drop_item_at_slot(slot_index: int):
 					# Set position
 					item_instance.global_position = drop_position
 					
-					# Set stack count if item is stackable
-					if item.get("stackable", false) and item.get("stack_count", 1) > 1:
-						if item_instance.has_method("set"):
-							item_instance.set("stack_count", item.stack_count)
-						# Update label to show stack count
-						if item_instance.has_method("update_label_text"):
+					# NEW: Restore item properties from inventory data
+					if item_instance is BaseItem:
+						# Restore level and quality
+						if item.has("item_level"):
+							item_instance.item_level = item.item_level
+						if item.has("item_quality"):
+							item_instance.item_quality = item.item_quality
+						if item.has("value"):
+							item_instance.value = item.value
+						
+						# Set stack count if item is stackable
+						if item.get("stackable", false) and item.get("stack_count", 1) > 1:
+							item_instance.stack_count = item.stack_count
+						
+						# Update properties after setting everything
+						if item_instance.has_method("set_item_properties"):
+							item_instance.set_item_properties(
+								item.get("item_level", 1),
+								item.get("item_quality", ItemQuality.Quality.NORMAL),
+								item.get("value", 10)
+							)
+						elif item_instance.has_method("update_label_text"):
 							item_instance.update_label_text()
 					
 					# Mark as just spawned so FOV doesn't hide it immediately

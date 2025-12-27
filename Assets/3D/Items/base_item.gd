@@ -9,6 +9,11 @@ class_name BaseItem
 @export var stackable: bool = false
 @export var max_stack_size: int = 99
 
+# NEW: Level-based system
+var item_level: int = 1  # Set by loot system when spawned
+var item_quality: int = ItemQuality.Quality.NORMAL  # Damaged, Normal, or Fine
+var rolled_stats: Dictionary = {}  # Future: store randomized stats based on item_level
+
 var is_hovered: bool = false
 var label_3d: Label3D
 var collision_body: CollisionObject3D
@@ -190,10 +195,34 @@ func create_rounded_rect_texture() -> ImageTexture:
 
 func update_label_text():
 	if label_3d:
+		var display_text = item_name
+		
+		# Show stack count if stackable
 		if stackable and stack_count > 1:
-			label_3d.text = "%s (x%d)" % [item_name, stack_count]
-		else:
-			label_3d.text = item_name
+			display_text = "%s (x%d)" % [item_name, stack_count]
+		
+		label_3d.text = display_text
+		
+		# Set color based on item quality
+		label_3d.modulate = ItemQuality.get_quality_color(item_quality)
+
+# NEW: Method called by loot system to set item properties
+func set_item_properties(level: int, quality: int, final_value: int):
+	item_level = level
+	item_quality = quality
+	value = final_value
+	update_label_text()  # Update label with quality color
+	
+	# FUTURE: Roll stats based on item_level and quality
+	# roll_item_stats()
+
+# FUTURE: Roll randomized stats based on item_level
+func roll_item_stats():
+	# Example: Higher item_level = better stats
+	# rolled_stats["damage"] = base_damage + (item_level * damage_per_level) + randi_range(-variance, variance)
+	# rolled_stats["armor"] = base_armor + (item_level * armor_per_level)
+	# etc.
+	pass
 
 func pickup():
 	# Prevent duplicate pickups
@@ -205,10 +234,22 @@ func pickup():
 	
 	being_picked_up = true  # Immediately mark as being picked up
 	
-	# Pass the scene reference AND weight/value/stackable/item_type so the item can be dropped later
+	# Pass the scene reference AND all item properties including level and quality
 	var item_scene = load(scene_file_path) if scene_file_path else null
 	
-	if Inventory.add_item(item_name, item_icon, item_scene, weight, value, stackable, max_stack_size, stack_count, item_type):
+	if Inventory.add_item(
+		item_name, 
+		item_icon, 
+		item_scene, 
+		weight, 
+		value, 
+		stackable, 
+		max_stack_size, 
+		stack_count, 
+		item_type,
+		item_level,  # NEW: Pass item level
+		item_quality  # NEW: Pass item quality
+	):
 		queue_free()
 	else:
 		being_picked_up = false  # Re-enable if inventory was full

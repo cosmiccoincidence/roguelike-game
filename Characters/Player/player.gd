@@ -18,25 +18,35 @@ const ENCUMBERED_ROTATION_MULT: float = 0.75  # 75% rotation speed
 @onready var hud: CanvasLayer = get_node("/root/World/UI/HUD")
 
 # Stats
-@export var stat_strength := 5
-@export var stat_dexterity := 5
+@export var strength := 5
+@export var dexterity := 5
 
+@export var max_stamina := 10
+@export var stamina_regen: float = 1.0  # How much stamina per interval
+@export var stamina_regen_interval: float = 0.5  # Seconds between stamina regen
+@export var max_health := 10
+@export var health_regen: float = 1.0  # How much health per interval
+@export var health_regen_interval: float = 10.0  # Seconds between health regen
 
+@export var crit_chance := 0.1      # 10%
+@export var crit_multiplier: float = 2.0  # x2 damage
+
+@export var luck: float = 0.0  # Base luck stat (can be negative, 0, or positive)
+# Luck affects item quality rolls:
+# luck = -10: Heavy bias toward Damaged
+# luck = 0: Normal distribution
+# luck = +10: Heavy bias toward Fine
+
+# Movement
 @export var rotation_speed := 5.0  # higher = faster turning
 @export var sprint_multiplier := 3.0  # speed multiplier when sprinting
 @export var sprint_stamina_cost: float = 1.5  # Stamina consumption per second while sprinting
-@export var stamina_regen: float = 1.0  # How much stamina per interval
-@export var stamina_regen_interval: float = 0.5  # Seconds between stamina regen
-@export var health_regen: float = 1.0  # How much health per interval
-@export var health_regen_interval: float = 10.0  # Seconds between health regen
+
+# Camera
 @export var zoom_min := 10
 @export var zoom_max := 100  # Normal max zoom
 @export var zoom_speed := 15.0
 @export var zoom_smooth := 8.0
-@export var max_health := 10
-@export var max_stamina := 10
-@export var crit_chance := 0.1      # 10%
-@export var crit_multiplier: float = 2.0  # x2 damage
 
 var god_mode := false
 var god_zoom_max := 500.0  # Max zoom in god mode
@@ -441,6 +451,13 @@ func die():
 			child.visible = false
 		elif child is CollisionShape3D:
 			child.disabled = true
+
+# You can add methods to modify luck from equipment, buffs, etc:
+func get_total_luck() -> float:
+	var total = luck
+	# TODO: Add luck from equipment
+	# TODO: Add luck from buffs/debuffs
+	return total
 
 # Play combat sound
 func play_combat(name: String):

@@ -2,7 +2,7 @@ extends Control
 class_name InventorySlotTooltip
 
 ## Tooltip that appears when hovering over inventory slots
-## Shows item name and optionally stack count
+## Shows item name, level, quality, value, type, and weight
 
 var tooltip_panel: PanelContainer = null
 var item_label: RichTextLabel = null
@@ -111,21 +111,31 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	# Build tooltip text with BBCode formatting
 	var lines = []
 	
-	# Item name (with stack count if applicable) - larger and underlined
+	# Get item quality and its color
+	var item_quality = item_data.get("item_quality", ItemQuality.Quality.NORMAL)
+	var quality_color = ItemQuality.get_quality_color(item_quality)
+	var quality_hex = quality_color.to_html(false)  # Get hex color without alpha
+	
+	# Item name (with stack count if applicable) - larger, underlined, and colored by quality
 	var name_text = item_data.get("name", "Unknown Item")
 	if item_data.get("stackable", false) and item_data.get("stack_count", 1) > 1:
 		name_text = "%s (x%d)" % [name_text, item_data.get("stack_count", 1)]
-	lines.append("[center][font_size=22][u]%s[/u][/font_size][/center]" % name_text)
+	lines.append("[center][font_size=22][u][color=#%s]%s[/color][/u][/font_size][/center]" % [quality_hex, name_text])
 	
-	# Value - gold color, above weight
+	# Item level - below name, white color
+	var item_level = item_data.get("item_level", 1)
+	lines.append("[center]Level: %d[/center]" % item_level)
+	
+	# Value - gold color
 	var value = item_data.get("value", 0)
 	lines.append("[center][color=gold]Value: %d[/color][/center]" % value)
 	
-	# Type - gray color, above weight
-	var item_type = item_data.get("item_type", 0)
-	lines.append("[center][color=darkgray]Type: %s[/color][/center]" % str(item_type))
+	# Type - gray color
+	var item_type = item_data.get("item_type", "")
+	if item_type != "":
+		lines.append("[center][color=darkgray]Type: %s[/color][/center]" % item_type)
 	
-	# Weight - gray color (note: BBCode uses "gray" not "grey")
+	# Weight - gray color
 	var weight = item_data.get("weight", 0.0)
 	lines.append("[center][color=gray]Weight: %.1f[/color][/center]" % weight)
 	

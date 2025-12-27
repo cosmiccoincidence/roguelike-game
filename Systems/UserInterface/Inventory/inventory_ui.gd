@@ -312,6 +312,20 @@ func _setup_stats_panel():
 	stamina_regen_label.text = "Stamina Regeneration: 0"
 	stamina_regen_label.add_theme_font_size_override("font_size", 14)
 	vbox.add_child(stamina_regen_label)
+	
+	# Create crit chance label
+	var crit_chance_label = Label.new()
+	crit_chance_label.name = "CritChanceLabel"
+	crit_chance_label.text = "Crit Chance: 0"
+	crit_chance_label.add_theme_font_size_override("font_size", 14)
+	vbox.add_child(crit_chance_label)
+	
+	# Create crit damage label
+	var crit_damage_label = Label.new()
+	crit_damage_label.name = "CritDamageLabel"
+	crit_damage_label.text = "Crit Damage: 0"
+	crit_damage_label.add_theme_font_size_override("font_size", 14)
+	vbox.add_child(crit_damage_label)
 
 func _update_stats_display():
 	"""Update the stats panel with current player stats"""
@@ -325,12 +339,12 @@ func _update_stats_display():
 	# Update strength
 	var str_label = vbox.get_node_or_null("StrengthLabel")
 	if str_label:
-		str_label.text = "Strength: %d" % player_ref.stat_strength
+		str_label.text = "Strength: %d" % player_ref.strength
 	
 	# Update dexterity
 	var dex_label = vbox.get_node_or_null("DexterityLabel")
 	if dex_label:
-		dex_label.text = "Dexterity: %d" % player_ref.stat_dexterity
+		dex_label.text = "Dexterity: %d" % player_ref.dexterity
 	
 	# Update max health
 	var health_label = vbox.get_node_or_null("MaxHealthLabel")
@@ -351,7 +365,17 @@ func _update_stats_display():
 	var stamina_regen_label = vbox.get_node_or_null("StaminaRegenLabel")
 	if stamina_regen_label:
 		stamina_regen_label.text = "Stamina Regeneration: %d every %.1fs" % [player_ref.stamina_regen, player_ref.stamina_regen_interval]
-
+	
+	# Update crit chance
+	var crit_chance_label = vbox.get_node_or_null("CritChanceLabel")
+	if crit_chance_label:
+		crit_chance_label.text = "Crit Chance: %d" % player_ref.crit_chance
+	
+	# Update crit damage
+	var crit_damage_label = vbox.get_node_or_null("CritDamageeLabel")
+	if crit_damage_label:
+		crit_damage_label.text = "Crit Damage: %d" % player_ref.crit_damage
+	
 func _setup_equipment_grid():
 	"""Set up the equipment grid with gaps"""
 	if not equipment_grid:

@@ -4,10 +4,9 @@ class_name EnemyBase
 @onready var audio_vocal: AudioStreamPlayer3D = $AudioVocal
 @onready var audio_combat: AudioStreamPlayer3D = $AudioCombat
 
-# NEW: Loot system using LootTable resource
-@export var loot_table: LootTable
-@export var legacy_item_scenes: Array[PackedScene] = []  # Keep for backwards compatibility
-@export var use_legacy_loot := false  # Toggle between old and new system
+# LEVEL-BASED LOOT SYSTEM
+@export var enemy_level: int = 5  # Determines enemy stats AND loot item levels
+@export var loot_profile: LootProfile  # Profile for this enemy type (goblin, bandit, etc.)
 
 @export var display_name: String = "Enemy"
 @export var max_health := 10
@@ -191,7 +190,6 @@ func take_damage(amount: int, is_crit: bool = false):
 	current_health = max(0, current_health)
 	spawn_damage_number(amount, is_crit)
 	
-	# EMIT SIGNAL - notify tooltip system of HP change
 	health_changed.emit(current_health, max_health)
 	
 	if is_crit:
@@ -240,29 +238,64 @@ func die():
 		timer.start()
 		await timer.timeout
 	else:
-		# Small delay even without audio to ensure loot spawns
 		await get_tree().create_timer(0.1).timeout
 	
-	# EMIT DIED SIGNAL - hide tooltip right before removing enemy
 	died.emit()
-	
 	queue_free()
 
 func spawn_loot():
-	# NEW: Use the LootTable system if available
-	if not use_legacy_loot and loot_table:
-		# Pass spawner_height for enemies (they spawn items higher)
-		LootSpawner.spawn_loot_from_table(loot_table, global_position, get_tree().current_scene, 1.0, 0.5)
-	# LEGACY: Fall back to old item_scenes array
-	elif use_legacy_loot and legacy_item_scenes.size() > 0:
-		spawn_legacy_item()
+	if not loot_profile:
+		return
+	
+	var loot_manager = get_node_or_null("/root/LootManager")
+	if not loot_manager:
+		push_error("LootManager not found! Add it as an autoload singleton.")
+		return
+	
+	# Get player luck stat
+	var player_luck = 0.0
+	if player and player.has_method("get_total_luck"):
+		player_luck = player.get_total_luck()
+	elif player and "luck" in player:
+		player_luck = player.luck
+	
+	# Generate loot based on enemy_level and player_luck
+	var loot_data = loot_manager.generate_loot(enemy_level, loot_profile, player_luck)
+	
+	for item_data in loot_data:
+		_spawn_loot_item(item_data)
 
-func spawn_legacy_item():
-	# Old system kept for backwards compatibility
-	if legacy_item_scenes.size() > 0:
-		var random_item = legacy_item_scenes[randi() % legacy_item_scenes.size()]
-		var item_instance = random_item.instantiate()
+func _spawn_loot_item(item_data: Dictionary):
+	var item: LootItem = item_data["item"]
+	var item_level: int = item_data["item_level"]
+	var item_quality: int = item_data["item_quality"]
+	var item_value: int = item_data["item_value"]
+	
+	if not item.item_scene:
+		push_warning("No scene set for item: %s" % item.item_name)
+		return
+	
+	var loot_instance = item.item_scene.instantiate()
+	
+	# Set up the item before adding to scene
+	if loot_instance is BaseItem:
+		# Copy base properties from LootItem resource
+		loot_instance.item_name = item.item_name
+		loot_instance.item_icon = item.icon
+		loot_instance.item_type = item.item_type
+		loot_instance.weight = item.weight
+		loot_instance.stackable = item.stackable
+		loot_instance.max_stack_size = item.max_stack_size
 		
-		if item_instance is Node3D:
-			get_tree().current_scene.add_child(item_instance)
-			item_instance.global_position = global_position + Vector3(0, 0.5, 0)
+		# Set rolled properties (level, quality, value)
+		loot_instance.item_level = item_level
+		loot_instance.item_quality = item_quality
+		loot_instance.value = item_value
+	
+	# Add to scene and position
+	get_tree().current_scene.add_child(loot_instance)
+	loot_instance.global_position = global_position + Vector3(0, 0.5, 0)
+	
+	# Call set_item_properties after it's in the tree (so label exists)
+	if loot_instance.has_method("set_item_properties"):
+		loot_instance.set_item_properties(item_level, item_quality, item_value)
