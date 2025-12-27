@@ -19,7 +19,7 @@ signal gold_changed(amount)
 signal encumbered_status_changed(is_encumbered)
 
 func _ready():
-	# Calculate hard max weight
+	# Calculate hard max mass
 	hard_max_mass = soft_max_mass * 1.1
 	
 	# Initialize items array with nulls for all slots
@@ -103,7 +103,7 @@ func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene
 			"name": item_name,
 			"icon": icon,
 			"scene": item_scene,
-			"mass": item_mass,
+			"mass": item_mass,  # Changed from 'weight' to 'mass'
 			"value": item_value,
 			"stackable": is_stackable,
 			"max_stack_size": max_stack,
@@ -212,19 +212,19 @@ func get_items() -> Array:
 func clear():
 	items.clear()
 	inventory_changed.emit()
-	mass_changed.emit(get_total_mass(), soft_max_mass)
+	weight_changed.emit(get_total_weight(), soft_max_weight)
 
-func get_total_mass() -> float:
+func get_total_weight() -> float:
 	var total: float = 0.0
 	
-	# Add mass from inventory items
+	# Add weight from inventory items
 	for item in items:
 		if item != null and item.has("mass"):
 			var item_mass = item.mass
 			var count = item.get("stack_count", 1)
 			total += item_mass * count
 	
-	# Add mass from equipped items
+	# Add weight from equipped items
 	if has_node("/root/Equipment"):
 		var equipped_items = Equipment.get_items()
 		for item in equipped_items:

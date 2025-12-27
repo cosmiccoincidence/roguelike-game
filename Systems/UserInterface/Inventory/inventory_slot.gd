@@ -237,7 +237,7 @@ func _drop_on_slot():
 		Equipment.set_item_at_slot(slot_index, item_from_inventory)
 		Inventory.items[dragged_from_slot_index] = item_from_equipment
 		Inventory.inventory_changed.emit()
-		Inventory._update_mass_signals()
+		Inventory._update_weight_signals()
 	elif original_is_equipment and not target_is_equipment:
 		# Equipment to Inventory - move item (inventory has no restrictions)
 		var item_from_equipment = Equipment.get_item_at_slot(dragged_from_slot_index)
@@ -254,7 +254,7 @@ func _drop_on_slot():
 		Inventory.items[slot_index] = item_from_equipment
 		Equipment.set_item_at_slot(dragged_from_slot_index, item_from_inventory)
 		Inventory.inventory_changed.emit()
-		Inventory._update_mass_signals()
+		Inventory._update_weight_signals()
 	
 	# Clean up drag state
 	_end_drag()
