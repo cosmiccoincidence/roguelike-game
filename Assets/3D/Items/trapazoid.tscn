@@ -49,8 +49,8 @@ script = ExtResource("1_n8dup")
 item_name = "Trapazoid"
 item_icon = ExtResource("2_03c86")
 item_type = "Belt"
-weight = 2.5
-value = 50
+mass = 5.0
+value = 5
 
 [node name="ItemBlue" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.045, 0)

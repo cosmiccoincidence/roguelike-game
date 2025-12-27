@@ -87,9 +87,9 @@ func _roll_single_item(enemy_level: int, profile: LootProfile, player_luck: floa
 	# Roll item quality based on player luck
 	var item_quality = ItemQuality.roll_quality(player_luck)
 	
-	# Calculate final value: base_value * (item_level * 0.1) * quality_mod
+	# Calculate final value: base_value * (item_level) * quality_mod
 	var quality_mod = ItemQuality.get_value_modifier(item_quality)
-	var final_value = int(selected_item.base_value * (item_level * 0.1) * quality_mod)
+	var final_value = int(selected_item.base_value * (item_level) * quality_mod)
 	
 	return {
 		"item": selected_item,

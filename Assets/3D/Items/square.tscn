@@ -49,9 +49,8 @@ script = ExtResource("1_ar7ek")
 item_name = "Square"
 item_icon = ExtResource("2_ja1il")
 item_type = "Helmet"
+mass = 3.0
 value = 3
-stackable = null
-max_stack_size = null
 
 [node name="ItemSquare" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.045, 0)
