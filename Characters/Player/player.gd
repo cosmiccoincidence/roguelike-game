@@ -38,12 +38,20 @@ const ENCUMBERED_ROTATION_MULT: float = 0.75  # 75% rotation speed
 
 # ===== COMBAT STATS =====
 @export_group("Combat")
+@export var base_damage := 5  # Base weapon damage
+@export var base_armor := 5  # Base armor/defense
+@export var base_attack_range := 1.5  # Base attack range in tiles
+@export var base_attack_speed := 1.0  # Base attack speed multiplier (1.0 = normal)
 @export var base_crit_chance := 0.1  # 10% base crit chance
-@export var base_crit_multiplier: float = 1.0
+@export var base_crit_multiplier: float = 2.0  # 2x damage on crit
 
 # Calculated combat stats (modified by gear/buffs/god mode)
+var damage: int = 5
+var armor: int = 5
+var attack_range: float = 1.5
+var attack_speed: float = 1.0
 var crit_chance: float = 0.1
-var crit_multiplier: float = 1.0
+var crit_multiplier: float = 2.0
 
 # ===== MOVEMENT =====
 @export_group("Movement")
@@ -133,9 +141,18 @@ func _update_combat_stats():
 	if god_mode:
 		crit_chance = GOD_CRIT_CHANCE
 		crit_multiplier = base_crit_multiplier * GOD_CRIT_MULT
+		# God mode doesn't change damage/armor/range/speed for now
+		damage = base_damage
+		armor = base_armor
+		attack_range = base_attack_range
+		attack_speed = base_attack_speed
 	else:
 		# TODO: Add equipment bonuses
 		# TODO: Add buff bonuses
+		damage = base_damage
+		armor = base_armor
+		attack_range = base_attack_range
+		attack_speed = base_attack_speed
 		crit_chance = base_crit_chance
 		crit_multiplier = base_crit_multiplier
 
@@ -178,7 +195,14 @@ func take_damage(amount: int):
 		print("God Mode: Damage blocked")
 		return
 	
-	current_health = max(0, current_health - amount)
+	# Apply armor reduction
+	# Formula: damage_taken = max(1, damage - armor)
+	var damage_taken = max(1, amount - armor)
+	
+	current_health = max(0, current_health - damage_taken)
+	
+	print("Player took %d damage (%d reduced by %d armor)" % [damage_taken, amount, armor])
+	
 	if hud:
 		hud.update_health(current_health, max_health)
 	
@@ -355,7 +379,10 @@ func _update_camera_global():
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body.is_in_group("enemy"):
-		nearby_enemy = body
+		# Check if enemy is within attack range
+		var distance = global_position.distance_to(body.global_position)
+		if distance <= attack_range:
+			nearby_enemy = body
 
 func _on_area_3d_body_exited(body: Node3D) -> void:
 	if body == nearby_enemy:
@@ -430,18 +457,23 @@ func _input(event):
 	# Attack
 	if event.is_action_pressed("attack"):
 		if nearby_enemy:
-			var base_damage = 5
-			var is_crit = randf() < crit_chance
-			var final_damage = base_damage
-			
-			if is_crit:
-				final_damage = int(base_damage * crit_multiplier)
-				print("Player CRITICAL HIT: ", final_damage)
+			# Check if still in range (enemy might have moved)
+			var distance = global_position.distance_to(nearby_enemy.global_position)
+			if distance <= attack_range:
+				var is_crit = randf() < crit_chance
+				var final_damage = damage
+				
+				if is_crit:
+					final_damage = int(damage * crit_multiplier)
+					print("Player CRITICAL HIT: %d damage" % final_damage)
+				else:
+					print("Player hit for %d damage" % final_damage)
+				
+				nearby_enemy.take_damage(final_damage, is_crit)
+				play_combat("hit")
 			else:
-				print("Player damage: ", final_damage)
-			
-			nearby_enemy.take_damage(final_damage, is_crit)
-			play_combat("hit")
+				print("Enemy out of range (%.1f / %.1f)" % [distance, attack_range])
+				play_combat("attack")
 		else:
 			play_combat("attack")
 	
