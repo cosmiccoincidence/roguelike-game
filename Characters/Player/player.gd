@@ -8,7 +8,7 @@ const JUMP_VELOCITY = 4.5
 # God Mode buffs
 const GOD_SPEED_MULT := 2.0
 const GOD_CRIT_CHANCE := 1.0  # 100% crit in god mode
-const GOD_CRIT_MULT := 3.0  # 3x damage multiplier in god mode
+const GOD_CRIT_MULT := 2.0  # 2x damage multiplier in god mode
 
 # Encumbered penalties (only applied when not in god mode)
 const ENCUMBERED_SPEED_MULT: float = 0.2  # 20% speed
@@ -43,7 +43,7 @@ const ENCUMBERED_ROTATION_MULT: float = 0.75  # 75% rotation speed
 @export var base_attack_range := 1.5  # Base attack range in tiles
 @export var base_attack_speed := 1.0  # Base attack speed multiplier (1.0 = normal)
 @export var base_crit_chance := 0.1  # 10% base crit chance
-@export var base_crit_multiplier: float = 2.0  # 2x damage on crit
+@export var base_crit_multiplier: float = 1.0  # 1x damage on crit
 
 # Calculated combat stats (modified by gear/buffs/god mode)
 var damage: int = 5
@@ -51,7 +51,7 @@ var armor: int = 5
 var attack_range: float = 1.5
 var attack_speed: float = 1.0
 var crit_chance: float = 0.1
-var crit_multiplier: float = 2.0
+var crit_multiplier: float = 1.0
 
 # ===== MOVEMENT =====
 @export_group("Movement")
