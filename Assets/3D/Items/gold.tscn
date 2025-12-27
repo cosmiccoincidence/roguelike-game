@@ -185,9 +185,10 @@ script = ExtResource("1_6w5xx")
 item_name = "Gold"
 item_icon = ExtResource("2_khxwe")
 item_type = "Gold"
+mass = 0.0
 value = 1
 stackable = true
-max_stack_size = 100000
+max_stack_size = 1000000
 
 [node name="ItemGold" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_6w5xx")
