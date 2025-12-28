@@ -1,13 +1,27 @@
 extends EnemyBase
+# Enemy2.gd
 
 @export var grunt_sfx: AudioStream
 @export var attack_sfx: AudioStream
 @export var hit_sfx: AudioStream
 
-# Enemy 2
 func _ready():
-	max_health = 25
-	damage_amount = 5
+	# Set base enemy level (0 = normal, +1 = slightly harder, +2 = elite, etc.)
+	base_enemy_level = 1
+	
+	# Set BASE stats (these will be scaled by enemy_level)
+	# enemy_level is now calculated as: map_level + base_enemy_level
+	base_max_health = 20
+	base_damage = 5
+	health_per_level = 3  # +2 HP per level
+	damage_per_level = 1  # +0.5 damage per level (rounds down)
+	
+	# If enemy_level was already set by map generator, scale stats now
+	# Otherwise, use default enemy_level (5) from EnemyBase
+	if enemy_level > 0:
+		scale_stats_to_level()
+	
+	# Other stats (not level-dependent)
 	crit_chance = 0.1
 	crit_multiplier = 2.0
 	
@@ -19,8 +33,8 @@ func _ready():
 	attack_range = 2.5
 	move_speed = 8.0
 	attack_cooldown = 0.5
-
-	# Uncomment sounds if you want to override them
+	
+	# Sounds (optional overrides)
 	vocal_sounds = {
 		#"grunt": grunt_sfx
 	}
@@ -28,5 +42,5 @@ func _ready():
 		#"attack": attack_sfx,
 		#"hit": hit_sfx
 	}
-
+	
 	super._ready()

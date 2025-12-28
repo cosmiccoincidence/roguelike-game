@@ -6,6 +6,7 @@ class_name HoverTooltipUI
 
 @onready var tooltip_panel: PanelContainer = $TooltipPanel
 @onready var name_label: Label = $TooltipPanel/VBoxContainer/NameLabel
+@onready var level_label: Label = $TooltipPanel/VBoxContainer/LevelLabel
 @onready var hp_label: Label = $TooltipPanel/VBoxContainer/HPLabel
 
 var tooltip_manager: HoverTooltipManager
@@ -24,6 +25,10 @@ func _ready():
 	
 	if not name_label:
 		push_error("HoverTooltipUI: name_label is null! Expected 'TooltipPanel/VBoxContainer/NameLabel'")
+		return
+	
+	if not level_label:
+		push_error("HoverTooltipUI: level_label is null! Expected 'TooltipPanel/VBoxContainer/LevelLabel'")
 		return
 	
 	if not hp_label:
@@ -132,15 +137,23 @@ func _on_tooltip_requested(target_node: Node3D, tooltip_data: Dictionary):
 	else:
 		name_label.text = "Unknown"
 	
-	# Show HP for enemies
+	# Show level for enemies
 	if tooltip_data.get("type") == "enemy":
+		if tooltip_data.has("level"):
+			level_label.text = "Level %d" % tooltip_data["level"]
+			level_label.visible = true
+		else:
+			level_label.visible = false
+		
+		# Show HP for enemies
 		if tooltip_data.has("current_hp") and tooltip_data.has("max_hp"):
 			hp_label.text = "HP: %d/%d" % [tooltip_data["current_hp"], tooltip_data["max_hp"]]
 			hp_label.visible = true
 		else:
 			hp_label.visible = false
 	else:
-		# Hide HP for NPCs
+		# Hide level and HP for NPCs
+		level_label.visible = false
 		hp_label.visible = false
 	
 	# Show tooltip

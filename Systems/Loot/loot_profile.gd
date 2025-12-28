@@ -4,7 +4,8 @@ class_name LootProfile
 
 # Item type filtering - which types of items can drop
 @export_group("Item Type Filtering")
-@export var allowed_item_types: Array[String] = []  # If empty, allows all types
+@export var item_type_pool: Array[LootItemType] = []  # Pool of item types that can drop (with weights)
+@export var allowed_item_types: Array[String] = []  # If empty, allows all types (legacy support)
 @export var excluded_item_types: Array[String] = []  # Blacklist specific types
 
 # Drop quantity
@@ -12,9 +13,6 @@ class_name LootProfile
 @export var min_drops: int = 1
 @export var max_drops: int = 3
 @export var drop_chance: float = 1.0  # 0.0-1.0, chance that ANY loot drops
-
-# Item level variance
-@export_group("Level Variance")
 @export var level_variance: int = 2  # ±variance from enemy_level (e.g., enemy lv10 drops items lv8-12)
 
 # Optional tag filtering

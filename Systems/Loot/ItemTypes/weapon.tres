@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="LootItemType" load_steps=2 format=3 uid="uid://bt35qw0i8hw81"]
+
+[ext_resource type="Script" uid="uid://47oxr4cv0gf0" path="res://Systems/Loot/loot_item_type.gd" id="1_sv4l3"]
+
+[resource]
+script = ExtResource("1_sv4l3")
+type_name = "weapon"
+display_name = "Weapon"
+metadata/_custom_type_script = "uid://47oxr4cv0gf0"

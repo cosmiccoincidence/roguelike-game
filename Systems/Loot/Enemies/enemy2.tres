@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="LootProfile" load_steps=2 format=3 uid="uid://dp1vamq3q3bdt"]
+[gd_resource type="Resource" script_class="LootProfile" load_steps=3 format=3 uid="uid://dp1vamq3q3bdt"]
 
+[ext_resource type="Script" uid="uid://47oxr4cv0gf0" path="res://Systems/Loot/loot_item_type.gd" id="1_7sn2l"]
 [ext_resource type="Script" uid="uid://dly44gmovhexn" path="res://Systems/Loot/loot_profile.gd" id="1_ri3i2"]
 
 [resource]

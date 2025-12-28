@@ -1,8 +1,9 @@
 extends BaseFurniture
 class_name Chest
 
-# NEW LOOT SYSTEM
-@export var chest_level: int = 5  # Determines item levels dropped
+# LEVEL-BASED LOOT SYSTEM
+@export var base_chest_level: int = 0  # Base level offset (0 = normal, +1 = better loot, etc.)
+@export var chest_level: int = 5  # Final calculated level (map_level + base_chest_level)
 @export var loot_profile: LootProfile  # Profile for this chest type
 
 @export var open_sound: AudioStream
@@ -51,6 +52,11 @@ func _ready():
 		audio_player.name = "AudioStreamPlayer3D"
 		add_child(audio_player)
 
+# Called by map generator to set chest level based on map level
+func set_level_from_map(map_level: int):
+	chest_level = map_level + base_chest_level
+	print("Chest set to level ", chest_level, " (map: ", map_level, " + base: ", base_chest_level, ")")
+
 func _physics_process(_delta):
 	if not is_open and check_interaction():
 		open_chest()
@@ -73,7 +79,7 @@ func open_chest():
 	# Spawn loot using new system
 	spawn_loot()
 	
-	print("Chest opened!")
+	print("Chest opened! (Level ", chest_level, ")")
 
 func spawn_loot():
 	if not loot_profile:
@@ -104,6 +110,7 @@ func _spawn_loot_item(item_data: Dictionary):
 	var item_level: int = item_data["item_level"]
 	var item_quality: int = item_data["item_quality"]
 	var item_value: int = item_data["item_value"]
+	var stack_size: int = item_data.get("stack_size", 1)
 	
 	if not item.item_scene:
 		push_warning("No scene set for item: %s" % item.item_name)
@@ -125,6 +132,10 @@ func _spawn_loot_item(item_data: Dictionary):
 		loot_instance.item_level = item_level
 		loot_instance.item_quality = item_quality
 		loot_instance.value = item_value
+		
+		# Set stack size if stackable
+		if item.stackable:
+			loot_instance.stack_count = stack_size
 	
 	# Add to scene and position (spawn items around the chest)
 	get_tree().current_scene.add_child(loot_instance)

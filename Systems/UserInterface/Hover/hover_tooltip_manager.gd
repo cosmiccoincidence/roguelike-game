@@ -163,6 +163,7 @@ func get_tooltip_data(target: Node3D) -> Dictionary:
 		data["type"] = "enemy"
 		data["current_hp"] = target.get("current_health")
 		data["max_hp"] = target.get("max_health")
+		data["level"] = target.get("enemy_level") if target.get("enemy_level") else 1
 		return data
 	
 	# NPC

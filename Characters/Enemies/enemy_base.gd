@@ -5,8 +5,15 @@ class_name EnemyBase
 @onready var audio_combat: AudioStreamPlayer3D = $AudioCombat
 
 # LEVEL-BASED LOOT SYSTEM
-@export var enemy_level: int = 5  # Determines enemy stats AND loot item levels
+@export var base_enemy_level: int = 0  # Base level offset for this enemy type (e.g., elite = +2)
+@export var enemy_level: int = 5  # Final calculated level (map_level + base_enemy_level)
 @export var loot_profile: LootProfile  # Profile for this enemy type (goblin, bandit, etc.)
+
+# Base stats (these get scaled by level)
+@export var base_max_health := 10
+@export var base_damage := 2
+@export var health_per_level := 2  # HP gain per level
+@export var damage_per_level := 0.5  # Damage gain per level
 
 @export var display_name: String = "Enemy"
 @export var max_health := 10
@@ -56,6 +63,19 @@ func _ready():
 	current_health = max_health
 	
 	player = get_tree().get_first_node_in_group("player")
+
+# Called by map generator to set enemy level based on map level
+func set_level_from_map(map_level: int):
+	enemy_level = map_level + base_enemy_level
+	scale_stats_to_level()
+
+# Scale stats based on enemy_level
+func scale_stats_to_level():
+	max_health = base_max_health + int(health_per_level * (enemy_level - 1))
+	damage_amount = base_damage + int(damage_per_level * (enemy_level - 1))
+	current_health = max_health
+	
+	print(display_name, " scaled to level ", enemy_level, " - HP: ", max_health, ", Damage: ", damage_amount)
 
 func _physics_process(delta):
 	if is_dying:

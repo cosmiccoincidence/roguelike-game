@@ -6,6 +6,7 @@ extends RefCounted
 # References
 var map_generator: GridMap
 var world_node: Node  # Parent node to add furniture to
+var parent_map_gen: CoreMapGen  # Reference to parent map generator for map_level access
 
 # Furniture configs (type -> FurnitureSpawnConfig)
 var furniture_configs: Dictionary = {}
@@ -165,6 +166,18 @@ func spawn_furniture_with_rotation(grid_pos: Vector3i, scene: PackedScene, rotat
 		
 		# Add to world
 		world_node.add_child(furniture_instance)
+		
+		# SET CHEST LEVEL IF THIS IS A CHEST
+		if type_name == "chest":
+			if parent_map_gen and "map_level" in parent_map_gen:
+				if furniture_instance.has_method("set_level_from_map"):
+					furniture_instance.set_level_from_map(parent_map_gen.map_level)
+				elif "chest_level" in furniture_instance:
+					var base_level = 0
+					if "base_chest_level" in furniture_instance:
+						base_level = furniture_instance.base_chest_level
+					furniture_instance.chest_level = parent_map_gen.map_level + base_level
+					print("Chest scaled to level ", furniture_instance.chest_level)
 		
 		# Track for cleanup
 		spawned_furniture.append(furniture_instance)

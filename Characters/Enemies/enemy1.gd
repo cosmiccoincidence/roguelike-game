@@ -6,14 +6,22 @@ extends EnemyBase
 @export var hit_sfx: AudioStream
 
 func _ready():
-	# Enemy level determines both stats AND loot item levels
-	# If enemy_level = 5, dropped items will be level 10 (5 * 2)
-	# If enemy_level = 25, dropped items will be level 50 (25 * 2)
-	enemy_level = 1  # Set this per-instance or per-area
+	# Set base enemy level (0 = normal, +1 = slightly harder, +2 = elite, etc.)
+	base_enemy_level = 0  # Normal enemy
 	
-	# Stats
-	max_health = 10
-	damage_amount = 2
+	# Set BASE stats (these will be scaled by enemy_level)
+	# enemy_level is now calculated as: map_level + base_enemy_level
+	base_max_health = 10
+	base_damage = 2
+	health_per_level = 1  # +2 HP per level
+	damage_per_level = 0.5  # +0.5 damage per level (rounds down)
+	
+	# If enemy_level was already set by map generator, scale stats now
+	# Otherwise, use default enemy_level (5) from EnemyBase
+	if enemy_level > 0:
+		scale_stats_to_level()
+	
+	# Other stats (not level-dependent)
 	crit_chance = 0.1
 	crit_multiplier = 2.0
 	

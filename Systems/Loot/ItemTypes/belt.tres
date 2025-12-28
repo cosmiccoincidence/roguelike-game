@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="LootItemType" load_steps=2 format=3 uid="uid://dgba5d0u8bwmi"]
+
+[ext_resource type="Script" uid="uid://47oxr4cv0gf0" path="res://Systems/Loot/loot_item_type.gd" id="1_1smkk"]
+
+[resource]
+script = ExtResource("1_1smkk")
+type_name = "belt"
+display_name = "Belt"
+metadata/_custom_type_script = "uid://47oxr4cv0gf0"

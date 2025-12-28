@@ -14,6 +14,12 @@ class_name LootItem
 @export var stackable: bool = false
 @export var max_stack_size: int = 99
 
+# Stack drop configuration (only applies if stackable = true)
+@export_group("Stack Drops")
+@export var min_drop_amount: int = 1  # Minimum stack size when dropped
+@export var max_drop_amount: int = 5  # Maximum stack size when dropped
+@export var scaled_quantity: bool = false  # If true, multiply min/max by enemy_level
+
 # Drop properties
 @export_group("Drop Properties")
 @export var base_weight: float = 1.0  # How common this item is in the loot pool

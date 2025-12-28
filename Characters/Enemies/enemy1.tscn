@@ -24,7 +24,7 @@ script = ExtResource("1_7k104")
 grunt_sfx = ExtResource("2_w4uou")
 attack_sfx = ExtResource("3_7wccd")
 hit_sfx = ExtResource("4_cxc73")
-enemy_level = 10
+enemy_level = 1
 loot_profile = ExtResource("5_7wccd")
 display_name = "Enemy1"
 
