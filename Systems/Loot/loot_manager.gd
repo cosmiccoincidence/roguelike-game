@@ -89,8 +89,8 @@ func _roll_single_item(enemy_level: int, profile: LootProfile, player_luck: floa
 	a. Roll item type (from item_type_pool)
 	b. Get eligible items of that type
 	c. Select specific item (weighted random)
-	d. Roll item level (enemy_level ± variance)
-	e. Roll item quality (based on luck)
+	d. Roll item level (enemy_level ± variance) - SKIPPED for certain types
+	e. Roll item quality (based on luck) - SKIPPED for certain types
 	f. Roll stack size (if stackable)
 	g. Calculate final value
 	"""
@@ -115,14 +115,25 @@ func _roll_single_item(enemy_level: int, profile: LootProfile, player_luck: floa
 	if not selected_item:
 		return {}
 	
+	# Check if this item type should skip level/quality rolls
+	var skip_level_quality = _should_skip_level_quality(selected_item.item_type)
+	
 	# STEP 3d: Calculate item level (enemy_level ± variance)
-	var item_level = enemy_level
-	if profile.level_variance > 0:
-		item_level += randi_range(-profile.level_variance, profile.level_variance)
-	item_level = max(1, item_level)  # Minimum level 1
+	var item_level = 1  # Default level for items that skip this step
+	if skip_level_quality:
+		print("[LOOT MANAGER]   Skipping level roll for item type: %s" % selected_item.item_type)
+	else:
+		item_level = enemy_level
+		if profile.level_variance > 0:
+			item_level += randi_range(-profile.level_variance, profile.level_variance)
+		item_level = max(1, item_level)  # Minimum level 1
 	
 	# STEP 3e: Roll item quality based on player luck
-	var item_quality = ItemQuality.roll_quality(player_luck)
+	var item_quality = ItemQuality.Quality.NORMAL  # Default quality for items that skip this step
+	if skip_level_quality:
+		print("[LOOT MANAGER]   Skipping quality roll for item type: %s" % selected_item.item_type)
+	else:
+		item_quality = ItemQuality.roll_quality(player_luck)
 	
 	# STEP 3f: Calculate stack size if stackable
 	var stack_size = 1
@@ -149,9 +160,13 @@ func _roll_single_item(enemy_level: int, profile: LootProfile, player_luck: floa
 		# Cap at max_stack_size
 		stack_size = min(stack_size, selected_item.max_stack_size)
 	
-	# STEP 3g: Calculate final value: base_value * (item_level * 0.1) * quality_mod
-	var quality_mod = ItemQuality.get_value_modifier(item_quality)
-	var final_value = int(selected_item.base_value * (item_level * 0.1) * quality_mod)
+	# STEP 3g: Calculate final value
+	# For items that skip level/quality, just use base_value
+	var final_value = selected_item.base_value
+	if not skip_level_quality:
+		# Standard calculation: base_value * (item_level * 0.1) * quality_mod
+		var quality_mod = ItemQuality.get_value_modifier(item_quality)
+		final_value = int(selected_item.base_value * (item_level * 0.1) * quality_mod)
 	
 	return {
 		"item": selected_item,
@@ -160,6 +175,21 @@ func _roll_single_item(enemy_level: int, profile: LootProfile, player_luck: floa
 		"item_value": final_value,
 		"stack_size": stack_size
 	}
+
+
+func _should_skip_level_quality(item_type: String) -> bool:
+	"""
+	Determine if an item type should skip level and quality rolls.
+	
+	These item types are not affected by level or quality:
+	- bag: Inventory expansion items
+	- food: Consumable food items
+	- potion: Healing/buff potions
+	- gold: Currency
+	- gemstone: Crafting gems/materials
+	"""
+	var skip_types = ["bag", "food", "potion", "gold", "gemstone"]
+	return item_type.to_lower() in skip_types
 
 
 func _roll_item_type(profile: LootProfile) -> String:
