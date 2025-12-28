@@ -202,14 +202,14 @@ func _roll_item_type(profile: LootProfile) -> String:
 	# Calculate total weight
 	var total_weight = 0.0
 	for item_type in profile.item_type_pool:
-		total_weight += item_type.drop_weight
+		total_weight += item_type.item_type_drop_weight
 	
 	# Weighted random selection
 	var roll = randf() * total_weight
 	var cumulative = 0.0
 	
 	for item_type in profile.item_type_pool:
-		cumulative += item_type.drop_weight
+		cumulative += item_type.item_type_drop_weight
 		if roll <= cumulative:
 			return item_type.type_name
 	
@@ -264,7 +264,7 @@ func _weighted_select(items: Array[LootItem], profile: LootProfile) -> LootItem:
 	var total_weight = 0.0
 	
 	for item in items:
-		var weight = item.base_weight
+		var weight = item.item_drop_weight
 		
 		# Apply tag bonuses
 		for tag in item.item_tags:

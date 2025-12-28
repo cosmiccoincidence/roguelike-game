@@ -76,7 +76,8 @@ points = PackedVector3Array(-0.19195127, -0.043913167, -0.20792668, -0.31275505,
 script = ExtResource("1_uqsxb")
 item_name = "Charm"
 item_icon = ExtResource("2_5hpas")
-item_type = "Charm"
+item_type = "Trinket"
+item_subtype = "Charm"
 mass = 0.5
 value = 20
 

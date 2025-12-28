@@ -48,7 +48,8 @@ points = PackedVector3Array(-0.10002276, -0.04452324, -0.099999994, -0.21658172,
 script = ExtResource("1_7fj0j")
 item_name = "Helmet1"
 item_icon = ExtResource("2_1v8ip")
-item_type = "Helmet"
+item_type = "Armor"
+item_subtype = "Helmet"
 mass = 1.5
 value = 15
 

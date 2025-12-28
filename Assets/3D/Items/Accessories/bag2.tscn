@@ -107,6 +107,7 @@ script = ExtResource("1_sh8o0")
 item_name = "Bag2"
 item_icon = ExtResource("2_xwd6d")
 item_type = "Bag"
+item_subtype = "Bag"
 mass = 0.0
 value = 0
 

@@ -107,6 +107,7 @@ script = ExtResource("1_nrb28")
 item_name = "Stick"
 item_icon = ExtResource("2_uoaee")
 item_type = "Weapon"
+item_subtype = "Weapon"
 
 [node name="ItemStick" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_uoaee")

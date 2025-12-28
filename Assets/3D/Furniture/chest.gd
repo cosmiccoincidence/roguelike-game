@@ -55,7 +55,7 @@ func _ready():
 # Called by map generator to set chest level based on map level
 func set_level_from_map(map_level: int):
 	chest_level = map_level + base_chest_level
-	print("Chest set to level ", chest_level, " (map: ", map_level, " + base: ", base_chest_level, ")")
+	print("Chest scaled to level ", chest_level, " (map: ", map_level, " + base: ", base_chest_level, ")")
 
 func _physics_process(_delta):
 	if not is_open and check_interaction():
@@ -124,6 +124,7 @@ func _spawn_loot_item(item_data: Dictionary):
 		loot_instance.item_name = item.item_name
 		loot_instance.item_icon = item.icon
 		loot_instance.item_type = item.item_type
+		loot_instance.item_subtype = item.item_subtype  # NEW: Copy subtype
 		loot_instance.mass = item.mass
 		loot_instance.stackable = item.stackable
 		loot_instance.max_stack_size = item.max_stack_size

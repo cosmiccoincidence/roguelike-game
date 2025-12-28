@@ -132,7 +132,8 @@ points = PackedVector3Array(0.28359777, 0.008057307, -0.23080385, 0.28126585, 0.
 script = ExtResource("1_ov3u0")
 item_name = "Amulet1"
 item_icon = ExtResource("2_pr0ry")
-item_type = "Amulet"
+item_type = "Accessory"
+item_subtype = "Amulet"
 mass = 1.5
 value = 30
 

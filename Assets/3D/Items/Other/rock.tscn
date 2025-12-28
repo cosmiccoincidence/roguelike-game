@@ -49,6 +49,7 @@ script = ExtResource("1_g1pa6")
 item_name = "Rock"
 item_icon = ExtResource("2_sf0s8")
 item_type = "Gemstone"
+item_subtype = "Gemstone"
 value = 1
 
 [node name="ItemRock" type="MeshInstance3D" parent="."]

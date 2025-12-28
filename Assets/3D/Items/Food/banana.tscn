@@ -49,6 +49,7 @@ script = ExtResource("1_sqog5")
 item_name = "Banana"
 item_icon = ExtResource("2_hpdbq")
 item_type = "Food"
+item_subtype = "Food"
 value = 3
 
 [node name="ItemBanana" type="MeshInstance3D" parent="."]

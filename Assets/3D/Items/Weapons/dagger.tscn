@@ -77,6 +77,7 @@ script = ExtResource("1_gw008")
 item_name = "Dagger"
 item_icon = ExtResource("2_sp60n")
 item_type = "Weapon"
+item_subtype = "Weapon"
 value = 15
 
 [node name="ItemDagger" type="MeshInstance3D" parent="."]

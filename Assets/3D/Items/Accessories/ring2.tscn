@@ -76,7 +76,8 @@ points = PackedVector3Array(-2.347678e-05, -0.020898363, -0.11943162, -0.0457105
 script = ExtResource("1_wpkry")
 item_name = "Ring2"
 item_icon = ExtResource("2_kg1y7")
-item_type = "Ring"
+item_type = "Accessory"
+item_subtype = "Ring"
 mass = 0.5
 value = 35
 

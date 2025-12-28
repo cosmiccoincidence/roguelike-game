@@ -4,6 +4,7 @@ class_name BaseItem
 @export var item_name: String = "Item"
 @export var item_icon: Texture2D
 @export var item_type: String = ""  # Type: helmet, weapon, armor, ring, etc.
+@export var item_subtype: String = ""  # NEW: Subtype: sword, axe, chest, boots, health_potion, etc.
 @export var mass: float = 1.0
 @export var value: int = 10
 @export var stackable: bool = false
@@ -216,12 +217,19 @@ func set_item_properties(level: int, quality: int, final_value: int):
 	# FUTURE: Roll stats based on item_level and quality
 	# roll_item_stats()
 
-# FUTURE: Roll randomized stats based on item_level
+# FUTURE: Roll randomized stats based on item_level and item_subtype
 func roll_item_stats():
 	# Example: Higher item_level = better stats
-	# rolled_stats["damage"] = base_damage + (item_level * damage_per_level) + randi_range(-variance, variance)
-	# rolled_stats["armor"] = base_armor + (item_level * armor_per_level)
-	# etc.
+	# Can use item_subtype to determine which stats to roll:
+	# if item_type == "weapon":
+	#     match item_subtype:
+	#         "sword": roll_sword_stats()
+	#         "axe": roll_axe_stats()
+	#         "dagger": roll_dagger_stats()
+	# elif item_type == "armor":
+	#     match item_subtype:
+	#         "helmet": roll_helmet_stats()
+	#         "chest": roll_chest_stats()
 	pass
 
 func pickup():
@@ -247,8 +255,9 @@ func pickup():
 		max_stack_size, 
 		stack_count, 
 		item_type,
-		item_level,  # NEW: Pass item level
-		item_quality  # NEW: Pass item quality
+		item_level,  # Pass item level
+		item_quality,  # Pass item quality
+		item_subtype  # Pass item subtype
 	):
 		queue_free()
 	else:

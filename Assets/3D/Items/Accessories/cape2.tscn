@@ -48,7 +48,8 @@ points = PackedVector3Array(0.23006977, 0.04452324, 0.5190109, 0.23006977, -0.04
 script = ExtResource("1_ksctg")
 item_name = "Cape2"
 item_icon = ExtResource("2_4418t")
-item_type = "Cape"
+item_type = "Accessory"
+item_subtype = "Cape"
 value = 30
 
 [node name="ItemCape2" type="MeshInstance3D" parent="."]

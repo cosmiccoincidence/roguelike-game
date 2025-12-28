@@ -49,6 +49,7 @@ script = ExtResource("1_crmt6")
 item_name = "Gemstone1"
 item_icon = ExtResource("2_8kqsk")
 item_type = "Gemstone"
+item_subtype = "Gemstone"
 mass = 0.5
 value = 30
 

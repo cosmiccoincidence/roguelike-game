@@ -79,6 +79,7 @@ script = ExtResource("1_3kuh6")
 item_name = "Axe"
 item_icon = ExtResource("2_67lpc")
 item_type = "Weapon"
+item_subtype = "Weapon"
 mass = 2.5
 value = 25
 

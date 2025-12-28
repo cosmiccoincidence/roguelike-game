@@ -78,7 +78,8 @@ points = PackedVector3Array(-4.337728e-05, -0.16647415, -0.221557, -4.337728e-05
 script = ExtResource("1_jom3r")
 item_name = "Mana Potion"
 item_icon = ExtResource("2_sho4m")
-item_type = "Potion"
+item_type = "Potions"
+item_subtype = "Potions"
 value = 15
 
 [node name="ItemPotionHealth" type="MeshInstance3D" parent="."]

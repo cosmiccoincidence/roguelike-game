@@ -106,7 +106,8 @@ points = PackedVector3Array(-8.279085e-05, -0.020898363, -0.12402662, -0.1611991
 script = ExtResource("1_7od1h")
 item_name = "Belt2"
 item_icon = ExtResource("2_eiiao")
-item_type = "Belt"
+item_type = "Armor"
+item_subtype = "Belt"
 value = 35
 
 [node name="ItemBelt2" type="MeshInstance3D" parent="."]

@@ -50,7 +50,7 @@ func _update_mass_signals():
 	mass_changed.emit(current_mass, soft_max_mass)
 	encumbered_status_changed.emit(is_encumbered())
 
-func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene = null, item_mass: float = 1.0, item_value: int = 10, is_stackable: bool = false, max_stack: int = 99, amount: int = 1, item_type: String = "", item_level: int = 1, item_quality: int = 1) -> bool:
+func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene = null, item_mass: float = 1.0, item_value: int = 10, is_stackable: bool = false, max_stack: int = 99, amount: int = 1, item_type: String = "", item_level: int = 1, item_quality: int = 1, item_subtype: String = "") -> bool:
 	# Special handling for gold - add directly to gold counter
 	if item_name.to_lower() == "gold" or item_name.to_lower() == "coin":
 		add_gold(amount)
@@ -110,7 +110,8 @@ func add_item(item_name: String, icon: Texture2D = null, item_scene: PackedScene
 			"stack_count": stack_size,
 			"item_type": item_type,
 			"item_level": item_level,  # Store item level
-			"item_quality": item_quality  # Store item quality
+			"item_quality": item_quality,  # Store item quality
+			"item_subtype": item_subtype  # NEW: Store item subtype
 		}
 		
 		amount -= stack_size
@@ -170,6 +171,10 @@ func drop_item_at_slot(slot_index: int):
 							item_instance.item_quality = item.item_quality
 						if item.has("value"):
 							item_instance.value = item.value
+						
+						# NEW: Restore item subtype
+						if item.has("item_subtype"):
+							item_instance.item_subtype = item.item_subtype
 						
 						# Set stack count if item is stackable
 						if item.get("stackable", false) and item.get("stack_count", 1) > 1:

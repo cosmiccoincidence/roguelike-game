@@ -107,6 +107,7 @@ script = ExtResource("1_pwmju")
 item_name = "Bag1"
 item_icon = ExtResource("2_hcan3")
 item_type = "Bag"
+item_subtype = "Bag"
 mass = 0.0
 value = 0
 
