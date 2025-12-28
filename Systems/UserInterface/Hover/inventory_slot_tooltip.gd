@@ -2,7 +2,7 @@ extends Control
 class_name InventorySlotTooltip
 
 ## Tooltip that appears when hovering over inventory slots
-## Shows item name, level, quality, value, type, and mass
+## Shows item name, level, quality, value, type, subtype, and mass
 
 var tooltip_panel: PanelContainer = null
 var item_label: RichTextLabel = null
@@ -126,6 +126,11 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	var item_type = item_data.get("item_type", "")
 	if item_type != "":
 		lines.append("[center][color=darkgray]Type: %s[/color][/center]" % item_type)
+	
+	# Subtype - gray color, separate line
+	var item_subtype = item_data.get("item_subtype", "")
+	if item_subtype != "":
+		lines.append("[center][color=darkgray]Subtype: %s[/color][/center]" % item_subtype)
 	
 	# Item level - below name, white color
 	var item_level = item_data.get("item_level", 1)

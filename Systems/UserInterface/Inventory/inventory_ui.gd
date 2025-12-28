@@ -1,8 +1,9 @@
+# inventory_ui.gd
 extends Control
 
 # ===== NODE REFERENCES =====
 @onready var grid_container: GridContainer = $InventoryPanel/InventoryGrid
-@onready var equipment_grid: GridContainer = $EquipmentPanel/EquipmentGrid
+@onready var equipment_ui: Panel = $EquipmentPanel  # Now handled by equipment_ui.gd
 @onready var stats_panel: Panel = $StatsPanel
 @onready var mass_label: Label = $MassLabel
 @onready var gold_label: Label = $GoldLabel
@@ -15,33 +16,6 @@ const SLOT_SCENE_PATH = "res://Systems/UserInterface/Inventory/inventory_slot.ts
 var slot_size: int = 64
 var rows: int = 0  # Calculated from Inventory.max_slots
 var columns: int = 5 # Fixed number of columns
-
-# Equipment grid (4 columns x 5 rows with gaps)
-var equipment_columns: int = 4
-var equipment_rows: int = 5
-
-# Equipment slot gaps (indices to skip in grid)
-var equipment_skip_slots: Array = [
-	1, 5, 9, 13, 17,  # Entire 2nd column
-	10, 11            # Row 3 positions 3 and 4
-]
-
-# Equipment slot names (in order of actual slots, not grid positions)
-var equipment_slot_names: Array = [
-	"Helmet",    # Slot 0
-	"Amulet",    # Slot 1
-	"Bag",       # Slot 2
-	"Armor",     # Slot 3
-	"Ring 1",    # Slot 4
-	"Ring 2",    # Slot 5
-	"Belt",      # Slot 6
-	"Gloves",    # Slot 7
-	"L Hand 1",  # Slot 8
-	"R Hand 1",  # Slot 9
-	"Boots",     # Slot 10
-	"L Hand 2",  # Slot 11
-	"R Hand 2"   # Slot 12
-]
 
 # ===== STATE =====
 var player_ref: CharacterBody3D = null
@@ -56,6 +30,10 @@ func _ready():
 	# Setup tooltip manager
 	_setup_tooltip_manager()
 	
+	# Pass tooltip to equipment UI
+	if equipment_ui and equipment_ui.has_method("set_tooltip_manager"):
+		equipment_ui.set_tooltip_manager(slot_tooltip)
+	
 	# Make panels transparent
 	_setup_transparent_panels()
 	
@@ -68,9 +46,6 @@ func _ready():
 	# Setup inventory grid
 	_setup_inventory_grid(slot_scene)
 	
-	# Setup equipment grid
-	_setup_equipment_grid(slot_scene)
-	
 	# Connect signals
 	_connect_signals()
 	
@@ -81,7 +56,6 @@ func _ready():
 	_update_inventory()
 	_update_mass_display(Inventory.get_total_mass(), Inventory.soft_max_mass)
 	_update_gold_display(Inventory.get_gold())
-	_update_equipment()
 	
 	# Start hidden
 	hide()
@@ -103,7 +77,7 @@ func _setup_tooltip_manager():
 			push_warning("Could not load inventory_slot_tooltip.gd - tooltips will not work")
 
 func _setup_transparent_panels():
-	"""Make inventory and equipment panels transparent"""
+	"""Make inventory panel transparent"""
 	var transparent_style = StyleBoxFlat.new()
 	transparent_style.bg_color = Color(0, 0, 0, 0)
 	
@@ -111,11 +85,6 @@ func _setup_transparent_panels():
 	if panel:
 		panel.add_theme_stylebox_override("panel", transparent_style)
 		panel.mouse_filter = Control.MOUSE_FILTER_PASS
-	
-	var equipment_panel = $EquipmentPanel
-	if equipment_panel:
-		equipment_panel.add_theme_stylebox_override("panel", transparent_style)
-		equipment_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 
 func _setup_inventory_grid(slot_scene: PackedScene):
 	"""Create inventory slots"""
@@ -137,78 +106,11 @@ func _setup_inventory_grid(slot_scene: PackedScene):
 		if slot.has_method("set_tooltip_manager") and slot_tooltip:
 			slot.set_tooltip_manager(slot_tooltip)
 
-func _setup_equipment_grid(slot_scene: PackedScene):
-	"""Create equipment grid with gaps"""
-	if not equipment_grid:
-		return
-	
-	equipment_grid.columns = equipment_columns
-	equipment_grid.mouse_filter = Control.MOUSE_FILTER_PASS
-	
-	var equipment_slot_index = 0
-	
-	for i in range(equipment_columns * equipment_rows):
-		if i in equipment_skip_slots:
-			# Create spacer for gap
-			var spacer = Control.new()
-			spacer.custom_minimum_size = Vector2(slot_size, slot_size)
-			spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			equipment_grid.add_child(spacer)
-		else:
-			# Create equipment slot
-			var slot = slot_scene.instantiate()
-			if not slot:
-				continue
-			
-			slot.set_mouse_filter(Control.MOUSE_FILTER_STOP)
-			slot.mouse_filter = Control.MOUSE_FILTER_STOP
-			slot.custom_minimum_size = Vector2(slot_size, slot_size)
-			slot.slot_index = equipment_slot_index
-			slot.set_meta("is_equipment_slot", true)
-			slot.add_to_group("equipment_slots")
-			equipment_grid.add_child(slot)
-			
-			# Add slot name label
-			if equipment_slot_index < equipment_slot_names.size():
-				_add_slot_name_label(slot, equipment_slot_names[equipment_slot_index])
-			
-			if slot.has_method("set_tooltip_manager") and slot_tooltip:
-				slot.set_tooltip_manager(slot_tooltip)
-			
-			equipment_slot_index += 1
-
-func _add_slot_name_label(slot: Control, slot_name: String):
-	"""Add name label to equipment slot"""
-	var slot_name_label = Label.new()
-	slot_name_label.name = "SlotNameLabel"
-	slot_name_label.text = slot_name
-	slot_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	slot_name_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-	slot_name_label.add_theme_font_size_override("font_size", 10)
-	slot_name_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.5))
-	slot_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	
-	slot_name_label.anchor_left = 0
-	slot_name_label.anchor_top = 0
-	slot_name_label.anchor_right = 1
-	slot_name_label.anchor_bottom = 0
-	slot_name_label.offset_left = 2
-	slot_name_label.offset_top = 2
-	slot_name_label.offset_right = -2
-	slot_name_label.offset_bottom = 14
-	
-	slot.add_child(slot_name_label)
-
 func _connect_signals():
-	"""Connect to inventory and equipment signals"""
+	"""Connect to inventory signals"""
 	Inventory.inventory_changed.connect(_update_inventory)
 	Inventory.mass_changed.connect(_update_mass_display)
 	Inventory.gold_changed.connect(_update_gold_display)
-	
-	if has_node("/root/Equipment"):
-		Equipment.equipment_changed.connect(_update_equipment)
-	else:
-		push_warning("Equipment singleton not found - add equipment.gd to AutoLoad as 'Equipment'")
 
 func _setup_player_reference():
 	"""Get player reference and setup stats panel"""
@@ -216,6 +118,10 @@ func _setup_player_reference():
 	if not player_ref:
 		push_warning("Player not found - stats panel will not update")
 		return
+	
+	# Pass player reference to equipment UI
+	if equipment_ui and "player_ref" in equipment_ui:
+		equipment_ui.player_ref = player_ref
 	
 	if stats_panel:
 		_setup_stats_panel()
@@ -363,23 +269,6 @@ func _update_inventory():
 		else:
 			slots[i].clear_item()
 
-func _update_equipment():
-	"""Update equipment slots to display equipped items"""
-	var equipped_items = Equipment.get_items()
-	
-	# Get only actual equipment slots (not spacers)
-	var equipment_slots = []
-	for child in equipment_grid.get_children():
-		if child.has_method("set_item"):
-			equipment_slots.append(child)
-	
-	for i in range(min(equipped_items.size(), equipment_slots.size())):
-		var slot = equipment_slots[i]
-		if equipped_items[i] != null:
-			slot.set_item(equipped_items[i])
-		else:
-			slot.clear_item()
-
 func _update_mass_display(current_mass: float, max_mass: float):
 	"""Update mass label and color"""
 	if not mass_label:
@@ -415,7 +304,7 @@ func _input(event):
 		if visible:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	
-	# Handle drops outside the inventory grid
+	# Handle drops outside the inventory/equipment grids
 	if event is InputEventMouseButton and not event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			_handle_outside_drop()
@@ -439,55 +328,29 @@ func _handle_outside_drop():
 	
 	var mouse_pos = get_global_mouse_position()
 	var inventory_rect = grid_container.get_global_rect()
-	var equipment_rect = equipment_grid.get_global_rect()
 	
 	var outside_inventory = not inventory_rect.has_point(mouse_pos)
-	var outside_equipment = not equipment_rect.has_point(mouse_pos)
 	
-	if outside_inventory and outside_equipment:
-		_drop_item_in_world(dragged_slot)
+	# Check if equipment UI handled the drop
+	var equipment_handled = false
+	if equipment_ui and equipment_ui.has_method("handle_outside_drop"):
+		equipment_handled = equipment_ui.handle_outside_drop(mouse_pos, dragged_slot)
+	
+	# If outside both grids, drop from inventory
+	if outside_inventory and not equipment_handled:
+		var is_equipment = dragged_slot.get_meta("is_equipment_slot", false)
+		if not is_equipment:
+			_drop_item_in_world(dragged_slot)
+		
 		dragged_slot.modulate = Color(1, 1, 1, 1)
 		any_slot.call("_end_drag")
 
 func _drop_item_in_world(dragged_slot: Control):
-	"""Drop item from equipment or inventory into the game world"""
+	"""Drop item from inventory into the game world"""
 	var slot_idx = dragged_slot.get("dragged_from_slot_index")
-	var is_equipment = dragged_slot.get_meta("is_equipment_slot", false)
 	
-	if is_equipment:
-		var item = Equipment.get_item_at_slot(slot_idx)
-		if item and Inventory.player_ref:
-			_spawn_item_in_world(item)
-		Equipment.remove_item_at_slot(slot_idx)
-	else:
+	if slot_idx != null:
 		Inventory.drop_item_at_slot(slot_idx)
-
-func _spawn_item_in_world(item: Dictionary):
-	"""Spawn an item in the world"""
-	if not item.has("scene") or not item.scene or not Inventory.player_ref:
-		return
-	
-	var forward = -Inventory.player_ref.global_transform.basis.z
-	var drop_position = Inventory.player_ref.global_position + forward * 1 + Vector3(0, 0.3, 0)
-	
-	var item_instance = item.scene.instantiate()
-	if not item_instance is Node3D:
-		return
-	
-	get_tree().current_scene.add_child(item_instance)
-	item_instance.global_position = drop_position
-	
-	# Set stack count if stackable
-	if item.get("stackable", false) and item.get("stack_count", 1) > 1:
-		if item_instance.has_method("set"):
-			item_instance.set("stack_count", item.stack_count)
-		if item_instance.has_method("update_label_text"):
-			item_instance.update_label_text()
-	
-	# Mark as just spawned
-	if item_instance.has_method("set"):
-		item_instance.set("just_spawned", true)
-		item_instance.set("spawn_timer", 0.0)
 
 
 # ===== CONTINUOUS UPDATE =====
