@@ -37,9 +37,9 @@ func _create_label():
 	item_label = RichTextLabel.new()
 	item_label.name = "ItemLabel"
 	item_label.bbcode_enabled = true
-	item_label.fit_content = true
+	item_label.fit_content = true  # This makes it resize to content
 	item_label.scroll_active = false
-	item_label.custom_minimum_size = Vector2(150, 0)  # Minimum width
+	item_label.custom_minimum_size = Vector2(150, 0)  # Minimum width, height auto-sizes
 	item_label.add_theme_font_size_override("normal_font_size", 14)
 	item_label.add_theme_color_override("default_color", Color.WHITE)
 	tooltip_panel.add_child(item_label)
@@ -51,15 +51,16 @@ func _create_tooltip_ui():
 	tooltip_panel.name = "TooltipPanel"
 	tooltip_panel.visible = false
 	tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tooltip_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN  # Allow panel to shrink to content
 	add_child(tooltip_panel)
 	
 	# Create RichTextLabel for BBCode support
 	item_label = RichTextLabel.new()
 	item_label.name = "ItemLabel"
 	item_label.bbcode_enabled = true
-	item_label.fit_content = true
+	item_label.fit_content = true  # Auto-resize to content
 	item_label.scroll_active = false
-	item_label.custom_minimum_size = Vector2(150, 0)  # Minimum width
+	item_label.custom_minimum_size = Vector2(150, 0)  # Minimum width, height auto-sizes
 	item_label.add_theme_font_size_override("normal_font_size", 14)
 	item_label.add_theme_color_override("default_color", Color.WHITE)
 	tooltip_panel.add_child(item_label)
@@ -156,6 +157,16 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	var tooltip_text = "\n".join(lines)
 	
 	item_label.text = tooltip_text
+	
+	# Force the label to recalculate its size
+	item_label.reset_size()
+	
+	# Wait one frame for RichTextLabel to calculate content size
+	await get_tree().process_frame
+	
+	# Force panel to update to new label size
+	tooltip_panel.reset_size()
+	
 	tooltip_panel.visible = true
 
 func hide_tooltip():
