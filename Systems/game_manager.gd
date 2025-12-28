@@ -5,6 +5,8 @@ extends Node
 @export var level_1a: PackedScene
 @export var level_1b: PackedScene
 @export var level_1c: PackedScene
+@export var level_1d: PackedScene
+@export var level_1e: PackedScene
 @export var town_1: PackedScene
 @export var ending_map: PackedScene
 
@@ -19,7 +21,7 @@ var level_sequence: Array[PackedScene] = []
 
 func _ready():
 	# Set up level sequence
-	level_sequence = [starting_map, level_1a, level_1b, level_1c, town_1, ending_map]
+	level_sequence = [starting_map, level_1a, level_1b, level_1c, level_1d, level_1e, town_1, ending_map]
 	
 	if starting_map:
 		load_map(starting_map)
