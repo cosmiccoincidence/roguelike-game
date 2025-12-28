@@ -7,7 +7,8 @@
 [resource]
 script = ExtResource("3_rhabo")
 item_name = "Stamina Potion"
-item_scene = ExtResource("2_q8h7o")
 icon = ExtResource("1_q8h7o")
-item_type = "Potion"
+item_scene = ExtResource("2_q8h7o")
+item_type = "Potions"
+item_subtype = "Potions"
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

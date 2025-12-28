@@ -7,7 +7,8 @@
 [resource]
 script = ExtResource("3_lu8gm")
 item_name = "Round Shield2"
-item_scene = ExtResource("2_1kjkp")
 icon = ExtResource("1_1kjkp")
+item_scene = ExtResource("2_1kjkp")
 item_type = "Weapon"
+item_subtype = "Shield"
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

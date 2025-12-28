@@ -7,7 +7,8 @@
 [resource]
 script = ExtResource("3_ufs4e")
 item_name = "Gemstone2"
-item_scene = ExtResource("2_skev8")
 icon = ExtResource("1_skev8")
+item_scene = ExtResource("2_skev8")
 item_type = "Gemstone"
+item_subtype = "Gemstone"
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

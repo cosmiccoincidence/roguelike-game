@@ -7,7 +7,8 @@
 [resource]
 script = ExtResource("3_yp85h")
 item_name = "Bag2"
-item_scene = ExtResource("2_s3gif")
 icon = ExtResource("1_s3gif")
+item_scene = ExtResource("2_s3gif")
 item_type = "Bag"
+item_subtype = "Bag"
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

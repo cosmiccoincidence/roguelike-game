@@ -7,15 +7,15 @@
 [resource]
 script = ExtResource("3_rp2h8")
 item_name = "Gold"
-item_scene = ExtResource("2_83yhm")
 icon = ExtResource("1_0pvav")
+item_scene = ExtResource("2_83yhm")
 item_type = "Gold"
-base_value = 1
+item_subtype = "Gold"
 mass = 0.0
+base_value = 1
 stackable = true
 max_stack_size = 1000000
 min_drop_amount = 5
 max_drop_amount = 10
 scaled_quantity = true
-base_weight = 30.0
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

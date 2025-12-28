@@ -7,7 +7,8 @@
 [resource]
 script = ExtResource("3_4ibmo")
 item_name = "Burger"
-item_scene = ExtResource("2_dri5m")
 icon = ExtResource("1_dri5m")
+item_scene = ExtResource("2_dri5m")
 item_type = "Food"
+item_subtype = "Food"
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

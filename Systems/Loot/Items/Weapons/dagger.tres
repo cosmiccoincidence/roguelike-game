@@ -7,7 +7,8 @@
 [resource]
 script = ExtResource("3_l4yd8")
 item_name = "Dagger"
-item_scene = ExtResource("2_f8wh2")
 icon = ExtResource("1_f8wh2")
+item_scene = ExtResource("2_f8wh2")
 item_type = "Weapon"
+item_subtype = "Melee"
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

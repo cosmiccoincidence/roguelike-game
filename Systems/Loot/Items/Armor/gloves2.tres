@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="LootItem" load_steps=4 format=3 uid="uid://bpv1r2fxqwno5"]
+
+[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="1_78a8h"]
+[ext_resource type="PackedScene" uid="uid://bk5xsrstchi02" path="res://Assets/3D/Items/Armor/gloves2.tscn" id="2_8eksw"]
+[ext_resource type="Script" uid="uid://bm5i53gst3tyr" path="res://Systems/Loot/loot_item.gd" id="3_aa26h"]
+
+[resource]
+script = ExtResource("3_aa26h")
+item_name = "Gloves2"
+icon = ExtResource("1_78a8h")
+item_scene = ExtResource("2_8eksw")
+item_type = "Armor"
+item_subtype = "Gloves"
+metadata/_custom_type_script = "uid://bm5i53gst3tyr"

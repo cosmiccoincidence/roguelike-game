@@ -7,7 +7,8 @@
 [resource]
 script = ExtResource("3_vc07n")
 item_name = "Axe"
-item_scene = ExtResource("2_6bd2j")
 icon = ExtResource("1_2php6")
+item_scene = ExtResource("2_6bd2j")
 item_type = "Weapon"
+item_subtype = "Melee"
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

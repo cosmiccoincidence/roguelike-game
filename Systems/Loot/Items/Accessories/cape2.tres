@@ -7,7 +7,8 @@
 [resource]
 script = ExtResource("3_lhvqb")
 item_name = "Cape2"
-item_scene = ExtResource("2_hbra1")
 icon = ExtResource("1_hbra1")
-item_type = "Cape"
+item_scene = ExtResource("2_hbra1")
+item_type = "Accessory"
+item_subtype = "Cape"
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

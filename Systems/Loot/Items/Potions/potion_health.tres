@@ -7,7 +7,8 @@
 [resource]
 script = ExtResource("3_65c18")
 item_name = "Health Potion"
-item_scene = ExtResource("2_myjin")
 icon = ExtResource("1_hjkme")
-item_type = "Potion"
+item_scene = ExtResource("2_myjin")
+item_type = "Potions"
+item_subtype = "Potions"
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

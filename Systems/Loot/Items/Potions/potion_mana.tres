@@ -7,7 +7,8 @@
 [resource]
 script = ExtResource("3_sirox")
 item_name = "Mana Potion"
-item_scene = ExtResource("2_fv5qq")
 icon = ExtResource("1_fv5qq")
-item_type = "Potion"
+item_scene = ExtResource("2_fv5qq")
+item_type = "Potions"
+item_subtype = "Potions"
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

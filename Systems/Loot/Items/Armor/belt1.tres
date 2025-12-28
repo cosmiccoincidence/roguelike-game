@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="LootItem" load_steps=4 format=3 uid="uid://c8cmcwmw1vjaa"]
+
+[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="1_r0j5h"]
+[ext_resource type="PackedScene" uid="uid://2gbj2prwxebt" path="res://Assets/3D/Items/Armor/belt1.tscn" id="2_5j3ki"]
+[ext_resource type="Script" uid="uid://bm5i53gst3tyr" path="res://Systems/Loot/loot_item.gd" id="3_bl06k"]
+
+[resource]
+script = ExtResource("3_bl06k")
+item_name = "Belt1"
+icon = ExtResource("1_r0j5h")
+item_scene = ExtResource("2_5j3ki")
+item_type = "Armor"
+item_subtype = "Belt"
+metadata/_custom_type_script = "uid://bm5i53gst3tyr"
