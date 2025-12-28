@@ -35,8 +35,8 @@ static func roll_weapon_damage(item_subtype: String, item_level: int, item_quali
 	# Scale with level (each level adds 10% to base damage)
 	var level_multiplier = 1.0 + (item_level - 1) * 0.1
 	
-	# Scale with quality (each quality tier adds 20%)
-	var quality_multiplier = 1.0 + (item_quality * 0.2)
+	# Scale with quality: Damaged (0) = 0.8x, Normal (1) = 1.0x, Fine (2) = 1.2x
+	var quality_multiplier = 0.8 + (item_quality * 0.2)
 	
 	# Calculate final damage
 	var final_damage = int(base_damage * level_multiplier * quality_multiplier)

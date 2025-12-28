@@ -29,8 +29,8 @@ static func roll_armor_defense(item_subtype: String, item_level: int, item_quali
 	# Scale with level (each level adds 15% to base defense)
 	var level_multiplier = 1.0 + (item_level - 1) * 0.15
 	
-	# Scale with quality (each quality tier adds 25%)
-	var quality_multiplier = 1.0 + (item_quality * 0.25)
+	# Scale with quality: Damaged (0) = 0.8x, Normal (1) = 1.0x, Fine (2) = 1.2x
+	var quality_multiplier = 0.8 + (item_quality * 0.2)
 	
 	# Calculate final defense
 	var final_defense = int(base_defense * level_multiplier * quality_multiplier)
