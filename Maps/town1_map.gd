@@ -10,11 +10,11 @@ extends TownCoreMap
 func _ready():
 	# Set town-specific values before calling super._ready()
 	act_number = 1      # After Act 1
-	map_number = 4      # 4th map overall (after 3 Act 1 levels)
+	map_number = 6      # 6th map in act
 	map_name = "Riverside Town"
 	
-	# Calculate map_level: (1 + 4) * 1 = 5
-	map_level = (act_number + map_number) * act_number
+	# Calculate map_level: (1 + 6) + (5 * (1 - 1)) = 7
+	map_level = (act_number + map_number) + (5 * (act_number - 1))
 	
 	print("Town 1 Map - Level: ", map_level, " Name: ", map_name, " (Act ", act_number, ", Map ", map_number, ")")
 	super._ready()

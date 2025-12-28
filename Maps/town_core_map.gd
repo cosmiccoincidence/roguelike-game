@@ -17,7 +17,7 @@ func _ready():
 	# Calculate map_level (same formula as generated maps)
 	# This will be called by child classes after they set act_number and map_number
 	if act_number > 0 and map_number > 0:
-		map_level = (act_number + map_number) * act_number
+		map_level = (act_number + map_number) + (5 * (act_number - 1))
 	
 	print("Town Map - Level: ", map_level, " Name: ", map_name, " (Act ", act_number, ", Map ", map_number, ")")
 	super._ready()
