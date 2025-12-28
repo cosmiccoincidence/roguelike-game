@@ -2,7 +2,7 @@ extends Node
 # inventory.gd
 
 var items: Array = []
-var max_slots: int = 40  # Match the UI grid (8 columns × 5 rows)
+var max_slots: int = 32  # Match the UI grid (8 columns × 5 rows)
 var player_ref: Node3D = null  # Reference to player for drop position
 
 # Mass system
