@@ -8,7 +8,6 @@ extends Act1MapGen
 # ============================================================================
 
 @export var map_number: int = 2  # First map in Act 2
-var map_level: int  # Calculated below
 
 func _ready():
 	# Calculate map_level before calling super._ready()

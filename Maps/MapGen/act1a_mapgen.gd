@@ -9,7 +9,6 @@ extends Act1MapGen
 	# Calculate map_level: (1 + 6) + (5 * (1 - 1)) = 7
 	
 @export var map_number: int = 1  # First map in Act 1
-var map_level: int  # Calculated below
 
 func _ready():
 	# Calculate map_level before calling super._ready()

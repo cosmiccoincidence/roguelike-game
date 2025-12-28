@@ -1,4 +1,3 @@
-# act1_mapgen.gd
 class_name Act1MapGen
 extends CoreMapGen
 
@@ -7,6 +6,7 @@ extends CoreMapGen
 # ============================================================================
 
 @export var act_number: int = 1  # Act 1
+var map_level: int = 1  # Will be calculated in subclasses (like Act1aMapGen)
 
 # ============================================================================
 # FEATURE GENERATORS
@@ -163,6 +163,7 @@ func sync_feature_settings():
 func spawn_enemies():
 	print("Spawning enemies...")
 	print("Enemy spawn list size: ", enemy_spawn_list.size())
+	print("Map Level: ", map_level)
 	
 	if enemy_spawn_list.size() == 0:
 		print("Warning: No enemy spawn data assigned")
@@ -234,7 +235,7 @@ func spawn_enemies():
 			enemy_positions.append(cell)
 			enemies_spawned += 1
 	
-	print("Spawned ", enemies_spawned, " enemies")
+	print("Spawned ", enemies_spawned, " enemies at level ", map_level)
 
 func _spawn_enemy_deferred(world_pos: Vector3):
 	if enemy_spawn_list.size() == 0:
@@ -258,4 +259,12 @@ func _spawn_enemy_deferred(world_pos: Vector3):
 				var enemy_instance = enemy_data.enemy_scene.instantiate()
 				get_parent().add_child(enemy_instance)
 				enemy_instance.global_position = world_pos
+				
+				# Set enemy level based on map level
+				if enemy_instance.has_method("set_level_from_map"):
+					enemy_instance.set_level_from_map(map_level)
+				elif "enemy_level" in enemy_instance:
+					enemy_instance.enemy_level = map_level
+					print("Enemy spawned at level ", map_level)
+				
 				return
