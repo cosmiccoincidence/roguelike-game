@@ -11,4 +11,7 @@ icon = ExtResource("1_6tour")
 item_scene = ExtResource("2_6tour")
 item_type = "Weapon"
 item_subtype = "Melee"
+base_value = 20
+min_weapon_damage = 3
+max_weapon_damage = 6
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

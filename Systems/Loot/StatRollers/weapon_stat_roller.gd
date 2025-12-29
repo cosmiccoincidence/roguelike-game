@@ -1,36 +1,18 @@
 # weapon_stat_roller.gd
-# Utility class for rolling weapon stats based on subtype, level, and quality
+# Utility class for rolling weapon stats based on item's base stats, level, and quality
 class_name WeaponStatRoller
 extends RefCounted
 
-# Base weapon damage ranges by subtype
-const WEAPON_SUBTYPE_STATS = {
-	"sword": {"min_damage": 5, "max_damage": 12},
-	"greatsword": {"min_damage": 10, "max_damage": 20},
-	"axe": {"min_damage": 6, "max_damage": 14},
-	"greataxe": {"min_damage": 12, "max_damage": 22},
-	"dagger": {"min_damage": 3, "max_damage": 8},
-	"bow": {"min_damage": 4, "max_damage": 10},
-	"crossbow": {"min_damage": 6, "max_damage": 15},
-	"staff": {"min_damage": 8, "max_damage": 15},
-	"wand": {"min_damage": 5, "max_damage": 11},
-	"mace": {"min_damage": 7, "max_damage": 13},
-	"spear": {"min_damage": 6, "max_damage": 12}
-}
-
-static func roll_weapon_damage(item_subtype: String, item_level: int, item_quality: int) -> int:
-	"""Roll weapon damage based on subtype, level, and quality"""
+static func roll_weapon_damage(min_damage: int, max_damage: int, item_level: int, item_quality: int) -> int:
+	"""Roll weapon damage based on item's damage range, level, and quality"""
 	
-	# Get base damage range for this weapon subtype
-	var subtype_key = item_subtype.to_lower()
-	if not WEAPON_SUBTYPE_STATS.has(subtype_key):
-		push_warning("Unknown weapon subtype: %s, using default damage" % item_subtype)
+	# Validate damage range
+	if min_damage <= 0 or max_damage <= 0:
+		push_warning("Invalid weapon damage range: %d-%d, using default" % [min_damage, max_damage])
 		return 5  # Default fallback
 	
-	var base_stats = WEAPON_SUBTYPE_STATS[subtype_key]
-	
-	# Roll random damage within base range
-	var base_damage = randi_range(base_stats.min_damage, base_stats.max_damage)
+	# Roll random damage within item's base range
+	var base_damage = randi_range(min_damage, max_damage)
 	
 	# Scale with level (each level adds 10% to base damage)
 	var level_multiplier = 1.0 + (item_level - 1) * 0.1

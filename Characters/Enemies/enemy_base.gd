@@ -332,14 +332,23 @@ func _spawn_loot_item(item_data: Dictionary):
 		loot_instance.set_item_properties(item_level, item_quality, item_value)
 	
 	# Roll weapon/armor stats if applicable
-	if item.item_type.to_lower() == "weapon" and item.item_subtype != "":
-		var weapon_damage = WeaponStatRoller.roll_weapon_damage(item.item_subtype, item_level, item_quality)
+	if item.item_type.to_lower() == "weapon" and item.min_weapon_damage > 0:
+		var weapon_damage = WeaponStatRoller.roll_weapon_damage(
+			item.min_weapon_damage,
+			item.max_weapon_damage,
+			item_level,
+			item_quality
+		)
 		if "weapon_damage" in loot_instance:
 			loot_instance.weapon_damage = weapon_damage
-		print("  Rolled weapon damage: ", weapon_damage)
+		print("  Rolled weapon damage: ", weapon_damage, " (base: ", item.min_weapon_damage, "-", item.max_weapon_damage, ")")
 	
-	elif item.item_type.to_lower() == "armor" and item.item_subtype != "":
-		var armor_defense = ArmorStatRoller.roll_armor_defense(item.item_subtype, item_level, item_quality)
+	elif item.item_type.to_lower() == "armor" and item.base_armor_defense > 0:
+		var armor_defense = ArmorStatRoller.roll_armor_defense(
+			item.base_armor_defense,
+			item_level,
+			item_quality
+		)
 		if "armor_defense" in loot_instance:
 			loot_instance.armor_defense = armor_defense
-		print("  Rolled armor defense: ", armor_defense)
+		print("  Rolled armor defense: ", armor_defense, " (base: ", item.base_armor_defense, ")")

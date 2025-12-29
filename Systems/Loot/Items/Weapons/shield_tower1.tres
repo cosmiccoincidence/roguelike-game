@@ -11,4 +11,5 @@ icon = ExtResource("1_yr8gw")
 item_scene = ExtResource("2_yr8gw")
 item_type = "Weapon"
 item_subtype = "Shield"
+base_value = 15
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"
