@@ -144,8 +144,17 @@ func _update_equipment():
 	# All children are now equipment slots (no spacers)
 	for i in range(min(equipped_items.size(), equipment_slots.size())):
 		var slot = equipment_slots[i]
-		if equipped_items[i] != null:
-			slot.set_item(equipped_items[i])
+		var item = equipped_items[i]
+		
+		if item != null:
+			# Check if this is a two-handed weapon placeholder
+			if typeof(item) == TYPE_DICTIONARY and item.has("_twohand_occupant"):
+				# This is a placeholder for a two-handed weapon
+				# Show a grayed-out version or special indicator
+				slot.show_twohand_placeholder(item.primary_slot)
+			else:
+				# Normal item
+				slot.set_item(item)
 		else:
 			slot.clear_item()
 

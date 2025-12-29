@@ -35,7 +35,7 @@ func _ready():
 		equipped_items[i] = null
 
 func can_equip_item_in_slot(item_data, slot_index: int) -> bool:
-	"""Check if an item can be equipped in a specific slot based on type and subtype"""
+	"""Check if an item can be equipped in a specific slot based on type, subtype, and hand restrictions"""
 	if slot_index < 0 or slot_index >= max_equipment_slots:
 		return false
 	
@@ -58,6 +58,12 @@ func can_equip_item_in_slot(item_data, slot_index: int) -> bool:
 		if item_subtype != required_subtype:
 			return false
 	
+	# Additional check for weapons: validate hand restrictions
+	if item_type == "weapon" and (EquipmentHandHelper.is_primary_slot(slot_index) or EquipmentHandHelper.is_offhand_slot(slot_index)):
+		var weapon_hand = item_data.get("weapon_hand", 0)  # 0 = ANY (default)
+		if not EquipmentHandHelper.can_equip_in_slot(weapon_hand, slot_index):
+			return false
+	
 	# Type matches and either subtype matches or no subtype required
 	return true
 
@@ -78,17 +84,40 @@ func swap_items(from_slot: int, to_slot: int):
 	Inventory._update_mass_signals()
 
 func set_item_at_slot(slot_index: int, item_data):
-	"""Set an item at a specific equipment slot (with type and subtype checking)"""
+	"""Set an item at a specific equipment slot (with type, subtype, and hand checking)"""
 	if slot_index >= 0 and slot_index < max_equipment_slots:
 		# If item_data is null (clearing slot), allow it
 		if item_data == null or can_equip_item_in_slot(item_data, slot_index):
-			equipped_items[slot_index] = item_data
+			# Handle two-handed weapons
+			if item_data and item_data.has("weapon_hand") and item_data.weapon_hand == 3:  # TWOHAND
+				# Two-handed weapon: ensure it goes in primary slot
+				var primary_slot = slot_index
+				if EquipmentHandHelper.is_offhand_slot(slot_index):
+					# If placed in offhand, move to corresponding primary
+					primary_slot = EquipmentHandHelper.get_primary_slot_for_twohand(slot_index)
+				
+				var paired_slot = EquipmentHandHelper.get_paired_slot(primary_slot)
+				
+				# Clear the paired offhand slot
+				if paired_slot >= 0:
+					equipped_items[paired_slot] = null
+				
+				# Equip in primary slot
+				equipped_items[primary_slot] = item_data
+				
+				# Mark the paired slot as occupied by setting a reference
+				if paired_slot >= 0:
+					equipped_items[paired_slot] = {"_twohand_occupant": true, "primary_slot": primary_slot}
+			else:
+				# Normal equip
+				equipped_items[slot_index] = item_data
+			
 			equipment_changed.emit()
 			# Notify inventory system to update mass
 			Inventory._update_mass_signals()
 			return true
 		else:
-			# Item type/subtype doesn't match slot requirement
+			# Item type/subtype/hand doesn't match slot requirement
 			var restriction = slot_restrictions[slot_index]
 			var item_type = item_data.get("item_type", "unknown")
 			var item_subtype = item_data.get("item_subtype", "unknown")
@@ -119,6 +148,21 @@ func get_item_at_slot(slot_index: int):
 func remove_item_at_slot(slot_index: int):
 	"""Remove item from equipment slot"""
 	if slot_index >= 0 and slot_index < max_equipment_slots:
+		var item = equipped_items[slot_index]
+		
+		# Check if this is a two-handed weapon placeholder
+		if item and typeof(item) == TYPE_DICTIONARY and item.has("_twohand_occupant"):
+			# This is a placeholder - remove the actual item from primary slot
+			var primary_slot = item.get("primary_slot", -1)
+			if primary_slot >= 0:
+				equipped_items[primary_slot] = null
+		else:
+			# Check if removing a two-handed weapon - also clear paired slot
+			if item and item.has("weapon_hand") and item.weapon_hand == 3:  # TWOHAND
+				var paired_slot = EquipmentHandHelper.get_paired_slot(slot_index)
+				if paired_slot >= 0:
+					equipped_items[paired_slot] = null
+		
 		equipped_items[slot_index] = null
 		equipment_changed.emit()
 		# Notify inventory system to update mass

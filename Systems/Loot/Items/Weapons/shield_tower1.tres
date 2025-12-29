@@ -12,5 +12,6 @@ item_scene = ExtResource("2_yr8gw")
 item_type = "Weapon"
 item_subtype = "Shield"
 base_value = 15
+weapon_hand = 2
 base_armor_defense = 5
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

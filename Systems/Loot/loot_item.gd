@@ -22,6 +22,15 @@ extends Resource
 @export var min_weapon_damage: int = 0  # Minimum base damage
 @export var max_weapon_damage: int = 0  # Maximum base damage
 
+# Weapon hand restrictions
+enum WeaponHand {
+	ANY,        # Can equip in either hand (default)
+	PRIMARY,    # Left hand only (slots 10, 14)
+	OFFHAND,    # Right hand only (slots 11, 15)
+	TWOHAND     # Takes both hands (auto-equips to primary + blocks offhand)
+}
+@export var weapon_hand: WeaponHand = WeaponHand.ANY
+
 # Armor stats (only for armor)
 @export_group("Armor Stats")
 @export var base_armor_defense: int = 0  # Base defense value

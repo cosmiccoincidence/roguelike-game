@@ -97,11 +97,6 @@ func _roll_single_item(enemy_level: int, profile: LootProfile, player_luck: floa
 	
 	# STEP 3a: Roll item type
 	var selected_type = _roll_item_type(profile)
-	if selected_type == "":
-		# No type pool defined, use legacy filtering
-		print("[LOOT MANAGER]   Using legacy type filtering")
-	else:
-		print("[LOOT MANAGER]   Rolled item type: %s" % selected_type)
 	
 	# STEP 3b: Get eligible items based on type and filters
 	var eligible_items = _filter_eligible_items(profile, selected_type)
@@ -121,8 +116,6 @@ func _roll_single_item(enemy_level: int, profile: LootProfile, player_luck: floa
 	# STEP 3d: Calculate item level (enemy_level ± variance)
 	var item_level = 1  # Default level for items that skip this step
 	if skip_level_quality:
-		print("[LOOT MANAGER]   Skipping level roll for item type: %s" % selected_item.item_type)
-	else:
 		item_level = enemy_level
 		if profile.level_variance > 0:
 			item_level += randi_range(-profile.level_variance, profile.level_variance)
@@ -131,8 +124,6 @@ func _roll_single_item(enemy_level: int, profile: LootProfile, player_luck: floa
 	# STEP 3e: Roll item quality based on player luck
 	var item_quality = ItemQuality.Quality.NORMAL  # Default quality for items that skip this step
 	if skip_level_quality:
-		print("[LOOT MANAGER]   Skipping quality roll for item type: %s" % selected_item.item_type)
-	else:
 		item_quality = ItemQuality.roll_quality(player_luck)
 	
 	# STEP 3f: Calculate stack size if stackable
