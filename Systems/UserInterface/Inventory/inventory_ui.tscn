@@ -88,3 +88,4 @@ offset_bottom = 40.0
 [node name="ItemLabel" type="Label" parent="SlotTooltip/TooltipPanel"]
 layout_mode = 2
 text = "Item Name"
+horizontal_alignment = 1
