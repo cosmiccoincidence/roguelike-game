@@ -20,6 +20,8 @@ var rolled_stats: Dictionary = {}  # Future: store randomized stats based on ite
 var weapon_damage: int = 0  # Only for weapons
 var armor_defense: int = 0  # Only for armor
 var weapon_hand: int = 0  # Weapon hand restriction (0=ANY, 1=PRIMARY, 2=OFFHAND, 3=TWOHAND)
+var weapon_range: float = 2.0  # Attack range in meters (default 2.0)
+var weapon_speed: float = 1.0  # Attack speed multiplier (default 1.0 = normal speed)
 
 # Internal state
 var is_hovered: bool = false
@@ -198,7 +200,7 @@ func update_label_text():
 	if label_3d:
 		var display_text = item_name
 		
-		# Show stack count if stackable
+		# Show stack count if stackable - format as "N Name" instead of "Name (xN)"
 		if stackable and stack_count > 1:
 			display_text = "%d %s" % [stack_count, item_name]
 		
@@ -220,8 +222,9 @@ func _update_background_size():
 		return
 	
 	# Calculate required width based on text length
+	# Increased from 20 to 30 pixels per character for better fitting
 	var text_length = label_3d.text.length()
-	var width = max(text_length * 25 + 50, 128)  # Minimum 128px, more padding
+	var width = max(text_length * 30 + 60, 128)  # Minimum 128px, more padding
 	var height = 64  # Fixed height for single-line text
 	
 	# Create texture with dynamic width
@@ -280,7 +283,9 @@ func pickup():
 		item_subtype,  # Pass item subtype
 		weapon_damage,  # Pass weapon damage
 		armor_defense,  # Pass armor defense
-		weapon_hand  # Pass weapon hand restriction
+		weapon_hand,  # Pass weapon hand restriction
+		weapon_range,  # Pass weapon range
+		weapon_speed  # Pass weapon speed
 	):
 		queue_free()
 	else:

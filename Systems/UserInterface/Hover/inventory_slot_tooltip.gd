@@ -141,6 +141,20 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	if item_data.has("weapon_damage") and item_data.weapon_damage > 0:
 		lines.append("[center][color=#ff6b6b]Damage: %d[/color][/center]" % item_data.weapon_damage)
 	
+	# Weapon range - orange color (only for weapons with range)
+	if item_data.has("weapon_range") and item_data.get("weapon_damage", 0) > 0:
+		lines.append("[center][color=#ffaa55]Range: %.1f[/color][/center]" % item_data.weapon_range)
+	
+	# Weapon speed - yellow color (only for weapons with speed)
+	if item_data.has("weapon_speed") and item_data.get("weapon_damage", 0) > 0:
+		var speed = item_data.weapon_speed
+		var speed_text = "Normal (%.1fx)" % speed
+		if speed > 1.0:
+			speed_text = "Fast (%.1fx)" % speed
+		elif speed < 1.0:
+			speed_text = "Slow (%.1fx)" % speed
+		lines.append("[center][color=#ffff77]Speed: %s[/color][/center]" % speed_text)
+	
 	# Armor defense - blue color (only for armor)
 	if item_data.has("armor_defense") and item_data.armor_defense > 0:
 		lines.append("[center][color=#6bb6ff]Defense: %d[/color][/center]" % item_data.armor_defense)

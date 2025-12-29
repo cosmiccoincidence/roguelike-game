@@ -132,6 +132,8 @@ func _spawn_loot_item(item_data: Dictionary):
 		# Copy weapon hand restriction if weapon
 		if item.item_type.to_lower() == "weapon":
 			loot_instance.weapon_hand = item.weapon_hand
+			loot_instance.weapon_range = item.weapon_range
+			loot_instance.weapon_speed = item.weapon_speed
 		
 		# Set rolled properties (level, quality, value)
 		loot_instance.item_level = item_level

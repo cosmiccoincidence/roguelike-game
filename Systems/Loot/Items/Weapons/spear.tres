@@ -14,5 +14,6 @@ item_subtype = "Melee"
 base_value = 20
 min_weapon_damage = 3
 max_weapon_damage = 6
+weapon_range = 3.0
 weapon_hand = 3
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"
