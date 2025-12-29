@@ -220,9 +220,8 @@ func _update_background_size():
 		return
 	
 	# Calculate required width based on text length
-	# Approximate: each character is ~20 pixels, with padding
 	var text_length = label_3d.text.length()
-	var width = max(text_length * 20 + 40, 128)  # Minimum 128px
+	var width = max(text_length * 25 + 50, 128)  # Minimum 128px, more padding
 	var height = 64  # Fixed height for single-line text
 	
 	# Create texture with dynamic width
