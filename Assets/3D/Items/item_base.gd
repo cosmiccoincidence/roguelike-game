@@ -200,7 +200,7 @@ func update_label_text():
 		
 		# Show stack count if stackable
 		if stackable and stack_count > 1:
-			display_text = "%s (x%d)" % [item_name, stack_count]
+			display_text = "%d %s" % [stack_count, item_name]
 		
 		label_3d.text = display_text
 		
