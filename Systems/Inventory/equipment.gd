@@ -34,6 +34,10 @@ func _ready():
 	for i in range(max_equipment_slots):
 		equipped_items[i] = null
 
+func get_equipment_stats() -> Dictionary:
+	"""Get calculated stats from all equipped items"""
+	return EquipmentStatsCalculator.calculate_total_stats(equipped_items)
+
 func can_equip_item_in_slot(item_data, slot_index: int) -> bool:
 	"""Check if an item can be equipped in a specific slot based on type, subtype, and hand restrictions"""
 	if slot_index < 0 or slot_index >= max_equipment_slots:
@@ -45,41 +49,26 @@ func can_equip_item_in_slot(item_data, slot_index: int) -> bool:
 	var item_type = item_data.item_type.to_lower()
 	var item_subtype = item_data.get("item_subtype", "").to_lower()
 	
-	print("=== EQUIP DEBUG ===")
-	print("Item: ", item_data.get("name", "Unknown"))
-	print("Item Type: ", item_type)
-	print("Slot Index: ", slot_index)
-	print("Item has weapon_hand: ", item_data.has("weapon_hand"))
-	if item_data.has("weapon_hand"):
-		print("Weapon Hand Value: ", item_data.weapon_hand)
-	
 	var restriction = slot_restrictions[slot_index]
 	var required_type = restriction.type.to_lower()
 	var required_subtype = restriction.subtype.to_lower()
 	
 	# Check type first
 	if item_type != required_type:
-		print("FAILED: Type mismatch")
 		return false
 	
 	# If subtype is required (not empty), check it
 	if required_subtype != "":
 		if item_subtype != required_subtype:
-			print("FAILED: Subtype mismatch")
 			return false
 	
 	# Additional check for weapons: validate hand restrictions
 	if item_type == "weapon" and (EquipmentHandHelper.is_primary_slot(slot_index) or EquipmentHandHelper.is_offhand_slot(slot_index)):
-		print("Checking weapon hand restrictions...")
 		var weapon_hand = item_data.get("weapon_hand", 0)  # 0 = ANY (default)
-		print("Weapon hand: ", weapon_hand)
-		print("Can equip in slot: ", EquipmentHandHelper.can_equip_in_slot(weapon_hand, slot_index))
 		if not EquipmentHandHelper.can_equip_in_slot(weapon_hand, slot_index):
-			print("FAILED: Hand restriction")
 			return false
 	
 	# Type matches and either subtype matches or no subtype required
-	print("SUCCESS: Can equip")
 	return true
 
 func swap_items(from_slot: int, to_slot: int):

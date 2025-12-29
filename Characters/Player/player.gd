@@ -48,12 +48,14 @@ const ENCUMBERED_ROTATION_MULT: float = 0.75  # 75% rotation speed
 @export var base_parry_window := 1.0  # Base parry window length
 
 # Calculated combat stats (modified by gear/buffs/god mode)
-var damage: int = 5
 var armor: int = 5
+var damage: int = 5
 var attack_range: float = 1.5
 var attack_speed: float = 1.0
 var crit_chance: float = 0.1
 var crit_multiplier: float = 1.0
+var block_window: float = 1.0
+var parry_window: float = 1.0
 
 # ===== MOVEMENT =====
 @export_group("Movement")
@@ -129,34 +131,73 @@ func _ready():
 	# Connect to encumbered status signal
 	Inventory.encumbered_status_changed.connect(_on_encumbered_status_changed)
 	
+	# Connect to equipment changes
+	Equipment.equipment_changed.connect(_on_equipment_changed)
+	
 	# Update HUD LAST (after everything is set up)
 	if hud:
 		await get_tree().process_frame
 		hud.update_health(current_health, max_health)
 		hud.update_stamina(current_stamina, max_stamina)
 
-
 # ===== STAT CALCULATIONS =====
 
 func _update_combat_stats():
 	"""Recalculate combat stats based on base stats, equipment, buffs, and god mode"""
+	# Get equipment stats
+	var equip_stats = Equipment.get_equipment_stats()
+	
 	if god_mode:
+		# God mode bonuses
 		crit_chance = GOD_CRIT_CHANCE
 		crit_multiplier = base_crit_multiplier * GOD_CRIT_MULT
-		# God mode doesn't change damage/armor/range/speed for now
-		damage = base_damage
-		armor = base_armor
-		attack_range = base_attack_range
-		attack_speed = base_attack_speed
+		
+		# Equipment still applies in god mode
+		damage = base_damage + equip_stats.weapon_damage
+		armor = base_armor + equip_stats.armor_defense
+		
+		# Use weapon stats if weapon equipped, otherwise use base
+		if equip_stats.has_weapon:
+			attack_range = equip_stats.weapon_range
+			attack_speed = equip_stats.weapon_speed
+			block_window = equip_stats.weapon_block_window
+			parry_window = equip_stats.weapon_parry_window
+		else:
+			attack_range = base_attack_range
+			attack_speed = base_attack_speed
+			block_window = base_block_window
+			parry_window = base_parry_window
 	else:
-		# TODO: Add equipment bonuses
-		# TODO: Add buff bonuses
-		damage = base_damage
-		armor = base_armor
-		attack_range = base_attack_range
-		attack_speed = base_attack_speed
+		# Normal mode - apply equipment bonuses
+		damage = base_damage + equip_stats.weapon_damage
+		armor = base_armor + equip_stats.armor_defense
+		
+		# Use weapon stats if weapon equipped, otherwise use base
+		if equip_stats.has_weapon:
+			attack_range = equip_stats.weapon_range
+			attack_speed = equip_stats.weapon_speed
+			block_window = equip_stats.weapon_block_window
+			parry_window = equip_stats.weapon_parry_window
+		else:
+			attack_range = base_attack_range
+			attack_speed = base_attack_speed
+			block_window = base_block_window
+			parry_window = base_parry_window
+		
 		crit_chance = base_crit_chance
 		crit_multiplier = base_crit_multiplier
+		
+		# TODO: Add buff bonuses
+	
+	# Debug output
+	print("=== STATS UPDATED ===")
+	print("  Damage: %d (base: %d + weapon: %d)" % [damage, base_damage, equip_stats.weapon_damage])
+	print("  Armor: %d (base: %d + armor: %d)" % [armor, base_armor, equip_stats.armor_defense])
+	print("  Range: %.1f" % attack_range)
+	print("  Speed: %.1fx" % attack_speed)
+	print("  Block Window: %.1fs" % block_window)
+	print("  Parry Window: %.1fs" % parry_window)
+	print("  Crit: %.0f%% (x%.1f)" % [crit_chance * 100, crit_multiplier])
 
 func get_total_luck() -> float:
 	"""Get total luck including equipment and buffs"""
@@ -489,7 +530,7 @@ func _input(event):
 		print("Player took 1 damage. HP: ", current_health, "/", max_health)
 
 
-# ===== ITEM PICKUP =====
+# ===== INVENTORY =====
 
 func _try_pickup_item():
 	var mouse_pos = get_viewport().get_mouse_position()
@@ -508,6 +549,10 @@ func _try_pickup_item():
 		elif hit_node.has_method("pickup"):
 			hit_node.pickup()
 
+func _on_equipment_changed():
+	"""Called when equipment changes - recalculate stats"""
+	_update_combat_stats()
+	print("Equipment changed - stats updated")
 
 # ===== AUDIO =====
 
