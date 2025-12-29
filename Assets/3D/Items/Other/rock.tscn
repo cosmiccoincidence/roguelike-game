@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=4 uid="uid://v1comgdbco8h"]
+[gd_scene load_steps=6 format=4 uid="uid://v1comgdbco8h"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_g1pa6"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_sf0s8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vi6am"]
 resource_name = "grey"
@@ -46,11 +45,6 @@ points = PackedVector3Array(0.085459724, 0.085459724, 0.085459724, 0.085459724, 
 
 [node name="Rock" type="Node3D" groups=["item"]]
 script = ExtResource("1_g1pa6")
-item_name = "Rock"
-item_icon = ExtResource("2_sf0s8")
-item_type = "Gemstone"
-item_subtype = "Gemstone"
-value = 1
 
 [node name="ItemRock" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_fu7oi")

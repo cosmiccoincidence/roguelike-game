@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=4 uid="uid://b06034wtx5unc"]
+[gd_scene load_steps=7 format=4 uid="uid://b06034wtx5unc"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_odwm2"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_17n2m"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_20wdq"]
 resource_name = "Brown"
@@ -74,12 +73,6 @@ points = PackedVector3Array(0.3423553, 0.048350874, 0.49841183, 0.3423553, -0.04
 
 [node name="TowerShield2" type="Node3D" groups=["item"]]
 script = ExtResource("1_odwm2")
-item_name = "Tower Shield2"
-item_icon = ExtResource("2_17n2m")
-item_type = "Weapon"
-item_subtype = "Shield"
-mass = 2.5
-value = 25
 
 [node name="ItemShieldTower2" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_odwm2")

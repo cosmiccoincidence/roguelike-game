@@ -1,7 +1,6 @@
-[gd_scene load_steps=9 format=4 uid="uid://ca3pxy68a3yq7"]
+[gd_scene load_steps=8 format=4 uid="uid://ca3pxy68a3yq7"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_7od1h"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_eiiao"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e14e8"]
 resource_name = "Coin Dark"
@@ -104,11 +103,6 @@ points = PackedVector3Array(-8.279085e-05, -0.020898363, -0.12402662, -0.1611991
 
 [node name="Belt2" type="Node3D" groups=["item"]]
 script = ExtResource("1_7od1h")
-item_name = "Belt2"
-item_icon = ExtResource("2_eiiao")
-item_type = "Armor"
-item_subtype = "Belt"
-value = 35
 
 [node name="ItemBelt2" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_7od1h")

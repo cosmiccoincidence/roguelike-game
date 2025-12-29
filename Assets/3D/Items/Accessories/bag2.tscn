@@ -1,7 +1,6 @@
-[gd_scene load_steps=9 format=4 uid="uid://bbyeu6awgnstr"]
+[gd_scene load_steps=8 format=4 uid="uid://bbyeu6awgnstr"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_sh8o0"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_xwd6d"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_syrim"]
 resource_name = "DarkGreen"
@@ -104,12 +103,6 @@ points = PackedVector3Array(0.4825232, -0.02179873, 0.40133715, 0.48148853, -0.0
 
 [node name="Bag2" type="Node3D" groups=["item"]]
 script = ExtResource("1_sh8o0")
-item_name = "Bag2"
-item_icon = ExtResource("2_xwd6d")
-item_type = "Bag"
-item_subtype = "Bag"
-mass = 0.0
-value = 0
 
 [node name="ItemRuggedSack2" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_sh8o0")

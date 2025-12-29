@@ -1,24 +1,26 @@
 extends Node3D
 class_name BaseItem
 
-@export var item_name: String = "Item"
-@export var item_icon: Texture2D
-@export var item_type: String = ""  # Type: helmet, weapon, armor, ring, etc.
-@export var item_subtype: String = ""  # NEW: Subtype: sword, axe, chest, boots, health_potion, etc.
-@export var mass: float = 1.0
-@export var value: int = 10
-@export var stackable: bool = false
-@export var max_stack_size: int = 99
+# Item properties (set from LootItem template when spawned)
+var item_name: String = "Item"
+var item_icon: Texture2D
+var item_type: String = ""  # Type: helmet, weapon, armor, ring, etc.
+var item_subtype: String = ""  # Subtype: sword, axe, chest, boots, health_potion, etc.
+var mass: float = 1.0
+var value: int = 10
+var stackable: bool = false
+var max_stack_size: int = 99
 
-# NEW: Level-based system
-var item_level: int = 1  # Set by loot system when spawned
+# Level-based system (set by loot system when spawned)
+var item_level: int = 1
 var item_quality: int = ItemQuality.Quality.NORMAL  # Damaged, Normal, or Fine
 var rolled_stats: Dictionary = {}  # Future: store randomized stats based on item_level
 
-# NEW: Weapon and Armor stats
+# Weapon and Armor stats (rolled when spawned)
 var weapon_damage: int = 0  # Only for weapons
 var armor_defense: int = 0  # Only for armor
 
+# Internal state
 var is_hovered: bool = false
 var label_3d: Label3D
 var collision_body: CollisionObject3D

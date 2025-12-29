@@ -1,7 +1,6 @@
-[gd_scene load_steps=9 format=4 uid="uid://b35h8kpkpyxmo"]
+[gd_scene load_steps=8 format=4 uid="uid://b35h8kpkpyxmo"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_pwmju"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_hcan3"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_20wdq"]
 resource_name = "Brown"
@@ -104,12 +103,6 @@ points = PackedVector3Array(0.4825232, -0.02179873, 0.40133715, 0.48148853, -0.0
 
 [node name="Bag1" type="Node3D" groups=["item"]]
 script = ExtResource("1_pwmju")
-item_name = "Bag1"
-item_icon = ExtResource("2_hcan3")
-item_type = "Bag"
-item_subtype = "Bag"
-mass = 0.0
-value = 0
 
 [node name="ItemRuggedSack" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_pwmju")

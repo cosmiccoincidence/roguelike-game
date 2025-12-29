@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=4 uid="uid://ks8phk0vvyig"]
+[gd_scene load_steps=6 format=4 uid="uid://ks8phk0vvyig"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_ksctg"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_4418t"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pxj6v"]
 resource_name = "red"
@@ -46,11 +45,6 @@ points = PackedVector3Array(0.23006977, 0.04452324, 0.5190109, 0.23006977, -0.04
 
 [node name="Cape2" type="Node3D" groups=["item"]]
 script = ExtResource("1_ksctg")
-item_name = "Cape2"
-item_icon = ExtResource("2_4418t")
-item_type = "Accessory"
-item_subtype = "Cape"
-value = 30
 
 [node name="ItemCape2" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_ksctg")

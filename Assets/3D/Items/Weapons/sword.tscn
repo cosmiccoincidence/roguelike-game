@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=4 uid="uid://xfakf43f0d7y"]
+[gd_scene load_steps=7 format=4 uid="uid://xfakf43f0d7y"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_3ke8k"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_eby7e"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vi6am"]
 resource_name = "grey"
@@ -74,12 +73,6 @@ points = PackedVector3Array(0.09186623, 0.041787505, 0.7940026, -0.09186625, 0.0
 
 [node name="Sword" type="Node3D" groups=["item"]]
 script = ExtResource("1_3ke8k")
-item_name = "Sword"
-item_icon = ExtResource("2_eby7e")
-item_type = "Weapon"
-item_subtype = "Weapon"
-mass = 2.0
-value = 25
 
 [node name="ItemSword" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_3ke8k")

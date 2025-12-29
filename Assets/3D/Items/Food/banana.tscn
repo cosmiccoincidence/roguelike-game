@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=4 uid="uid://woqrdy16j87n"]
+[gd_scene load_steps=6 format=4 uid="uid://woqrdy16j87n"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_sqog5"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_hpdbq"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u7vt1"]
 resource_name = "Coin.001"
@@ -46,11 +45,6 @@ points = PackedVector3Array(-0.16188994, -0.08545971, -0.16188994, -0.16188994, 
 
 [node name="Banana" type="Node3D" groups=["item"]]
 script = ExtResource("1_sqog5")
-item_name = "Banana"
-item_icon = ExtResource("2_hpdbq")
-item_type = "Food"
-item_subtype = "Food"
-value = 3
 
 [node name="ItemBanana" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_pamig")

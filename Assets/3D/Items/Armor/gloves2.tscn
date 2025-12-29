@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=4 uid="uid://bk5xsrstchi02"]
+[gd_scene load_steps=6 format=4 uid="uid://bk5xsrstchi02"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_rot7o"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_61xc8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pxj6v"]
 resource_name = "red"
@@ -48,11 +47,6 @@ points = PackedVector3Array(-0.062358797, -0.011158057, -0.10757963, -0.13504264
 
 [node name="Gloves2" type="Node3D" groups=["item"]]
 script = ExtResource("1_rot7o")
-item_name = "Gloves2"
-item_icon = ExtResource("2_61xc8")
-item_type = "Armor"
-item_subtype = "Gloves"
-value = 25
 
 [node name="ItemGlove2" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_rot7o")

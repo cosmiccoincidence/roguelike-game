@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=4 uid="uid://b405e6ypfuvqw"]
+[gd_scene load_steps=6 format=4 uid="uid://b405e6ypfuvqw"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_br74m"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_b71kb"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u7vt1"]
 resource_name = "Coin.001"
@@ -46,11 +45,6 @@ points = PackedVector3Array(0.085459724, 0.085459724, 0.085459724, 0.085459724, 
 
 [node name="Gemstone3" type="Node3D" groups=["item"]]
 script = ExtResource("1_br74m")
-item_name = "Gemstone3"
-item_icon = ExtResource("2_b71kb")
-item_type = "Gemstone"
-mass = 0.5
-value = 100
 
 [node name="ItemGemstone3" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_br74m")

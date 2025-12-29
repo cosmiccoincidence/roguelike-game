@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=4 uid="uid://b48m3f1h4xxif"]
+[gd_scene load_steps=6 format=4 uid="uid://b48m3f1h4xxif"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_ssf6r"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_y2a24"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pxj6v"]
 resource_name = "red"
@@ -46,12 +45,6 @@ points = PackedVector3Array(-0.0772495, -0.04452324, -0.099999994, -0.1672702, -
 
 [node name="Helmet2" type="Node3D" groups=["item"]]
 script = ExtResource("1_ssf6r")
-item_name = "Helmet2"
-item_icon = ExtResource("2_y2a24")
-item_type = "Armor"
-item_subtype = "Helmet"
-mass = 1.5
-value = 25
 
 [node name="ItemHelmet2" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_ssf6r")

@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=4 uid="uid://h27po3q7qe5e"]
+[gd_scene load_steps=7 format=4 uid="uid://h27po3q7qe5e"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_hiamh"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_8uqbt"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u5rhy"]
 resource_name = "white"
@@ -76,11 +75,6 @@ points = PackedVector3Array(-4.337728e-05, -0.16647415, -0.221557, -4.337728e-05
 
 [node name="PotionMana" type="Node3D" groups=["item"]]
 script = ExtResource("1_hiamh")
-item_name = "Mana Potion"
-item_icon = ExtResource("2_8uqbt")
-item_type = "Potions"
-item_subtype = "Potions"
-value = 15
 
 [node name="ItemPotionMana" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_hiamh")

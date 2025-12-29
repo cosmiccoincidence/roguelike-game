@@ -1,7 +1,6 @@
-[gd_scene load_steps=9 format=4 uid="uid://byn6f4lsp4fd4"]
+[gd_scene load_steps=8 format=4 uid="uid://byn6f4lsp4fd4"]
 
 [ext_resource type="Script" uid="uid://bsi5m1q304kyn" path="res://Assets/3D/Items/item_base.gd" id="1_nrb28"]
-[ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="2_uoaee"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_20wdq"]
 resource_name = "Brown"
@@ -104,10 +103,6 @@ points = PackedVector3Array(0.10490212, -0.003533408, -0.85339135, 0.10490212, -
 
 [node name="Stick" type="Node3D" groups=["item"]]
 script = ExtResource("1_nrb28")
-item_name = "Stick"
-item_icon = ExtResource("2_uoaee")
-item_type = "Weapon"
-item_subtype = "Weapon"
 
 [node name="ItemStick" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_uoaee")
