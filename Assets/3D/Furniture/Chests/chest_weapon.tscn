@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=4 uid="uid://bx6chqk5r8wao"]
+[gd_scene load_steps=9 format=4 uid="uid://ccpa5j7ittgs0"]
 
-[ext_resource type="Script" uid="uid://cjdokt8pp5v4k" path="res://Assets/3D/Furniture/chest.gd" id="1_1jufw"]
-[ext_resource type="Resource" uid="uid://b2fpg5kly6eox" path="res://Systems/Loot/Containers/chest1.tres" id="2_oja10"]
-[ext_resource type="AudioStream" uid="uid://j3x1tu5ppy0l" path="res://Assets/Audio/Furniture/Chest.wav" id="3_oja10"]
+[ext_resource type="Script" uid="uid://cjdokt8pp5v4k" path="res://Assets/3D/Furniture/Chests/chest.gd" id="1_y8cpj"]
+[ext_resource type="Resource" uid="uid://dpn54dnfcqyau" path="res://Systems/Loot/Containers/chest_weapons.tres" id="2_y8cpj"]
+[ext_resource type="AudioStream" uid="uid://j3x1tu5ppy0l" path="res://Assets/Audio/Furniture/Chest.wav" id="3_la16j"]
+[ext_resource type="Material" uid="uid://c3commbsrsfhp" path="res://World/Materials/material_road_dirt.tres" id="4_v28ew"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s2fn0"]
 resource_name = "tan"
@@ -45,16 +46,19 @@ shadow_mesh = SubResource("ArrayMesh_bfgrq")
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_oja10"]
 points = PackedVector3Array(-0.21959999, 7.986263e-08, -0.21959992, 0.21958984, 0.43919998, 0.21959999, 0.21958984, 0.43919998, -0.21959999, 0.21958984, 0, 0.21959999, -0.21959999, 0.4391999, 0.21959992, 0.21958984, 0, -0.21959999, -0.21959999, 7.986263e-08, 0.21959992, -0.21959999, 0.4391999, -0.21959992)
 
-[node name="Chest" type="StaticBody3D"]
-script = ExtResource("1_1jufw")
-loot_profile = ExtResource("2_oja10")
-open_sound = ExtResource("3_oja10")
+[node name="ChestWeapon" type="StaticBody3D"]
+script = ExtResource("1_y8cpj")
+loot_profile = ExtResource("2_y8cpj")
+open_sound = ExtResource("3_la16j")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("ArrayMesh_iru5d")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("4_v28ew")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 shape = SubResource("ConvexPolygonShape3D_oja10")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]

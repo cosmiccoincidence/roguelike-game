@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="LootProfile" load_steps=3 format=3 uid="uid://b2fpg5kly6eox"]
+
+[ext_resource type="Script" uid="uid://47oxr4cv0gf0" path="res://Systems/Loot/loot_item_type.gd" id="1_hhvth"]
+[ext_resource type="Script" uid="uid://dly44gmovhexn" path="res://Systems/Loot/loot_profile.gd" id="2_wy1ar"]
+
+[resource]
+script = ExtResource("2_wy1ar")
+metadata/_custom_type_script = "uid://dly44gmovhexn"

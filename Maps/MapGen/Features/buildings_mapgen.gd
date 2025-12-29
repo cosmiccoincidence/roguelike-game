@@ -87,7 +87,7 @@ func setup(generator: CoreMapGen):
 	furniture_placer.register_furniture_config(door_config)
 	
 	var chest_config = FurnitureSpawnConfig.new()
-	chest_config.furniture_scene = preload("res://Assets/3D/Furniture/chest.tscn")
+	chest_config.furniture_scene = preload("res://Assets/3D/Furniture/Chests/chest.tscn")
 	chest_config.furniture_type = "chest"
 	chest_config.spawn_chance = 0.5  # 50% chance per room
 	chest_config.min_per_area = 0
