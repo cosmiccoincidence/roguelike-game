@@ -225,7 +225,7 @@ func take_damage(amount: int, is_crit: bool = false):
 		call_deferred("die")
 
 func spawn_damage_number(amount: int, is_crit: bool=false):
-	var dmg_scene = preload("res://Systems/UserInterface/damage_number.tscn")
+	var dmg_scene = preload("res://Systems/UserInterface/Combat/damage_number.tscn")
 	var dmg_instance = dmg_scene.instantiate()
 	
 	add_child(dmg_instance)
