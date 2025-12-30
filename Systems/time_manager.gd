@@ -15,27 +15,6 @@ signal time_changed(hour: int, minute: int, day: int)
 func _ready():
 	print("Time started at Day ", current_day, " - ", get_time_string())
 
-func _input(event):
-	# Debug: Press I to toggle daylight lock
-	if event is InputEventKey and event.pressed and event.keycode == KEY_I:
-		daylight_lock = !daylight_lock
-		if daylight_lock:
-			print("=== DAYLIGHT LOCK ENABLED - Time frozen at 10:30 ===")
-			current_hour = 10
-			current_minute = 30
-			update_sun_position()
-			time_changed.emit(current_hour, current_minute, current_day)
-		else:
-			print("=== DAYLIGHT LOCK DISABLED - Time will advance normally ===")
-	
-	# Debug: Press O to advance time by 3 hours (unless locked)
-	if event is InputEventKey and event.pressed and event.keycode == KEY_O:
-		if daylight_lock:
-			print("Cannot advance time - Daylight lock is enabled")
-		else:
-			print("=== DEBUG: Advancing time by 3 hours ===")
-			advance_time()
-
 func set_sun_moon_origin(origin: Node3D):
 	sun_moon_origin = origin
 	update_sun_position()

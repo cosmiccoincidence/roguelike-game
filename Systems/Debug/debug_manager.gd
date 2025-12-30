@@ -58,6 +58,22 @@ func _input(event):
 					debug_combat.damage_player()
 				else:
 					print("⚠️  DebugCombat subsystem not found")
+		KEY_COMMA:
+			if debug_enabled:
+				# Delegate to debug_time subsystem
+				var debug_time = get_node_or_null("DebugTime")
+				if debug_time and debug_time.has_method("advance_time"):
+					debug_time.advance_time()
+				else:
+					print("⚠️  DebugTime subsystem not found")
+		KEY_PERIOD:
+			if debug_enabled:
+				# Delegate to debug_time subsystem
+				var debug_time = get_node_or_null("DebugTime")
+				if debug_time and debug_time.has_method("freeze_time"):
+					debug_time.freeze_time()
+				else:
+					print("⚠️  DebugTime subsystem not found")
 
 func toggle_debug_system():
 	"""Toggle the entire debug system on/off"""
@@ -69,6 +85,7 @@ func toggle_debug_system():
 		print("=".repeat(50))
 		print("F1: Toggle Debug Mode")
 		print("F2: Show/Hide Keybind Panel")
+		print("F3: Spawn Test Loot")
 		print("=".repeat(50) + "\n")
 		
 		# Show enabled indicator
@@ -76,6 +93,16 @@ func toggle_debug_system():
 			debug_ui.show_debug_enabled()
 	else:
 		print("\n🔧 DEBUG MODE DISABLED\n")
+		
+		# Disable god mode if active
+		var player = get_tree().get_first_node_in_group("player")
+		if player and player.get("god_mode") and player.god_mode:
+			player.god_mode = false
+			if player.has_method("_update_combat_stats"):
+				player._update_combat_stats()
+			if player.has_method("_on_encumbered_status_changed"):
+				player._on_encumbered_status_changed(player.is_encumbered)
+			print("⚡ God mode disabled")
 		
 		# Hide all debug UI
 		keybind_panel_visible = false
