@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="LootItem" load_steps=4 format=3 uid="uid://bestml8nbpi1u"]
 
 [ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="1_nrmya"]
-[ext_resource type="PackedScene" uid="uid://btle4do1713pv" path="res://Assets/3D/Items/Potions/potion_stamina.tscn" id="2_r5p64"]
+[ext_resource type="PackedScene" uid="uid://btle4do1713pv" path="res://Assets/3D/Items/Potion/potion_stamina.tscn" id="2_r5p64"]
 [ext_resource type="Script" uid="uid://bm5i53gst3tyr" path="res://Systems/Loot/loot_item.gd" id="3_q55sn"]
 
 [resource]

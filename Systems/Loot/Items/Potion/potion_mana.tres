@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="LootItem" load_steps=4 format=3 uid="uid://dotfcvsjgokaa"]
 
 [ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="1_jbx3b"]
-[ext_resource type="PackedScene" uid="uid://h27po3q7qe5e" path="res://Assets/3D/Items/Potions/potion_mana.tscn" id="2_8etk7"]
+[ext_resource type="PackedScene" uid="uid://h27po3q7qe5e" path="res://Assets/3D/Items/Potion/potion_mana.tscn" id="2_8etk7"]
 [ext_resource type="Script" uid="uid://bm5i53gst3tyr" path="res://Systems/Loot/loot_item.gd" id="3_bgxrm"]
 
 [resource]

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="LootItem" load_steps=4 format=3 uid="uid://sy0l16cs1x3l"]
 
 [ext_resource type="Texture2D" uid="uid://beb208oeohb52" path="res://Assets/2D/banana.png" id="1_s3gif"]
-[ext_resource type="PackedScene" uid="uid://bbyeu6awgnstr" path="res://Assets/3D/Items/Accessories/bag2.tscn" id="2_s3gif"]
+[ext_resource type="PackedScene" uid="uid://bbyeu6awgnstr" path="res://Assets/3D/Items/Accessory/bag2.tscn" id="2_s3gif"]
 [ext_resource type="Script" uid="uid://bm5i53gst3tyr" path="res://Systems/Loot/loot_item.gd" id="3_yp85h"]
 
 [resource]
