@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://dcifklqoa35fx"]
+
+[ext_resource type="Script" uid="uid://iovejei6ttju" path="res://Systems/UserInterface/Controls/controls_ui.gd" id="1_ri8h6"]
+
+[node name="ControlsUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_ri8h6")

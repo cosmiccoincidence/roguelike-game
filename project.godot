@@ -23,6 +23,7 @@ AutoPickupManager="*res://Systems/Inventory/auto_pickup_manager.gd"
 LootManager="*res://Systems/Loot/loot_manager.tscn"
 TimeManager="*res://Systems/time_manager.gd"
 DebugManager="*res://Systems/Debug/debug_manager.gd"
+ControlsUI="*res://Systems/UserInterface/Controls/controls_ui.tscn"
 
 [display]
 

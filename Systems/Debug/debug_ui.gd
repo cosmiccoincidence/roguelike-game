@@ -8,10 +8,17 @@ var god_mode_label: Label
 var keybind_panel: PanelContainer
 var keybind_vbox: VBoxContainer
 
+# Reference to controls UI
+var controls_ui: Control = null
+
 func _ready():
 	# Make sure UI is on top
 	z_index = 100
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	# Try to find controls UI
+	await get_tree().process_frame
+	controls_ui = get_node_or_null("/root/ControlsUI")
 	
 	_create_god_mode_indicator()
 	_create_enabled_indicator()
@@ -108,7 +115,7 @@ func _create_keybind_panel():
 	
 	# Title
 	var title = Label.new()
-	title.text = "═══ DEBUG KEYBINDS ═══"
+	title.text = "═══ DEBUG CONTROLS ═══"
 	title.add_theme_color_override("font_color", Color(0.2, 0.8, 1.0))
 	title.add_theme_font_size_override("font_size", 18)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -211,8 +218,17 @@ func hide_all():
 
 func show_keybind_panel():
 	"""Show the keybind reference panel"""
+	# Close controls panel if it's open
+	if controls_ui and controls_ui.has_method("is_controls_panel_visible"):
+		if controls_ui.is_controls_panel_visible():
+			controls_ui.hide_controls_panel()
+	
 	keybind_panel.visible = true
 
 func hide_keybind_panel():
 	"""Hide the keybind reference panel"""
 	keybind_panel.visible = false
+
+func is_keybind_panel_visible() -> bool:
+	"""Check if keybind panel is currently visible"""
+	return keybind_panel.visible
