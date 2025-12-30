@@ -22,18 +22,38 @@ func _create_enabled_indicator():
 	"""Create the debug mode enabled indicator"""
 	enabled_label = Label.new()
 	enabled_label.text = "🔧 DEBUG MODE ENABLED"
-	enabled_label.position = Vector2(10, 10)
 	enabled_label.add_theme_color_override("font_color", Color.GREEN)
 	enabled_label.add_theme_font_size_override("font_size", 16)
 	enabled_label.visible = false
+	
+	# Position in top right
+	enabled_label.anchor_left = 1.0
+	enabled_label.anchor_right = 1.0
+	enabled_label.anchor_top = 0.0
+	enabled_label.anchor_bottom = 0.0
+	enabled_label.offset_left = -250
+	enabled_label.offset_right = -10
+	enabled_label.offset_top = 10
+	enabled_label.offset_bottom = 40
+	enabled_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	
 	add_child(enabled_label)
 
 func _create_keybind_panel():
 	"""Create the keybind reference panel"""
 	keybind_panel = PanelContainer.new()
-	keybind_panel.position = Vector2(10, 50)
 	keybind_panel.custom_minimum_size = Vector2(350, 150)
 	keybind_panel.visible = false
+	
+	# Position in top right, below enabled indicator
+	keybind_panel.anchor_left = 1.0
+	keybind_panel.anchor_right = 1.0
+	keybind_panel.anchor_top = 0.0
+	keybind_panel.anchor_bottom = 0.0
+	keybind_panel.offset_left = -370
+	keybind_panel.offset_right = -10
+	keybind_panel.offset_top = 50
+	keybind_panel.offset_bottom = 220
 	
 	# Style the panel
 	var style = StyleBoxFlat.new()
