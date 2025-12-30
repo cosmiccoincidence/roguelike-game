@@ -3,7 +3,6 @@ extends CharacterBody3D
 
 # ===== CONSTANTS =====
 const SPEED = 5.0
-const JUMP_VELOCITY = 4.5
 
 # God Mode buffs
 const GOD_SPEED_MULT := 2.0
