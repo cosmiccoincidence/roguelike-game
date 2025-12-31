@@ -39,7 +39,7 @@ func _create_label():
 	item_label.bbcode_enabled = true
 	item_label.fit_content = true  # This makes it resize to content
 	item_label.scroll_active = false
-	item_label.custom_minimum_size = Vector2(150, 0)  # Minimum width, height auto-sizes
+	item_label.custom_minimum_size = Vector2(220, 0)  # Minimum width increased to prevent wrapping
 	item_label.add_theme_font_size_override("normal_font_size", 14)
 	item_label.add_theme_color_override("default_color", Color.WHITE)
 	tooltip_panel.add_child(item_label)
@@ -60,7 +60,7 @@ func _create_tooltip_ui():
 	item_label.bbcode_enabled = true
 	item_label.fit_content = true  # Auto-resize to content
 	item_label.scroll_active = false
-	item_label.custom_minimum_size = Vector2(150, 0)  # Minimum width, height auto-sizes
+	item_label.custom_minimum_size = Vector2(220, 0)  # Minimum width increased to prevent wrapping
 	item_label.add_theme_font_size_override("normal_font_size", 14)
 	item_label.add_theme_color_override("default_color", Color.WHITE)
 	tooltip_panel.add_child(item_label)
@@ -117,27 +117,79 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	var quality_color = ItemQuality.get_quality_color(item_quality)
 	var quality_hex = quality_color.to_html(false)  # Get hex color without alpha
 	
-	# Item name (with stack count if applicable) - larger, underlined, and colored by quality
+	# Item name with quality prefix (skip "Normal" quality)
+	# Format: "Quality Item Name" or just "Item Name" if Normal
+	var quality_name = ItemQuality.get_quality_name(item_quality)
 	var name_text = item_data.get("name", "Unknown Item")
 	if item_data.get("stackable", false) and item_data.get("stack_count", 1) > 1:
 		name_text = "%s (x%d)" % [name_text, item_data.get("stack_count", 1)]
-	lines.append("[center][font_size=22][u][color=#%s]%s[/color][/u][/font_size][/center]" % [quality_hex, name_text])
 	
-	# Type - gray color
-	var item_type = item_data.get("item_type", "")
-	if item_type != "":
-		lines.append("[center][color=darkgray]Type: %s[/color][/center]" % item_type)
+	# Add quality prefix only if not Normal
+	if item_quality != ItemQuality.Quality.NORMAL:
+		name_text = "%s %s" % [quality_name, name_text]
 	
-	# Subtype - gray color, separate line
+	lines.append("[center][font_size=22][color=#%s]%s[/color][/font_size][/center]" % [quality_hex, name_text])
+	
+	# BREAK 1: After item name
+	lines.append("")
+	
+	# Subtype with weapon_hand (if applicable)
+	# Format: "Subtype Hand" or just "Subtype"
 	var item_subtype = item_data.get("item_subtype", "")
 	if item_subtype != "":
-		lines.append("[center][color=darkgray]Subtype: %s[/color][/center]" % item_subtype)
+		var subtype_text = item_subtype.capitalize()
+		
+		# Add weapon_hand if it exists and is a weapon
+		if item_data.has("weapon_hand") and item_data.get("weapon_damage", 0) > 0:
+			var weapon_hand = item_data.weapon_hand
+			var hand_text = ""
+			match weapon_hand:
+				1:  # PRIMARY
+					hand_text = "Primary"
+				2:  # OFFHAND
+					hand_text = "Offhand"
+				3:  # TWOHAND
+					hand_text = "Two-Handed"
+				_:  # ANY (0)
+					hand_text = "Any Hand"
+			subtype_text = "%s (%s)" % [subtype_text, hand_text]
+		
+		lines.append("[center][color=darkgray]%s[/color][/center]" % subtype_text)
 	
-	# Item level - below name, white color
-	var item_level = item_data.get("item_level", 1)
-	lines.append("[center]Level: %d[/center]" % item_level)
+	# Weapon class combined with attack speed (only for weapons)
+	# Format: "Slash - 1.2x (Fast)" or "Blunt" (if speed is 1.0)
+	if item_data.has("weapon_class") and item_data.weapon_class != "" and item_data.get("weapon_damage", 0) > 0:
+		var class_text = item_data.weapon_class.capitalize()
+		
+		# Add speed if available and not 1.0 (normal)
+		if item_data.has("weapon_speed"):
+			var speed = item_data.weapon_speed
+			if speed != 1.0:  # Only show if not normal speed
+				var speed_descriptor = ""
+				if speed >= 1.5:
+					speed_descriptor = "Very Fast"
+				elif speed >= 1.2:
+					speed_descriptor = "Fast"
+				elif speed >= 1.0:
+					speed_descriptor = "Normal"
+				elif speed >= 0.8:
+					speed_descriptor = "Slow"
+				else:
+					speed_descriptor = "Very Slow"
+				
+				class_text = "%s - %.1fx (%s)" % [class_text, speed, speed_descriptor]
+		
+		lines.append("[center][color=#bb88ff]%s[/color][/center]" % class_text)
 	
-	# Stat requirements - red if player doesn't meet them (only show if requirements exist)
+	# Armor class - cyan color (only for armor)
+	if item_data.has("armor_class") and item_data.armor_class != "":
+		lines.append("[center][color=#88ddff]%s[/color][/center]" % item_data.armor_class.capitalize())
+	
+	# BREAK 2: After class info
+	if (item_data.has("weapon_class") and item_data.weapon_class != "" and item_data.get("weapon_damage", 0) > 0) or (item_data.has("armor_class") and item_data.armor_class != ""):
+		lines.append("")
+	
+	# Stat requirements - red, underlined (only show if requirements exist)
 	var req_str = item_data.get("required_strength", 0)
 	var req_dex = item_data.get("required_dexterity", 0)
 	if req_str > 0 or req_dex > 0:
@@ -146,15 +198,7 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 			req_parts.append("Str: %d" % req_str)
 		if req_dex > 0:
 			req_parts.append("Dex: %d" % req_dex)
-		lines.append("[center][color=#ff6b6b]Requires: %s[/color][/center]" % ", ".join(req_parts))
-	
-	# Weapon class - purple color (only for weapons)
-	if item_data.has("weapon_class") and item_data.weapon_class != "":
-		lines.append("[center][color=#bb88ff]Class: %s[/color][/center]" % item_data.weapon_class.capitalize())
-	
-	# Armor class - cyan color (only for armor)
-	if item_data.has("armor_class") and item_data.armor_class != "":
-		lines.append("[center][color=#88ddff]Class: %s[/color][/center]" % item_data.armor_class.capitalize())
+		lines.append("[center][u][color=#ff6b6b]Requires: %s[/color][/u][/center]" % ", ".join(req_parts))
 	
 	# Weapon damage - red color (only for weapons)
 	if item_data.has("weapon_damage") and item_data.weapon_damage > 0:
@@ -163,16 +207,6 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	# Weapon range - orange color (only for weapons with range)
 	if item_data.has("weapon_range") and item_data.get("weapon_damage", 0) > 0:
 		lines.append("[center][color=#ffaa55]Range: %.1f[/color][/center]" % item_data.weapon_range)
-	
-	# Weapon speed - yellow color (only for weapons with speed)
-	if item_data.has("weapon_speed") and item_data.get("weapon_damage", 0) > 0:
-		var speed = item_data.weapon_speed
-		var speed_text = "Normal (1.0x)"
-		if speed > 1.0:
-			speed_text = "Fast (%.1fx)" % speed
-		elif speed < 1.0:
-			speed_text = "Slow (%.1fx)" % speed
-		lines.append("[center][color=#ffff77]Speed: %s[/color][/center]" % speed_text)
 	
 	# Weapon block window - cyan color (only for weapons with block window)
 	if item_data.has("weapon_block_rating") and item_data.get("weapon_damage", 0) > 0 and item_data.weapon_block_rating > 0.0:
@@ -195,11 +229,14 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	if item_data.has("armor_rating") and item_data.armor_rating > 0:
 		lines.append("[center][color=#6bb6ff]Defense: %d[/color][/center]" % item_data.armor_rating)
 	
-	# Value - gold color
-	var value = item_data.get("value", 0)
-	lines.append("[center][color=gold]Value: %d[/color][/center]" % value)
+	# BREAK 3: Before value/physical properties
+	lines.append("")
 	
-	# Durability - color based on condition (only show if not stackable or if < 100)
+	# Value (left) and Durability (right) - combined line
+	var value = item_data.get("value", 0)
+	var value_dur_line = "[color=gold]Value: %d[/color]" % value
+	
+	# Add durability on same line if applicable
 	if item_data.has("durability") and not item_data.get("stackable", false):
 		var durability_val = item_data.get("durability", 100)
 		var durability_color = Color.GREEN
@@ -210,11 +247,18 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 		if durability_val < 25:
 			durability_color = Color.RED
 		var durability_hex = durability_color.to_html(false)
-		lines.append("[center][color=#%s]Durability: %d/100[/color][/center]" % [durability_hex, durability_val])
-		
-	# Mass - gray color
+		# Use fill_to to add padding between value and durability
+		var padding = "          "  # Fixed spacing
+		value_dur_line += "%s[color=#%s]Dur: %d/100[/color]" % [padding, durability_hex, durability_val]
+	
+	lines.append("[center]%s[/center]" % value_dur_line)
+	
+	# Mass (left) and Level (right) - combined line
 	var mass = item_data.get("mass", 0.0)
-	lines.append("[center][color=gray]Mass: %.1f[/color][/center]" % mass)
+	var item_level = item_data.get("item_level", 1)
+	var padding2 = "          "  # Fixed spacing
+	var mass_level_line = "[color=gray]Mass: %.1f[/color]%sLevel: %d" % [mass, padding2, item_level]
+	lines.append("[center]%s[/center]" % mass_level_line)
 	
 	# Join lines with newlines
 	var tooltip_text = "\n".join(lines)
