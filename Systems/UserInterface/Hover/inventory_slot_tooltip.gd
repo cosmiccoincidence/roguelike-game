@@ -150,11 +150,11 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	
 	# Weapon class - purple color (only for weapons)
 	if item_data.has("weapon_class") and item_data.weapon_class != "":
-		lines.append("[center][color=#bb88ff]Type: %s[/color][/center]" % item_data.weapon_class.capitalize())
+		lines.append("[center][color=#bb88ff]Class: %s[/color][/center]" % item_data.weapon_class.capitalize())
 	
 	# Armor class - cyan color (only for armor)
 	if item_data.has("armor_class") and item_data.armor_class != "":
-		lines.append("[center][color=#88ddff]Resists: %s[/color][/center]" % item_data.armor_class.capitalize())
+		lines.append("[center][color=#88ddff]Class: %s[/color][/center]" % item_data.armor_class.capitalize())
 	
 	# Weapon damage - red color (only for weapons)
 	if item_data.has("weapon_damage") and item_data.weapon_damage > 0:

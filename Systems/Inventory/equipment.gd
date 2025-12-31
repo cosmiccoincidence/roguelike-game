@@ -39,7 +39,7 @@ func get_equipment_stats() -> Dictionary:
 	return EquipmentStatsCalculator.calculate_total_stats(equipped_items)
 
 func can_equip_item_in_slot(item_data, slot_index: int) -> bool:
-	"""Check if an item can be equipped in a specific slot based on type, subtype, and hand restrictions"""
+	"""Check if an item can be equipped in a specific slot based on type, subtype, hand restrictions, and stat requirements"""
 	if slot_index < 0 or slot_index >= max_equipment_slots:
 		return false
 	
@@ -68,7 +68,43 @@ func can_equip_item_in_slot(item_data, slot_index: int) -> bool:
 		if not EquipmentHandHelper.can_equip_in_slot(weapon_hand, slot_index):
 			return false
 	
+	# Check stat requirements
+	if not _meets_stat_requirements(item_data):
+		return false
+	
 	# Type matches and either subtype matches or no subtype required
+	return true
+
+func _meets_stat_requirements(item_data) -> bool:
+	"""Check if player meets stat requirements to equip item"""
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		print("Warning: No player found for stat requirement check")
+		return true  # Allow equip if no player (shouldn't happen)
+	
+	# Check strength requirement
+	var req_str = item_data.get("required_strength", 0)
+	if req_str > 0:
+		var player_str = player.get("strength")
+		if player_str == null:
+			print("Warning: Player missing strength stat")
+			return true  # Allow if stat missing
+		if player_str < req_str:
+			print("Cannot equip: Requires %d Strength (you have %d)" % [req_str, player_str])
+			return false
+	
+	# Check dexterity requirement
+	var req_dex = item_data.get("required_dexterity", 0)
+	if req_dex > 0:
+		var player_dex = player.get("dexterity")
+		if player_dex == null:
+			print("Warning: Player missing dexterity stat")
+			return true  # Allow if stat missing
+		if player_dex < req_dex:
+			print("Cannot equip: Requires %d Dexterity (you have %d)" % [req_dex, player_dex])
+			return false
+	
+	# All requirements met
 	return true
 
 func swap_items(from_slot: int, to_slot: int):
@@ -76,6 +112,19 @@ func swap_items(from_slot: int, to_slot: int):
 	if from_slot < 0 or from_slot >= max_equipment_slots:
 		return
 	if to_slot < 0 or to_slot >= max_equipment_slots:
+		return
+	
+	# Check if items can be equipped in their new slots
+	var from_item = equipped_items[from_slot]
+	var to_item = equipped_items[to_slot]
+	
+	# If moving an item to a slot, check if it can be equipped there
+	if from_item != null and not can_equip_item_in_slot(from_item, to_slot):
+		print("Cannot swap: Item cannot be equipped in target slot")
+		return
+	
+	if to_item != null and not can_equip_item_in_slot(to_item, from_slot):
+		print("Cannot swap: Item cannot be equipped in source slot")
 		return
 	
 	# Swap the items (including nulls for empty slots)
