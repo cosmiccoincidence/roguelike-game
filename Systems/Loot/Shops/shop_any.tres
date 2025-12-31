@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ShopData" load_steps=3 format=3 uid="uid://cssp56yopov4f"]
+
+[ext_resource type="Script" uid="uid://dyirb8ruypcjx" path="res://Systems/Loot/Shops/shop_data.gd" id="1_r04aw"]
+[ext_resource type="Script" uid="uid://bm5i53gst3tyr" path="res://Systems/Loot/loot_item.gd" id="2_3s3ef"]
+
+[resource]
+script = ExtResource("1_r04aw")
+max_item_level = 10
+metadata/_custom_type_script = "uid://dyirb8ruypcjx"

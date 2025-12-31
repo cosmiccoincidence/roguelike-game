@@ -238,6 +238,17 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	else:
 		_add_label(vbox, "Value: %d" % value, 14, Color.GOLD, HORIZONTAL_ALIGNMENT_CENTER)
 	
+	# === SHOP PRICES (if applicable) ===
+	if item_data.get("is_shop_item", false):
+		# This is a shop item - show buy price
+		var buy_price = item_data.get("buy_price", 0)
+		_add_label(vbox, "Buy Price: %d gold" % buy_price, 14, Color("#ffd700"), HORIZONTAL_ALIGNMENT_CENTER)
+	elif ShopManager.is_shop_open() and not item_data.get("is_shop_item", false):
+		# Shop is open and this is a player item - show sell price
+		var item_value = item_data.get("value", 0)
+		var sell_price = int(item_value * 0.75)  # 75% of value
+		_add_label(vbox, "Sell Price: %d gold (CTRL+Click)" % sell_price, 14, Color("#90EE90"), HORIZONTAL_ALIGNMENT_CENTER)
+	
 	# === MASS + LEVEL (SAME LINE) ===
 	var mass = item_data.get("mass", 0.0)
 	var item_level = item_data.get("item_level", 1)

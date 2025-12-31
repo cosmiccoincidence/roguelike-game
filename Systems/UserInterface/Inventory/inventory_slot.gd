@@ -200,6 +200,21 @@ func _input(event):
 			if item_data:
 				Inventory.drop_item_at_slot(slot_index)
 				get_viewport().set_input_as_handled()
+	
+	# CTRL+Left Click to sell item (when shop is open)
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.ctrl_pressed:
+			# Check if shop is open
+			if ShopManager.is_shop_open() and item_data:
+				# Attempt to sell this item
+				var success = ShopManager.sell_item(slot_index, Inventory)
+				if success:
+					print("[InventorySlot] Sold item from slot %d" % slot_index)
+				else:
+					print("[InventorySlot] Failed to sell item")
+				# Prevent drag from starting
+				accept_event()
+				return
 
 func _start_drag():
 	"""Start dragging this slot's item"""
