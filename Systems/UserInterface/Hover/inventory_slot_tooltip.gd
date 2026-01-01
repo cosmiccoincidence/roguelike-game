@@ -5,6 +5,7 @@ class_name InventorySlotTooltip
 ## Shows item name, level, quality, value, type, subtype, and mass
 
 var tooltip_panel: PanelContainer = null
+var price_panel: PanelContainer = null  # Separate panel for buy/sell price
 var item_label: RichTextLabel = null
 var current_slot: Control = null  # Which slot we're showing tooltip for
 
@@ -15,9 +16,10 @@ func _ready():
 	visibility_layer = 1
 	top_level = false  # Make sure we're not detached from tree
 	
-	# Try to find existing panel
+	# Try to find existing panels
 	tooltip_panel = get_node_or_null("TooltipPanel")
-	if not tooltip_panel:
+	price_panel = get_node_or_null("PricePanel")
+	if not tooltip_panel or not price_panel:
 		_create_tooltip_ui()
 	
 	# Start hidden
@@ -27,6 +29,12 @@ func _ready():
 		tooltip_panel.modulate = Color(1, 1, 1, 1)
 		tooltip_panel.self_modulate = Color(1, 1, 1, 1)
 		tooltip_panel.visibility_layer = 1
+	
+	if price_panel:
+		price_panel.visible = false
+		price_panel.modulate = Color(1, 1, 1, 1)
+		price_panel.self_modulate = Color(1, 1, 1, 1)
+		price_panel.visibility_layer = 1
 
 func _create_label():
 	"""Create the content container"""
@@ -37,12 +45,12 @@ func _create_label():
 
 func _create_tooltip_ui():
 	"""Create the tooltip UI programmatically"""
-	# Create panel
+	# Create main tooltip panel
 	tooltip_panel = PanelContainer.new()
 	tooltip_panel.name = "TooltipPanel"
 	tooltip_panel.visible = false
 	tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tooltip_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN  # Allow panel to shrink to content
+	tooltip_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	tooltip_panel.custom_minimum_size = Vector2(220, 0)
 	add_child(tooltip_panel)
 	
@@ -52,26 +60,55 @@ func _create_tooltip_ui():
 	vbox.add_theme_constant_override("separation", 2)
 	tooltip_panel.add_child(vbox)
 	
-	# Style the panel
+	# Style the main panel with 85% opacity
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0.8)
-	style.draw_center = true  # Force drawing the background
-	style.border_color = Color(1, 1, 1, 0.8)  # Default white border (will be overridden per item)
+	style.bg_color = Color(0, 0, 0, 0.85)  # 85% opaque
+	style.draw_center = true
+	style.border_color = Color(1, 1, 1, 0.85)  # 85% opaque white border
 	style.set_border_width_all(2)
 	style.set_corner_radius_all(4)
-	style.content_margin_left = 10
-	style.content_margin_right = 10
-	style.content_margin_top = 10
-	style.content_margin_bottom = 10
+	style.content_margin_left = 15
+	style.content_margin_right = 15
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
 	tooltip_panel.add_theme_stylebox_override("panel", style)
-	
-	# Make absolutely sure everything is fully opaque
 	tooltip_panel.modulate = Color(1, 1, 1, 1)
 	tooltip_panel.self_modulate = Color(1, 1, 1, 1)
-	
-	# Disable any inherited material or canvas item properties
 	tooltip_panel.material = null
 	tooltip_panel.use_parent_material = false
+	
+	# Create price panel (separate panel below main tooltip)
+	price_panel = PanelContainer.new()
+	price_panel.name = "PricePanel"
+	price_panel.visible = false
+	price_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	price_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	price_panel.custom_minimum_size = Vector2(220, 0)  # Will be overridden to match tooltip width
+	add_child(price_panel)
+	
+	# Create label for price panel
+	var price_label = Label.new()
+	price_label.name = "PriceLabel"
+	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	price_label.add_theme_font_size_override("font_size", 14)
+	price_panel.add_child(price_label)
+	
+	# Style the price panel with GOLD border and 85% opacity
+	var price_style = StyleBoxFlat.new()
+	price_style.bg_color = Color(0, 0, 0, 0.85)  # 85% opaque
+	price_style.draw_center = true
+	price_style.border_color = Color(1.0, 0.843, 0.0, 0.85)  # Gold border 85% opaque
+	price_style.set_border_width_all(2)
+	price_style.set_corner_radius_all(4)
+	price_style.content_margin_left = 15
+	price_style.content_margin_right = 15
+	price_style.content_margin_top = 8
+	price_style.content_margin_bottom = 8
+	price_panel.add_theme_stylebox_override("panel", price_style)
+	price_panel.modulate = Color(1, 1, 1, 1)
+	price_panel.self_modulate = Color(1, 1, 1, 1)
+	price_panel.material = null
+	price_panel.use_parent_material = false
 
 func _process(_delta):
 	"""Position tooltip near mouse cursor every frame when visible"""
@@ -97,6 +134,17 @@ func _process(_delta):
 		# Check bottom edge  
 		if tooltip_panel.global_position.y + tooltip_size.y > viewport_size.y:
 			tooltip_panel.global_position.y = mouse_pos.y - tooltip_size.y - 5
+		
+		# Position price panel directly below main tooltip (if visible)
+		if price_panel and price_panel.visible:
+			# Match width to main tooltip
+			price_panel.custom_minimum_size.x = tooltip_panel.size.x
+			
+			# Position directly below with 2px gap
+			price_panel.global_position = Vector2(
+				tooltip_panel.global_position.x,
+				tooltip_panel.global_position.y + tooltip_panel.size.y + 2
+			)
 
 func show_tooltip(slot: Control, item_data: Dictionary):
 	"""Show tooltip with item data using UI elements for proper alignment"""
@@ -107,17 +155,20 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	var item_quality = item_data.get("item_quality", ItemQuality.Quality.NORMAL)
 	var quality_color = ItemQuality.get_quality_color(item_quality)
 	
-	# Create a NEW style with quality-colored border
+	# Make quality color 85% opaque
+	quality_color.a = 0.85
+	
+	# Create a NEW style with quality-colored border and 85% opacity
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0.8)
+	style.bg_color = Color(0, 0, 0, 0.85)  # 85% opaque
 	style.draw_center = true
-	style.border_color = Color(quality_color.r, quality_color.g, quality_color.b, 0.8)  # 80% opacity
-	style.set_border_width_all(2)  # Make border thicker so it's visible
+	style.border_color = quality_color  # Quality color at 85% opacity
+	style.set_border_width_all(3)
 	style.set_corner_radius_all(4)
-	style.content_margin_left = 10
-	style.content_margin_right = 10
-	style.content_margin_top = 10
-	style.content_margin_bottom = 10
+	style.content_margin_left = 15
+	style.content_margin_right = 15
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
 	tooltip_panel.add_theme_stylebox_override("panel", style)
 	
 	# Clear existing content
@@ -189,15 +240,7 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 		var req_parts = []
 		if req_str > 0: req_parts.append("Str: %d" % req_str)
 		if req_dex > 0: req_parts.append("Dex: %d" % req_dex)
-		
-		# Use RichTextLabel for underline support
-		var req_label = RichTextLabel.new()
-		req_label.bbcode_enabled = true
-		req_label.text = "[center][u][color=#ff6b6b]Requires: %s[/color][/u][/center]" % ", ".join(req_parts)
-		req_label.fit_content = true
-		req_label.scroll_active = false
-		req_label.add_theme_font_size_override("normal_font_size", 14)
-		vbox.add_child(req_label)
+		_add_label(vbox, "Requires: %s" % ", ".join(req_parts), 14, Color("#ff6b6b"), HORIZONTAL_ALIGNMENT_CENTER)
 	
 	# === STATS ===
 	if item_data.has("weapon_damage") and item_data.weapon_damage > 0:
@@ -238,26 +281,41 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	else:
 		_add_label(vbox, "Value: %d" % value, 14, Color.GOLD, HORIZONTAL_ALIGNMENT_CENTER)
 	
-	# === SHOP PRICES (if applicable) ===
-	if item_data.get("is_shop_item", false):
-		# This is a shop item - show buy price
-		var buy_price = item_data.get("buy_price", 0)
-		_add_label(vbox, "Buy Price: %d gold" % buy_price, 14, Color("#ffd700"), HORIZONTAL_ALIGNMENT_CENTER)
-	elif ShopManager.is_shop_open() and not item_data.get("is_shop_item", false):
-		# Shop is open and this is a player item - show sell price
-		var item_value = item_data.get("value", 0)
-		var sell_price = int(item_value * 0.75)  # 75% of value
-		_add_label(vbox, "Sell Price: %d gold (CTRL+Click)" % sell_price, 14, Color("#90EE90"), HORIZONTAL_ALIGNMENT_CENTER)
-	
 	# === MASS + LEVEL (SAME LINE) ===
 	var mass = item_data.get("mass", 0.0)
 	var item_level = item_data.get("item_level", 1)
 	_add_two_column_row(vbox, "Mass: %.1f" % mass, Color.GRAY, "Level: %d" % item_level, Color.WHITE)
 	
-	# Show tooltip
+	# Show main tooltip
 	tooltip_panel.visible = true
 	await get_tree().process_frame
 	tooltip_panel.reset_size()
+	
+	# === PRICE PANEL (SEPARATE WINDOW BELOW) ===
+	if price_panel:
+		var price_label = price_panel.get_node_or_null("PriceLabel")
+		if price_label:
+			# Check if this is a shop item or if shop is open
+			if item_data.get("is_shop_item", false):
+				# Shop item - show buy price
+				var buy_price = item_data.get("buy_price", 0)
+				price_label.text = "Buy Price: %d gold" % buy_price
+				price_label.add_theme_color_override("font_color", Color("#ffd700"))  # Gold
+				price_panel.visible = true
+			elif ShopManager.is_shop_open() and not item_data.get("is_shop_item", false):
+				# Player item when shop open - show sell price
+				var item_value = item_data.get("value", 0)
+				var sell_price = int(item_value * 0.75)
+				price_label.text = "Sell Price: %d gold" % sell_price
+				price_label.add_theme_color_override("font_color", Color("#ffd700"))  # Gold (changed from green)
+				price_panel.visible = true
+			else:
+				# No shop interaction - hide price panel
+				price_panel.visible = false
+		
+		await get_tree().process_frame
+		if price_panel.visible:
+			price_panel.reset_size()
 
 func _add_label(parent: VBoxContainer, text: String, font_size: int, color: Color, alignment: HorizontalAlignment) -> Label:
 	"""Add a centered label"""
@@ -301,4 +359,6 @@ func hide_tooltip():
 	"""Hide the tooltip"""
 	if tooltip_panel:
 		tooltip_panel.visible = false
+	if price_panel:
+		price_panel.visible = false
 	current_slot = null
