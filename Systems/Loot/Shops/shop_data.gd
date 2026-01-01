@@ -148,7 +148,17 @@ func get_buy_price(item_key: String) -> int:
 		return 0
 	
 	var item = item_stock[item_key].item
-	var base_price = item.base_value
+	var is_sold_item = item_stock[item_key].get("is_sold_item", false)
+	var base_price = 0
+	
+	# Handle both LootItem templates and sold item dictionaries
+	if is_sold_item:
+		# Sold item is a dictionary
+		base_price = item.get("value", 0)
+	else:
+		# LootItem template
+		base_price = item.base_value
+	
 	var multiplier = buy_price_multiplier
 	
 	# Check for special pricing using item_key
@@ -173,8 +183,8 @@ func get_stock(item_key: String) -> int:
 		return 0
 	return item_stock[item_key].count
 
-func get_item(item_key: String) -> LootItem:
-	"""Get the LootItem for a key"""
+func get_item(item_key: String):
+	"""Get the item for a key (returns LootItem or Dictionary for sold items)"""
 	if not item_stock.has(item_key):
 		return null
 	return item_stock[item_key].item
@@ -186,8 +196,15 @@ func remove_stock(item_key: String, amount: int = 1) -> bool:
 	
 	var item = item_stock[item_key].item
 	
+	# Get item name (handle both LootItem and Dictionary)
+	var item_name = ""
+	if item is Dictionary:
+		item_name = item.get("name", "")
+	else:
+		item_name = item.item_name
+	
 	# Check for infinite stock
-	if item.item_name in infinite_stock_items:
+	if item_name in infinite_stock_items:
 		return true  # Never runs out
 	
 	if item_stock[item_key].count > 0:
@@ -202,18 +219,41 @@ func add_stock(item_key: String, amount: int = 1):
 	
 	var item = item_stock[item_key].item
 	
+	# Get item name (handle both LootItem and Dictionary)
+	var item_name = ""
+	if item is Dictionary:
+		item_name = item.get("name", "")
+	else:
+		item_name = item.item_name
+	
 	# Don't add to infinite stock items
-	if item.item_name in infinite_stock_items:
+	if item_name in infinite_stock_items:
 		return
 	
 	item_stock[item_key].count += amount
+
+func add_sold_item(sold_item_data: Dictionary):
+	"""Add a player-sold item to shop inventory"""
+	# Get the next available index
+	var next_index = item_stock.size()
+	
+	# Create a unique key for this sold item
+	var item_key = "sold_item_%d" % next_index
+	
+	# Add to shop stock
+	item_stock[item_key] = {
+		"item": sold_item_data,  # Store the full item data
+		"count": 1,  # Sold items have quantity of 1
+		"index": next_index,
+		"is_sold_item": true  # Flag to identify player-sold items
+	}
 
 func can_afford_to_buy_from_player(price: int) -> bool:
 	"""Check if shop has enough gold to buy from player"""
 	return shop_gold >= price
 
 func is_item_level_valid(item_level: int) -> bool:
-	"""Check if item level is within shop's range""" 
+	"""Check if item level is within shop's range"""
 	return item_level >= min_item_level and item_level <= max_item_level
 
 func get_all_shop_items() -> Array:
@@ -223,6 +263,7 @@ func get_all_shop_items() -> Array:
 		items.append({
 			"key": item_key,
 			"item": item_stock[item_key].item,
-			"stock": item_stock[item_key].count
+			"stock": item_stock[item_key].count,
+			"is_sold_item": item_stock[item_key].get("is_sold_item", false)
 		})
 	return items

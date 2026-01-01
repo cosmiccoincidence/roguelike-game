@@ -9,6 +9,7 @@ signal shop_opened(shop_data: ShopData)
 signal shop_closed
 signal transaction_completed(item_name: String, is_purchase: bool, price: int)
 signal shop_gold_changed(amount: int)
+signal shop_inventory_changed  # Emitted when shop inventory changes (e.g., player sells item)
 
 func open_shop(shop_data: ShopData, merchant: Node):
 	"""Open a shop for trading"""
@@ -38,10 +39,13 @@ func buy_item_by_key(item_key: String, player_inventory: Node) -> bool:
 	if not current_shop:
 		return false
 	
-	# Get the item
+	# Get the item (can be LootItem or Dictionary for sold items)
 	var item = current_shop.get_item(item_key)
 	if not item:
 		return false
+	
+	# Check if this is a sold item (Dictionary) or LootItem template
+	var is_sold_item = item is Dictionary
 	
 	# Check stock
 	if not current_shop.has_stock(item_key):
@@ -54,12 +58,18 @@ func buy_item_by_key(item_key: String, player_inventory: Node) -> bool:
 	if player_inventory.get_gold() < price:
 		return false
 	
-	# Check if player has inventory space and won't exceed mass limit
-	var item_data = _loot_item_to_dictionary(item)
+	# Get item data for inventory
+	var item_data: Dictionary
+	if is_sold_item:
+		# Already a dictionary, use it directly
+		item_data = item.duplicate()
+	else:
+		# LootItem template, convert it
+		item_data = _loot_item_to_dictionary(item)
 	
 	# Check mass limit
 	var current_mass = player_inventory.get_total_mass()
-	var item_mass = item.mass
+	var item_mass = item_data.get("mass", 0.0)
 	if current_mass + item_mass > player_inventory.hard_max_mass:
 		return false
 	
@@ -72,7 +82,8 @@ func buy_item_by_key(item_key: String, player_inventory: Node) -> bool:
 	var success = player_inventory.add_item(item_data)
 	
 	if success:
-		transaction_completed.emit(item.item_name, true, price)
+		var item_name = item_data.get("name", "Unknown")
+		transaction_completed.emit(item_name, true, price)
 		shop_gold_changed.emit(current_shop.shop_gold)
 		return true
 	else:
@@ -107,8 +118,12 @@ func sell_item(slot_index: int, player_inventory: Node) -> bool:
 	player_inventory.add_gold(price)
 	player_inventory.remove_item_at_slot(slot_index)
 	
+	# Add sold item to shop inventory
+	current_shop.add_sold_item(item_data)
+	
 	transaction_completed.emit(item_data.get("name", "Unknown"), false, price)
 	shop_gold_changed.emit(current_shop.shop_gold)
+	shop_inventory_changed.emit()  # Refresh shop UI
 	return true
 
 func _loot_item_to_dictionary(item: LootItem) -> Dictionary:

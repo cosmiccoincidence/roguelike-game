@@ -31,6 +31,7 @@ func _ready():
 	ShopManager.shop_opened.connect(_on_shop_opened)
 	ShopManager.shop_closed.connect(_on_shop_closed)
 	ShopManager.shop_gold_changed.connect(_on_shop_gold_changed)
+	ShopManager.shop_inventory_changed.connect(_on_shop_inventory_changed)
 	
 	# Setup shop grid
 	_setup_shop_grid()
@@ -130,6 +131,10 @@ func _on_shop_gold_changed(new_amount: int):
 	"""Update shop gold display"""
 	shop_gold_label.text = "Gold: %d" % new_amount
 
+func _on_shop_inventory_changed():
+	"""Refresh shop inventory when items are sold to shop"""
+	_populate_shop_inventory()
+
 func _populate_shop_inventory():
 	"""Fill shop slots with items from shop data"""
 	if not current_shop_data:
@@ -154,43 +159,55 @@ func _populate_shop_inventory():
 		var item_key = item_data.key
 		var item = item_data.item
 		var stock = item_data.stock
+		var is_sold_item = item_data.get("is_sold_item", false)
 		
 		# Skip out of stock items
 		if stock <= 0:
 			continue
 		
-		# Create display data (match format expected by tooltip)
-		var display_data = {
-			"name": item.item_name,
-			"icon": item.icon,
-			"item_type": item.item_type,
-			"item_subtype": item.item_subtype,
-			"item_level": 1,
-			"item_quality": ItemQuality.Quality.NORMAL,
-			"value": item.base_value,
-			"buy_price": current_shop_data.get_buy_price(item_key),
-			"stock": stock,
-			"stackable": item.stackable,
-			"stack_count": stock if item.stackable else 1,
-			"is_shop_item": true,
-			"item_key": item_key,  # Store key for purchasing
-			# Add other stats for tooltip
-			"mass": item.mass,
-			"durability": item.durability,
-			"required_strength": item.required_strength,
-			"required_dexterity": item.required_dexterity,
-			"weapon_class": item.weapon_class,
-			"weapon_damage": 0,
-			"armor_class": item.armor_class,
-			"armor_rating": 0,
-			"weapon_hand": item.weapon_hand,
-			"weapon_range": item.weapon_range,
-			"weapon_speed": item.weapon_speed,
-			"weapon_block_rating": item.weapon_block_rating,
-			"weapon_parry_window": item.weapon_parry_window,
-			"weapon_crit_chance": item.weapon_crit_chance,
-			"weapon_crit_multiplier": item.weapon_crit_multiplier
-		}
+		# Create display data (handle both LootItem templates and player-sold items)
+		var display_data = {}
+		
+		if is_sold_item:
+			# Player-sold item - item is already a dictionary with all stats
+			display_data = item.duplicate()
+			display_data["is_shop_item"] = true
+			display_data["item_key"] = item_key
+			display_data["buy_price"] = current_shop_data.get_buy_price(item_key)
+			display_data["stock"] = stock
+		else:
+			# LootItem template - build data from template
+			display_data = {
+				"name": item.item_name,
+				"icon": item.icon,
+				"item_type": item.item_type,
+				"item_subtype": item.item_subtype,
+				"item_level": 1,
+				"item_quality": ItemQuality.Quality.NORMAL,
+				"value": item.base_value,
+				"buy_price": current_shop_data.get_buy_price(item_key),
+				"stock": stock,
+				"stackable": item.stackable,
+				"stack_count": stock if item.stackable else 1,
+				"is_shop_item": true,
+				"item_key": item_key,
+				# Add other stats for tooltip
+				"mass": item.mass,
+				"durability": item.durability,
+				"required_strength": item.required_strength,
+				"required_dexterity": item.required_dexterity,
+				"weapon_class": item.weapon_class,
+				"weapon_damage": 0,
+				"armor_class": item.armor_class,
+				"armor_rating": 0,
+				"weapon_hand": item.weapon_hand,
+				"weapon_range": item.weapon_range,
+				"weapon_speed": item.weapon_speed,
+				"weapon_block_rating": item.weapon_block_rating,
+				"weapon_parry_window": item.weapon_parry_window,
+				"weapon_crit_chance": item.weapon_crit_chance,
+				"weapon_crit_multiplier": item.weapon_crit_multiplier
+			}
 		
 		if slots[slot_index].has_method("set_item"):
 			slots[slot_index].set_item(display_data)
