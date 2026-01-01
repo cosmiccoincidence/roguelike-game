@@ -289,6 +289,9 @@ func _roll_shop_item(item: LootItem) -> Dictionary:
 	const WeaponStatRoller = preload("res://Systems/Loot/StatRollers/weapon_stat_roller.gd")
 	const ArmorStatRoller = preload("res://Systems/Loot/StatRollers/armor_stat_roller.gd")
 	
+	# Roll item quality (shops can sell various qualities)
+	var item_quality = ItemQuality.roll_quality(0.0)  # 0 luck = normal distribution
+	
 	# Base item data
 	var item_data = {
 		"name": item.item_name,
@@ -296,7 +299,7 @@ func _roll_shop_item(item: LootItem) -> Dictionary:
 		"item_type": item.item_type,
 		"item_subtype": item.item_subtype,
 		"item_level": 1,
-		"item_quality": ItemQuality.Quality.NORMAL,
+		"item_quality": item_quality,  # Use rolled quality
 		"value": item.base_value,
 		"mass": item.mass,
 		"durability": item.durability,
@@ -320,7 +323,7 @@ func _roll_shop_item(item: LootItem) -> Dictionary:
 			item.min_weapon_damage,
 			item.max_weapon_damage,
 			item_data.item_level,
-			item_data.item_quality
+			item_quality  # Use rolled quality
 		)
 		item_data["weapon_damage"] = weapon_damage
 	else:
@@ -334,10 +337,14 @@ func _roll_shop_item(item: LootItem) -> Dictionary:
 		var armor_rating = ArmorStatRoller.roll_base_armor_rating(
 			item.base_armor_rating,
 			item_data.item_level,
-			item_data.item_quality
+			item_quality  # Use rolled quality
 		)
 		item_data["armor_rating"] = armor_rating
 	else:
 		item_data["armor_rating"] = 0
+	
+	# Calculate value based on quality
+	var quality_mod = ItemQuality.get_value_modifier(item_quality)
+	item_data["value"] = int(item.base_value * quality_mod)
 	
 	return item_data
