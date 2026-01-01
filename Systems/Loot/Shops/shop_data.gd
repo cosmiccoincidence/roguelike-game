@@ -46,8 +46,8 @@ var max_slots: int:
 @export var min_item_level: int = 1   # Don't show items below this level
 
 # Internal data (auto-populated)
-var item_stock: Dictionary = {}  # LootItem -> stock count (0 = out of stock)
-var special_prices: Dictionary = {}  # LootItem -> float multiplier
+var item_stock: Dictionary = {}  # item_key -> {item, count, index, is_sold_item}
+var special_prices: Dictionary = {}  # item_name -> float multiplier (applies to all items with that name)
 var _initialized: bool = false
 
 func _init():
@@ -144,18 +144,29 @@ func _filter_items_by_type(all_items: Array) -> Array[LootItem]:
 	return filtered
 
 func _apply_price_variations():
-	"""Randomly mark up or mark down some items"""
+	"""Randomly mark up or mark down some items by name"""
+	# Track which item names we've already processed
+	var processed_names: Array[String] = []
+	
 	for item_key in item_stock.keys():
+		var item = item_stock[item_key].item
+		var item_name = item.get("name", "")
+		
+		# Skip if we already set a price for this item name
+		if item_name in processed_names:
+			continue
+		
+		processed_names.append(item_name)
+		
+		# Roll for price variation
 		if randf() < price_variation_chance:
-			var item = item_stock[item_key].item
-			
 			# Randomly choose markup or markdown
 			if randf() < 0.5:
 				# Markup
-				special_prices[item_key] = randf_range(markup_range.x, markup_range.y)
+				special_prices[item_name] = randf_range(markup_range.x, markup_range.y)
 			else:
 				# Markdown
-				special_prices[item_key] = randf_range(markdown_range.x, markdown_range.y)
+				special_prices[item_name] = randf_range(markdown_range.x, markdown_range.y)
 
 func get_buy_price(item_key: String) -> int:
 	"""Get the price the player pays to buy this item"""
@@ -163,20 +174,37 @@ func get_buy_price(item_key: String) -> int:
 		return 0
 	
 	var item = item_stock[item_key].item
-	# All items are now dictionaries (both shop-rolled and player-sold)
 	var base_price = item.get("value", 0)
+	var item_name = item.get("name", "")
 	
 	var multiplier = buy_price_multiplier
 	
-	# Check for special pricing using item_key
-	if special_prices.has(item_key):
-		multiplier = special_prices[item_key]
+	# Check for special pricing by item name (not key)
+	if special_prices.has(item_name):
+		multiplier = special_prices[item_name]
 	
 	return int(base_price * multiplier)
 
 func get_sell_price(item_value: int) -> int:
-	"""Get the price the shop pays when player sells an item"""
+	"""Get the price the shop pays when player sells an item (base rate, no markup matching)"""
 	return int(item_value * sell_price_multiplier)
+
+func get_sell_price_for_item(item_name: String, item_value: int) -> int:
+	"""
+	Get the price the shop pays when player sells a specific item.
+	Matches the markup/markdown of items with the same name in the shop.
+	"""
+	# Base sell price (75% of value)
+	var base_sell_price = int(item_value * sell_price_multiplier)
+	
+	# Check if this item name has special pricing
+	if special_prices.has(item_name):
+		var price_multiplier = special_prices[item_name]
+		# Apply the same multiplier to the sell price
+		return int(base_sell_price * price_multiplier)
+	else:
+		# No special pricing, use buy_price_multiplier
+		return int(base_sell_price * buy_price_multiplier)
 
 func has_stock(item_key: String) -> bool:
 	"""Check if item is in stock"""

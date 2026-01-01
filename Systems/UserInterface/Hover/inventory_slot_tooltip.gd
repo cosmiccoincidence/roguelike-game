@@ -60,11 +60,11 @@ func _create_tooltip_ui():
 	vbox.add_theme_constant_override("separation", 2)
 	tooltip_panel.add_child(vbox)
 	
-	# Style the main panel with 80% opacity
+	# Style the main panel
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0.8)  # 80% opaque
+	style.bg_color = Color(0, 0, 0, 0.8)
 	style.draw_center = true
-	style.border_color = Color(1, 1, 1, 0.8)  # 80% opaque white border
+	style.border_color = Color(1, 1, 1, 0.8)
 	style.set_border_width_all(2)
 	style.set_corner_radius_all(4)
 	style.content_margin_left = 15
@@ -83,21 +83,24 @@ func _create_tooltip_ui():
 	price_panel.visible = false
 	price_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	price_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	price_panel.custom_minimum_size = Vector2(220, 0)  # Will be overridden to match tooltip width
+	price_panel.custom_minimum_size = Vector2(220, 0)
 	add_child(price_panel)
 	
 	# Create label for price panel
-	var price_label = Label.new()
+	var price_label = RichTextLabel.new()
 	price_label.name = "PriceLabel"
-	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	price_label.add_theme_font_size_override("font_size", 14)
+	price_label.bbcode_enabled = true
+	price_label.fit_content = true
+	price_label.scroll_active = false
+	price_label.add_theme_font_size_override("normal_font_size", 14)
+	price_label.add_theme_font_size_override("bold_font_size", 14)
 	price_panel.add_child(price_label)
 	
-	# Style the price panel with GOLD border and 80% opacity
+	# Style the price panel
 	var price_style = StyleBoxFlat.new()
-	price_style.bg_color = Color(0, 0, 0, 0.80)  # 80% opaque
+	price_style.bg_color = Color(0, 0, 0, 0.8)
 	price_style.draw_center = true
-	price_style.border_color = Color(1.0, 0.843, 0.0, 0.80)  # Gold border 80% opaque
+	price_style.border_color = Color(1.0, 0.843, 0.0, 0.8)
 	price_style.set_border_width_all(2)
 	price_style.set_corner_radius_all(4)
 	price_style.content_margin_left = 15
@@ -155,14 +158,12 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	var item_quality = item_data.get("item_quality", ItemQuality.Quality.NORMAL)
 	var quality_color = ItemQuality.get_quality_color(item_quality)
 	
-	# Make quality color 80% opaque
-	quality_color.a = 0.80
+	quality_color.a = 0.8
 	
-	# Create a NEW style with quality-colored border and 80% opacity
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0.80)  # 80% opaque
+	style.bg_color = Color(0, 0, 0, 0.8)
 	style.draw_center = true
-	style.border_color = quality_color  # Quality color
+	style.border_color = quality_color
 	style.set_border_width_all(3)
 	style.set_corner_radius_all(4)
 	style.content_margin_left = 15
@@ -297,17 +298,36 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 		if price_label:
 			# Check if this is a shop item or if shop is open
 			if item_data.get("is_shop_item", false):
-				# Shop item - show buy price
+				# Shop item - show buy price with color coding
 				var buy_price = item_data.get("buy_price", 0)
-				price_label.text = "Buy Price: %d gold" % buy_price
-				price_label.add_theme_color_override("font_color", Color("#ffd700"))  # Gold
+				var base_value = item_data.get("value", 0)
+				
+				# Determine color based on price vs value
+				var price_color = "#ffd700"  # Gold (default)
+				if buy_price < base_value:
+					price_color = "#90EE90"  # Green (cheaper than base value)
+				elif buy_price > base_value * 1.2:
+					price_color = "#FF6B6B"  # Red (expensive, 20%+ markup)
+				
+				price_label.text = "[center]Buy Price: [color=%s]%d gold[/color][/center]" % [price_color, buy_price]
 				price_panel.visible = true
 			elif ShopManager.is_shop_open() and not item_data.get("is_shop_item", false):
-				# Player item when shop open - show sell price
+				# Player item when shop open - show sell price with markup/markdown
+				var item_name = item_data.get("name", "")
 				var item_value = item_data.get("value", 0)
-				var sell_price = int(item_value * 0.75)
-				price_label.text = "Sell Price: %d gold" % sell_price
-				price_label.add_theme_color_override("font_color", Color("#ffd700"))  # Gold (changed from green)
+				
+				# Get actual sell price (may have markup/markdown applied)
+				var sell_price = ShopManager.current_shop.get_sell_price_for_item(item_name, item_value)
+				var base_sell_price = int(item_value * 0.75)  # Standard 75%
+				
+				# Determine color based on comparison to base sell price
+				var price_color = "#ffd700"  # Gold (default)
+				if sell_price > base_sell_price * 1.05:
+					price_color = "#90EE90"  # Green (shop paying more than standard)
+				elif sell_price < base_sell_price * 0.95:
+					price_color = "#FF6B6B"  # Red (shop paying less than standard)
+				
+				price_label.text = "[center]Sell Price: [color=%s]%d gold[/color][/center]" % [price_color, sell_price]
 				price_panel.visible = true
 			else:
 				# No shop interaction - hide price panel

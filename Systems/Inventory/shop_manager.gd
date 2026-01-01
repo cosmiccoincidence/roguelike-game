@@ -96,9 +96,10 @@ func sell_item(slot_index: int, player_inventory: Node) -> bool:
 	if not item_data:
 		return false
 	
-	# Calculate sell price (75% of item value)
+	# Calculate sell price with markup/markdown matching
+	var item_name = item_data.get("name", "")
 	var item_value = item_data.get("value", 0)
-	var price = current_shop.get_sell_price(item_value)
+	var price = current_shop.get_sell_price_for_item(item_name, item_value)
 	
 	# Check if shop has enough gold
 	if not current_shop.can_afford_to_buy_from_player(price):
