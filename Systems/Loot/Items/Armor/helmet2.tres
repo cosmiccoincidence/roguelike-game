@@ -12,5 +12,6 @@ item_scene = ExtResource("2_x3fi7")
 item_type = "Armor"
 item_subtype = "Helmet"
 base_value = 18
-base_armor_defense = 6
+armor_class = "Physical"
+base_armor_rating = 20
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"

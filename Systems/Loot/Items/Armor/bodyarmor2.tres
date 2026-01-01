@@ -12,5 +12,6 @@ item_scene = ExtResource("2_vawei")
 item_type = "Armor"
 item_subtype = "Bodyarmor"
 base_value = 20
-base_armor_defense = 10
+armor_class = "Physical"
+base_armor_rating = 25
 metadata/_custom_type_script = "uid://bm5i53gst3tyr"
