@@ -60,11 +60,11 @@ func _create_tooltip_ui():
 	vbox.add_theme_constant_override("separation", 2)
 	tooltip_panel.add_child(vbox)
 	
-	# Style the main panel with 85% opacity
+	# Style the main panel with 80% opacity
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0.85)  # 85% opaque
+	style.bg_color = Color(0, 0, 0, 0.8)  # 80% opaque
 	style.draw_center = true
-	style.border_color = Color(1, 1, 1, 0.85)  # 85% opaque white border
+	style.border_color = Color(1, 1, 1, 0.8)  # 80% opaque white border
 	style.set_border_width_all(2)
 	style.set_corner_radius_all(4)
 	style.content_margin_left = 15
@@ -93,11 +93,11 @@ func _create_tooltip_ui():
 	price_label.add_theme_font_size_override("font_size", 14)
 	price_panel.add_child(price_label)
 	
-	# Style the price panel with GOLD border and 85% opacity
+	# Style the price panel with GOLD border and 80% opacity
 	var price_style = StyleBoxFlat.new()
-	price_style.bg_color = Color(0, 0, 0, 0.85)  # 85% opaque
+	price_style.bg_color = Color(0, 0, 0, 0.80)  # 80% opaque
 	price_style.draw_center = true
-	price_style.border_color = Color(1.0, 0.843, 0.0, 0.85)  # Gold border 85% opaque
+	price_style.border_color = Color(1.0, 0.843, 0.0, 0.80)  # Gold border 80% opaque
 	price_style.set_border_width_all(2)
 	price_style.set_corner_radius_all(4)
 	price_style.content_margin_left = 15
@@ -155,14 +155,14 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	var item_quality = item_data.get("item_quality", ItemQuality.Quality.NORMAL)
 	var quality_color = ItemQuality.get_quality_color(item_quality)
 	
-	# Make quality color 85% opaque
-	quality_color.a = 0.85
+	# Make quality color 80% opaque
+	quality_color.a = 0.80
 	
-	# Create a NEW style with quality-colored border and 85% opacity
+	# Create a NEW style with quality-colored border and 80% opacity
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0.85)  # 85% opaque
+	style.bg_color = Color(0, 0, 0, 0.80)  # 80% opaque
 	style.draw_center = true
-	style.border_color = quality_color  # Quality color at 85% opacity
+	style.border_color = quality_color  # Quality color
 	style.set_border_width_all(3)
 	style.set_corner_radius_all(4)
 	style.content_margin_left = 15
