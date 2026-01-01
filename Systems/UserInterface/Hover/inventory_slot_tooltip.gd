@@ -301,19 +301,16 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 				# Shop item - show buy price with color coding
 				var buy_price = item_data.get("buy_price", 0)
 				var base_value = item_data.get("value", 0)
-				var item_name = item_data.get("name", "Unknown")
 				
 				# Calculate what the standard price would be (1.25x)
 				var standard_price = int(base_value * 1.25)
 				
 				# Compare actual price vs standard price
-				var price_color = "#ffd700"  # Gold (default)
+				var price_color = "#ffd700"
 				if buy_price < standard_price * 0.95:
-					price_color = "#90EE90"  # Green (5%+ below standard)
+					price_color = "#90EE90"
 				elif buy_price > standard_price * 1.05:
-					price_color = "#FF6B6B"  # Red (5%+ above standard)
-				
-				print("[Tooltip] %s: value=%d, standard=%d, buy_price=%d, color=%s" % [item_name, base_value, standard_price, buy_price, "GREEN" if price_color == "#90EE90" else ("RED" if price_color == "#FF6B6B" else "GOLD")])
+					price_color = "#FF6B6B"
 				
 				price_label.text = "[center]Buy Price: [color=%s]%d gold[/color][/center]" % [price_color, buy_price]
 				price_panel.visible = true

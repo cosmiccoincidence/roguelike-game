@@ -105,18 +105,13 @@ func _on_shop_opened(shop_data: ShopData):
 	"""Called when a shop is opened"""
 	current_shop_data = shop_data
 	
-	print("[ShopUI] Opening shop: %s" % shop_data.shop_name)
-	print("[ShopUI] Grid rows: %d, max slots: %d" % [shop_data.grid_rows, shop_data.max_slots])
-	
 	# Update UI
 	shop_name_label.text = shop_data.shop_name
 	shop_gold_label.text = "Gold: %d" % shop_data.shop_gold
 	
 	# Set rows from shop data and rebuild grid
 	rows = shop_data.grid_rows
-	print("[ShopUI] Setting rows to: %d" % rows)
 	_rebuild_shop_grid()
-	print("[ShopUI] Grid rebuilt with %d slots" % shop_grid.get_child_count())
 	
 	# Populate shop inventory
 	_populate_shop_inventory()
@@ -175,38 +170,30 @@ func _on_shop_inventory_changed():
 func _populate_shop_inventory():
 	"""Fill shop slots with items from shop data"""
 	if not current_shop_data:
-		print("[ShopUI] ERROR: No shop data!")
 		return
 	
 	var slots = shop_grid.get_children()
 	var slot_index = 0
-	
-	print("[ShopUI] Populating shop with %d slots available" % slots.size())
 	
 	# Clear all slots first
 	for slot in slots:
 		if slot.has_method("clear_item"):
 			slot.clear_item()
 	
-	# Get all items this shop sells (now returns dictionaries with keys)
+	# Get all items this shop sells
 	var shop_items = current_shop_data.get_all_shop_items()
-	print("[ShopUI] Shop has %d items to display" % shop_items.size())
 	
 	# Add shop items to slots
 	for item_data in shop_items:
 		if slot_index >= slots.size():
-			print("[ShopUI] Ran out of slots at index %d" % slot_index)
 			break
 		
 		var item_key = item_data.key
-		var item = item_data.item  # Always a dictionary now
+		var item = item_data.item
 		var stock = item_data.stock
-		
-		print("[ShopUI]   Item %d: %s (stock: %d)" % [slot_index, item.get("name", "Unknown"), stock])
 		
 		# Skip out of stock items
 		if stock <= 0:
-			print("[ShopUI]     Skipping - out of stock")
 			continue
 		
 		# Item is already a full dictionary with all stats rolled

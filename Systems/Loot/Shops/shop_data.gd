@@ -158,13 +158,11 @@ func _apply_price_variations():
 	if source_pool.is_empty():
 		return
 	
-	print("[ShopData] Applying price variations to entire item pool...")
-	
 	# Roll pricing for EVERY item in the source pool
 	var processed_names: Array[String] = []
 	
 	for loot_item in source_pool:
-		var base_name = loot_item.item_name  # Use the LootItem's base name
+		var base_name = loot_item.item_name
 		
 		# Skip if already processed
 		if base_name in processed_names:
@@ -176,15 +174,9 @@ func _apply_price_variations():
 		if randf() < price_variation_chance:
 			# Randomly choose markup or markdown
 			if randf() < 0.5:
-				# Markup
 				special_prices[base_name] = randf_range(markup_range.x, markup_range.y)
-				print("[ShopData]   '%s' MARKUP: %.2fx" % [base_name, special_prices[base_name]])
 			else:
-				# Markdown
 				special_prices[base_name] = randf_range(markdown_range.x, markdown_range.y)
-				print("[ShopData]   '%s' MARKDOWN: %.2fx" % [base_name, special_prices[base_name]])
-		else:
-			print("[ShopData]   '%s' no variation (standard 1.25x)" % base_name)
 
 func get_buy_price(item_key: String) -> int:
 	"""Get the price the player pays to buy this item"""
@@ -197,15 +189,11 @@ func get_buy_price(item_key: String) -> int:
 	
 	var multiplier = buy_price_multiplier
 	
-	# Check for special pricing by base name (not display name)
+	# Check for special pricing by base name
 	if special_prices.has(base_name):
 		multiplier = special_prices[base_name]
 	
-	var final_price = int(base_price * multiplier)
-	
-	print("[ShopData] get_buy_price - base_name: '%s', base_price: %d, multiplier: %.2f, final: %d" % [base_name, base_price, multiplier, final_price])
-	
-	return final_price
+	return int(base_price * multiplier)
 
 func get_sell_price(item_value: int) -> int:
 	"""Get the price the shop pays when player sells an item (base rate, no markup matching)"""
@@ -222,19 +210,14 @@ func get_sell_price_for_item(item_name: String, item_value: int) -> int:
 	# Extract base name by removing quality prefixes
 	var base_name = _extract_base_name(item_name)
 	
-	print("[ShopData] get_sell_price_for_item - item_name: '%s', base_name: '%s', value: %d" % [item_name, base_name, item_value])
-	
 	# Check if this base name has special pricing
 	if special_prices.has(base_name):
 		var price_multiplier = special_prices[base_name]
-		# Apply same multiplier to sell price (not buy price!)
-		# If buy price has 1.5x markup, sell price also gets 1.5x
+		# Apply same multiplier to sell price
 		var adjusted_sell_price = int(base_sell_price * price_multiplier / buy_price_multiplier)
-		print("[ShopData]   Found special price %.2fx (adjusted from buy multiplier) -> %d gold" % [price_multiplier, adjusted_sell_price])
 		return adjusted_sell_price
 	else:
-		# No special pricing, use standard sell price (just 75% of value)
-		print("[ShopData]   No special price, using standard 0.75x -> %d gold" % base_sell_price)
+		# No special pricing, use standard sell price
 		return base_sell_price
 
 func _extract_base_name(full_name: String) -> String:
