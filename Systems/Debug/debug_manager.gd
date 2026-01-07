@@ -160,7 +160,7 @@ func toggle_keybind_panel():
 
 func _setup_debug_ui():
 	"""Create the debug UI node"""
-	var ui_scene_path = "res://Systems/Debug/debug_ui.tscn"
+	var ui_scene_path = "res://Systems/UserInterface/Debug/debug_ui.tscn"
 	
 	if ResourceLoader.exists(ui_scene_path):
 		var ui_scene = load(ui_scene_path)
@@ -168,4 +168,3 @@ func _setup_debug_ui():
 		add_child(debug_ui)
 	else:
 		push_error("❌ Debug UI scene not found at: %s" % ui_scene_path)
-		push_error("   Create debug_ui.tscn in res://Systems/Debug/")

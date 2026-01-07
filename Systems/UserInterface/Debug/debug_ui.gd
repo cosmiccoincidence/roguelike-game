@@ -31,7 +31,7 @@ func _ready():
 
 func _create_keybinds_component():
 	"""Create the keybinds component"""
-	var keybinds_script = load("res://Systems/Debug/debug_ui_keybinds.gd")
+	var keybinds_script = load("res://Systems/UserInterface/Debug/debug_ui_keybinds.gd")
 	if keybinds_script:
 		keybinds = Node.new()
 		keybinds.name = "Keybinds"
