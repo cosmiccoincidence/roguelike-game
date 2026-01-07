@@ -17,7 +17,7 @@
 [ext_resource type="Script" uid="uid://6ghdey4sqjxb" path="res://Systems/FOV/vision_cone.gd" id="13_2o6r5"]
 [ext_resource type="Script" uid="uid://dj4d8icofodij" path="res://Systems/FOV/entity_culling.gd" id="14_70uel"]
 [ext_resource type="Script" uid="uid://d3si6e1vt6vqs" path="res://Systems/FOV/fog_of_war.gd" id="15_hiqwa"]
-[ext_resource type="PackedScene" uid="uid://dty3gppkdlpm8" path="res://Systems/UserInterface/Inventory/shop_ui.tscn" id="15_kcyjf"]
+[ext_resource type="PackedScene" uid="uid://dty3gppkdlpm8" path="res://Systems/UserInterface/Inventory/Shops/shop_ui.tscn" id="15_kcyjf"]
 
 [node name="World" type="Node3D" groups=["world"]]
 script = ExtResource("1_tlwt5")

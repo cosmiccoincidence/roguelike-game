@@ -65,8 +65,14 @@ func _ready():
 	
 	# Initial updates
 	_update_inventory()
-	_update_mass_display(Inventory.get_total_mass(), Inventory.soft_max_mass)
 	_update_gold_display(Inventory.get_gold())
+	
+	# Get soft_max_mass from mass manager component
+	var mass_manager = Inventory.get_node_or_null("MassManager")
+	var soft_max = 20.0  # Default fallback
+	if mass_manager and "soft_max_mass" in mass_manager:
+		soft_max = mass_manager.soft_max_mass
+	_update_mass_display(Inventory.get_total_mass(), soft_max)
 	
 	# Start hidden
 	hide()
@@ -229,22 +235,18 @@ func _handle_outside_drop():
 		var is_equipment = dragged_slot.get_meta("is_equipment_slot", false)
 		
 		if is_equipment:
-			# Drop from equipment
+			# Drop from equipment - delegate to equipment UI
 			if equipment_ui and equipment_ui.has_method("handle_outside_drop"):
 				equipment_ui.handle_outside_drop(mouse_pos, dragged_slot)
 		else:
-			# Drop from inventory
-			_drop_item_in_world(dragged_slot)
+			# Drop from inventory - use Inventory singleton
+			# Inventory.drop_item_at_slot() uses ItemDropper internally
+			var slot_idx = dragged_slot.get("dragged_from_slot_index")
+			if slot_idx != null:
+				Inventory.drop_item_at_slot(slot_idx)
 		
 		dragged_slot.modulate = Color(1, 1, 1, 1)
 		any_slot.call("_end_drag")
-
-func _drop_item_in_world(dragged_slot: Control):
-	"""Drop item from inventory into the game world"""
-	var slot_idx = dragged_slot.get("dragged_from_slot_index")
-	
-	if slot_idx != null:
-		Inventory.drop_item_at_slot(slot_idx)
 
 
 # ===== UTILITY =====

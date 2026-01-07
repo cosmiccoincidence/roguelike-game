@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bl5kby8ys2uft"]
 
 [ext_resource type="Script" uid="uid://dhchpcnrapibx" path="res://Systems/UserInterface/Inventory/inventory_ui.gd" id="1_sp84r"]
-[ext_resource type="Script" uid="uid://dey2rbwsybyuo" path="res://Systems/UserInterface/Inventory/equipment_ui.gd" id="2_l76kd"]
+[ext_resource type="Script" uid="uid://dey2rbwsybyuo" path="res://Systems/UserInterface/Inventory/Equipment/equipment_ui.gd" id="2_l76kd"]
 [ext_resource type="Script" uid="uid://blpcw14f670oa" path="res://Systems/UserInterface/Hover/inventory_slot_tooltip.gd" id="2_o2au4"]
 [ext_resource type="Script" uid="uid://b6inlwi1vbqty" path="res://Systems/UserInterface/Inventory/stats_panel.gd" id="3_5wtj6"]
 

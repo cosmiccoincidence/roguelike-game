@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b0qbmou8fh1pc"]
 
-[ext_resource type="Script" uid="uid://bkm18xg2tcxwn" path="res://Systems/UserInterface/Inventory/shop_slot.gd" id="1_j0xbs"]
+[ext_resource type="Script" uid="uid://bkm18xg2tcxwn" path="res://Systems/UserInterface/Inventory/Shops/shop_slot.gd" id="1_j0xbs"]
 
 [node name="ShopSlot" type="Panel"]
 custom_minimum_size = Vector2(64, 64)
