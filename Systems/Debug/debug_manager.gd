@@ -1,5 +1,5 @@
 # debug_manager.gd
-# Core debug system manager - handles debug state and delegates to subsystems
+# Core debug system manager - handles debug state and delegates to Systems
 extends Node
 
 # Debug state
@@ -18,135 +18,87 @@ func _ready():
 	# Create debug UI
 	_setup_debug_ui()
 	
-	# Auto-create debug subsystems
-	_setup_subsystems()
+	# Auto-create debug Systems
+	_setup_Systems()
 
-func _setup_subsystems():
+func _setup_Systems():
 	"""Automatically create debug subsystem nodes"""
+	# Create DebugInputs (for input handling)
+	if not has_node("DebugInputs"):
+		var debug_inputs_script = load("res://Systems/Debug/debug_inputs.gd")
+		if debug_inputs_script:
+			var debug_inputs = Node.new()
+			debug_inputs.name = "DebugInputs"
+			debug_inputs.set_script(debug_inputs_script)
+			add_child(debug_inputs)
+		else:
+			push_warning("Could not load debug_inputs.gd")
+	
 	# Create DebugLoot
 	if not has_node("DebugLoot"):
-		var debug_loot_script = load("res://Systems/Debug/debug_loot.gd")
+		var debug_loot_script = load("res://Systems/Debug/Systems/debug_loot.gd")
 		if debug_loot_script:
 			var debug_loot = Node.new()
 			debug_loot.name = "DebugLoot"
 			debug_loot.set_script(debug_loot_script)
 			add_child(debug_loot)
 		else:
-			push_warning("Could not load debug_loot.gd")
+			push_warning("Could not load debug_loot.gd from Debug/Systems folder")
 	
 	# Create DebugCombat
 	if not has_node("DebugCombat"):
-		var debug_combat_script = load("res://Systems/Debug/debug_combat.gd")
+		var debug_combat_script = load("res://Systems/Debug/Systems/debug_combat.gd")
 		if debug_combat_script:
 			var debug_combat = Node.new()
 			debug_combat.name = "DebugCombat"
 			debug_combat.set_script(debug_combat_script)
 			add_child(debug_combat)
 		else:
-			push_warning("Could not load debug_combat.gd")
+			push_warning("Could not load debug_combat.gd from Debug/Systems folder")
 	
 	# Create DebugTime
 	if not has_node("DebugTime"):
-		var debug_time_script = load("res://Systems/Debug/debug_time.gd")
+		var debug_time_script = load("res://Systems/Debug/Systems/debug_time.gd")
 		if debug_time_script:
 			var debug_time = Node.new()
 			debug_time.name = "DebugTime"
 			debug_time.set_script(debug_time_script)
 			add_child(debug_time)
 		else:
-			push_warning("Could not load debug_time.gd")
+			push_warning("Could not load debug_time.gd from Debug/Systems folder")
 	
 	# Create DebugFOV
 	if not has_node("DebugFOV"):
-		var debug_fov_script = load("res://Systems/Debug/debug_fov.gd")
+		var debug_fov_script = load("res://Systems/Debug/Systems/debug_fov.gd")
 		if debug_fov_script:
 			var debug_fov = Node.new()
 			debug_fov.name = "DebugFOV"
 			debug_fov.set_script(debug_fov_script)
 			add_child(debug_fov)
 		else:
-			push_warning("Could not load debug_fov.gd")
-
-func _input(event):
-	if not event is InputEventKey or not event.pressed:
-		return
+			push_warning("Could not load debug_fov.gd from Debug/Systems folder")
 	
-	match event.keycode:
-		KEY_F1:
-			toggle_debug_system()
-		KEY_F2:
-			if debug_enabled:
-				toggle_keybind_panel()
-		KEY_F3:
-			if debug_enabled:
-				toggle_god_mode()
-		KEY_F4:
-			if debug_enabled:
-				skip_level()
-		KEY_BACKSLASH:
-			if debug_enabled:
-				# Delegate to debug_loot subsystem
-				var debug_loot = get_node_or_null("DebugLoot")
-				if debug_loot and debug_loot.has_method("spawn_test_loot"):
-					debug_loot.spawn_test_loot()
-				else:
-					print("⚠️  DebugLoot subsystem not found")
-		KEY_BRACKETLEFT:
-			if debug_enabled:
-				# Delegate to debug_combat subsystem
-				var debug_combat = get_node_or_null("DebugCombat")
-				if debug_combat and debug_combat.has_method("heal_player"):
-					debug_combat.heal_player()
-				else:
-					print("⚠️  DebugCombat subsystem not found")
-		KEY_BRACKETRIGHT:
-			if debug_enabled:
-				# Delegate to debug_combat subsystem
-				var debug_combat = get_node_or_null("DebugCombat")
-				if debug_combat and debug_combat.has_method("damage_player"):
-					debug_combat.damage_player()
-				else:
-					print("⚠️  DebugCombat subsystem not found")
-		KEY_COMMA:
-			if debug_enabled:
-				# Delegate to debug_time subsystem
-				var debug_time = get_node_or_null("DebugTime")
-				if debug_time and debug_time.has_method("advance_time"):
-					debug_time.advance_time()
-				else:
-					print("⚠️  DebugTime subsystem not found")
-		KEY_PERIOD:
-			if debug_enabled:
-				# Delegate to debug_time subsystem
-				var debug_time = get_node_or_null("DebugTime")
-				if debug_time and debug_time.has_method("freeze_time"):
-					debug_time.freeze_time()
-				else:
-					print("⚠️  DebugTime subsystem not found")
-		KEY_M:
-			if debug_enabled:
-				# Delegate to debug_fov subsystem
-				var debug_fov = get_node_or_null("DebugFOV")
-				if debug_fov and debug_fov.has_method("toggle_fov_system"):
-					debug_fov.toggle_fov_system()
-				else:
-					print("⚠️  DebugFOV subsystem not found")
-		KEY_N:
-			if debug_enabled:
-				# Delegate to debug_fov subsystem
-				var debug_fov = get_node_or_null("DebugFOV")
-				if debug_fov and debug_fov.has_method("reset_explored_map"):
-					debug_fov.reset_explored_map()
-				else:
-					print("⚠️  DebugFOV subsystem not found")
-		KEY_B:
-			if debug_enabled:
-				# Delegate to debug_fov subsystem
-				var debug_fov = get_node_or_null("DebugFOV")
-				if debug_fov and debug_fov.has_method("reveal_entire_map"):
-					debug_fov.reveal_entire_map()
-				else:
-					print("⚠️  DebugFOV subsystem not found")
+	# Create DebugPlayer
+	if not has_node("DebugPlayer"):
+		var debug_player_script = load("res://Systems/Debug/Systems/debug_player.gd")
+		if debug_player_script:
+			var debug_player = Node.new()
+			debug_player.name = "DebugPlayer"
+			debug_player.set_script(debug_player_script)
+			add_child(debug_player)
+		else:
+			push_warning("Could not load debug_player.gd from Debug/Systems folder")
+	
+	# Create DebugMaps
+	if not has_node("DebugMaps"):
+		var debug_maps_script = load("res://Systems/Debug/Systems/debug_maps.gd")
+		if debug_maps_script:
+			var debug_maps = Node.new()
+			debug_maps.name = "DebugMaps"
+			debug_maps.set_script(debug_maps_script)
+			add_child(debug_maps)
+		else:
+			push_warning("Could not load debug_maps.gd from Debug/Systems folder")
 
 func toggle_debug_system():
 	"""Toggle the entire debug system on/off"""
@@ -158,7 +110,8 @@ func toggle_debug_system():
 		print("=".repeat(50))
 		print("F1: Toggle Debug Mode")
 		print("F2: Show/Hide Keybind Panel")
-		print("F3: Spawn Test Loot")
+		print("F3: Toggle God Mode")
+		print("F4: Skip Level")
 		print("=".repeat(50) + "\n")
 		
 		# Show enabled indicator
@@ -167,15 +120,21 @@ func toggle_debug_system():
 	else:
 		print("\n🔧 DEBUG MODE DISABLED\n")
 		
-		# Disable god mode if active
+		# Disable god mode if active (delegate to debug_player)
+		var debug_player = get_node_or_null("DebugPlayer")
 		var player = get_tree().get_first_node_in_group("player")
 		if player and player.get("god_mode") and player.god_mode:
-			player.god_mode = false
-			if player.has_method("_update_combat_stats"):
-				player._update_combat_stats()
-			if player.has_method("_on_encumbered_status_changed"):
-				player._on_encumbered_status_changed(player.is_encumbered)
-			print("⚡ God mode disabled")
+			if debug_player and debug_player.has_method("toggle_god_mode"):
+				debug_player.toggle_god_mode()
+			else:
+				# Fallback if debug_player not available
+				player.god_mode = false
+				var stats_component = player.get_node_or_null("PlayerStats")
+				if stats_component and stats_component.has_method("_update_combat_stats"):
+					stats_component._update_combat_stats()
+				elif player.has_method("_update_combat_stats"):
+					player._update_combat_stats()
+				print("⚡ God mode disabled")
 		
 		# Hide all debug UI
 		keybind_panel_visible = false
@@ -198,98 +157,6 @@ func toggle_keybind_panel():
 			debug_ui.hide_keybind_panel()
 	
 	keybind_panel_toggled.emit(keybind_panel_visible)
-
-func toggle_god_mode():
-	"""Toggle god mode for the player"""
-	if not debug_enabled:
-		return
-	
-	var player = get_tree().get_first_node_in_group("player")
-	if not player:
-		print("❌ No player found in scene!")
-		return
-	
-	if not "god_mode" in player:
-		print("❌ Player doesn't have god_mode variable!")
-		return
-	
-	# Toggle god mode
-	player.god_mode = !player.god_mode
-	
-	# Recalculate player stats
-	if player.has_method("_update_combat_stats"):
-		player._update_combat_stats()
-	
-	# Update UI display
-	if debug_ui:
-		if player.god_mode:
-			debug_ui.show_god_mode(player)
-		else:
-			debug_ui.hide_god_mode()
-	
-	# Print to console
-	if player.god_mode:
-		print("\n" + "=".repeat(50))
-		print("⚡ GOD MODE ENABLED")
-		print("=".repeat(50))
-		print("  Speed: x%.1f" % player.GOD_SPEED_MULT)
-		print("  Crit Chance: %.0f%%" % (player.GOD_CRIT_CHANCE * 100))
-		print("  Crit Multiplier: x%.1f" % player.GOD_CRIT_MULT)
-		print("  Max Zoom: %.0f" % player.god_zoom_max)
-		print("  Encumbered penalties: DISABLED")
-		print("  Stamina cost: DISABLED")
-		print("  Damage taken: BLOCKED")
-		print("=".repeat(50) + "\n")
-	else:
-		print("\n⚡ GOD MODE DISABLED\n")
-		
-		# Clamp zoom if it exceeds normal max
-		if player.zoom_target > player.zoom_max:
-			player.zoom_target = player.zoom_max
-	
-	# Refresh encumbered status UI
-	if player.has_method("_on_encumbered_status_changed"):
-		player._on_encumbered_status_changed(player.is_encumbered)
-
-func skip_level():
-	"""Skip to the next map level"""
-	if not debug_enabled:
-		return
-	
-	print("\n" + "=".repeat(50))
-	print("⏭️  SKIPPING TO NEXT LEVEL")
-	print("=".repeat(50))
-	
-	var world = get_tree().get_first_node_in_group("world")
-	if not world:
-		print("❌ World not found!")
-		print("   Make sure world node is in 'world' group")
-		print("=".repeat(50) + "\n")
-		return
-	
-	var current_map = world.get_node_or_null("CurrentMap")
-	if current_map and current_map.has_method("is_generation_in_progress"):
-		if current_map.is_generation_in_progress():
-			print("❌ Cannot skip - map generation in progress!")
-			print("   Wait for map to finish generating")
-			print("=".repeat(50) + "\n")
-			return
-	
-	var game_manager = world.get_node_or_null("GameManager")
-	if not game_manager:
-		print("❌ GameManager not found!")
-		print("   Expected at: World/GameManager")
-		print("=".repeat(50) + "\n")
-		return
-	
-	if not game_manager.has_method("_on_player_reached_exit"):
-		print("❌ GameManager missing _on_player_reached_exit() method!")
-		print("=".repeat(50) + "\n")
-		return
-	
-	print("✓ Triggering level transition...")
-	game_manager._on_player_reached_exit()
-	print("=".repeat(50) + "\n")
 
 func _setup_debug_ui():
 	"""Create the debug UI node"""
