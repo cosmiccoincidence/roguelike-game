@@ -86,7 +86,7 @@ func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_m
 	
 	# Rotate toward mouse cursor
 	var encumbered_effects_active = is_encumbered and not god_mode
-	_rotate_toward_mouse(encumbered_effects_active)
+	_rotate_toward_mouse(encumbered_effects_active, is_sprinting)
 	
 	# Move the body
 	player.move_and_slide()
@@ -120,7 +120,7 @@ func _get_effective_speed_mult(is_encumbered: bool, god_mode: bool) -> float:
 	
 	return mult
 
-func _rotate_toward_mouse(apply_encumbered_penalty: bool = false):
+func _rotate_toward_mouse(apply_encumbered_penalty: bool = false, is_sprinting: bool = false):
 	"""Rotate player toward mouse cursor"""
 	var mouse_pos = player.get_viewport().get_mouse_position()
 	var from = camera.project_ray_origin(mouse_pos)
@@ -139,10 +139,16 @@ func _rotate_toward_mouse(apply_encumbered_penalty: bool = false):
 	var target_angle = atan2(-look_dir.x, -look_dir.z)
 	var current_angle = player.rotation.y
 	
-	# Apply rotation speed with encumbered penalty
+	# Apply rotation speed with penalties
 	var effective_rotation_speed = rotation_speed
+	
+	# Apply encumbered penalty
 	if apply_encumbered_penalty:
 		effective_rotation_speed *= ENCUMBERED_ROTATION_MULT
+	
+	# Apply sprint penalty (50% slower rotation while sprinting)
+	if is_sprinting:
+		effective_rotation_speed *= 0.5
 	
 	var new_angle = lerp_angle(current_angle, target_angle, effective_rotation_speed * player.get_physics_process_delta_time())
 	player.rotation.y = new_angle
