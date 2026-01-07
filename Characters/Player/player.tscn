@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://ca1cn4h542dlw"]
+[gd_scene load_steps=12 format=3 uid="uid://ca1cn4h542dlw"]
 
 [ext_resource type="Script" uid="uid://b4eat4m65wc6b" path="res://Characters/Player/player.gd" id="1_4flbx"]
 [ext_resource type="Script" uid="uid://bf4skbn13wfik" path="res://Systems/camera_zoom.gd" id="2_onrkg"]
 [ext_resource type="Script" uid="uid://bn0mmrwtek40t" path="res://Systems/UserInterface/Hover/hover_tooltip_manager.gd" id="3_cue0d"]
 [ext_resource type="Script" uid="uid://wbashbey3sr4" path="res://Characters/Player/player_inventory.gd" id="4_osktb"]
 [ext_resource type="Script" uid="uid://b71tbpgm3af3v" path="res://Characters/Player/player_stats.gd" id="5_7vev3"]
+[ext_resource type="Script" uid="uid://c71hoe61fu77f" path="res://Characters/Player/player_movement.gd" id="6_7vev3"]
 [ext_resource type="Script" uid="uid://chfai5a0xifgt" path="res://Characters/Player/player_combat.gd" id="6_klx3t"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_onrkg"]
@@ -67,6 +68,9 @@ script = ExtResource("4_osktb")
 
 [node name="PlayerStats" type="Node" parent="."]
 script = ExtResource("5_7vev3")
+
+[node name="PlayerMovement" type="Node" parent="."]
+script = ExtResource("6_7vev3")
 
 [node name="PlayerCombat" type="Node" parent="."]
 script = ExtResource("6_klx3t")
