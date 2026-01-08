@@ -10,12 +10,14 @@ var camera: Camera3D
 @export var base_movement_speed: float = 5.0  # Base movement speed (can be modified by buffs/items)
 @export var rotation_speed: float = 5.0
 @export var sprint_multiplier: float = 2.0
+@export var sprint_stamina_cost: float = 1.5  # Stamina per second while sprinting
 
 # Dodge roll
 @export var dodge_roll_speed: float = 15.0  # Speed during dodge roll
 @export var dodge_roll_duration: float = 0.3  # How long the roll lasts (seconds)
 @export var dodge_roll_cooldown: float = 1.0  # Cooldown between rolls (seconds)
 @export var dodge_roll_stamina_cost: float = 10.0  # Stamina cost per roll
+@export var dodge_roll_iframe_duration: float = 0.15  # Duration of invincibility frames (seconds)
 
 # Calculated movement speed (base + modifiers)
 var movement_speed: float = 5.0
@@ -25,6 +27,7 @@ var is_dodge_rolling: bool = false
 var dodge_roll_timer: float = 0.0
 var dodge_roll_cooldown_timer: float = 0.0
 var dodge_roll_direction: Vector3 = Vector3.ZERO
+var dodge_roll_iframe_timer: float = 0.0  # Invincibility frame timer
 
 # Encumbered penalties (only applied when not in god mode)
 const ENCUMBERED_SPEED_MULT: float = 0.2  # 20% speed
@@ -71,11 +74,15 @@ func _process(delta: float):
 	if dodge_roll_cooldown_timer > 0:
 		dodge_roll_cooldown_timer -= delta
 
-func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_mode: bool):
+func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_mode: bool, stats_component: Node):
 	"""Handle all movement physics"""
 	# Gravity
 	if not player.is_on_floor():
 		player.velocity.y -= gravity * delta
+	
+	# Handle sprint stamina consumption
+	if is_sprinting and not god_mode and stats_component:
+		stats_component.use_stamina(sprint_stamina_cost * delta)
 	
 	# Handle dodge roll timer
 	if is_dodge_rolling:
@@ -83,6 +90,14 @@ func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_m
 		if dodge_roll_timer <= 0:
 			is_dodge_rolling = false
 			dodge_roll_direction = Vector3.ZERO
+	
+	# Handle i-frame timer
+	if dodge_roll_iframe_timer > 0:
+		dodge_roll_iframe_timer -= delta
+		if dodge_roll_iframe_timer <= 0:
+			# I-frames ended
+			if stats_component:
+				stats_component.set_invincible(false)
 	
 	# Get input
 	var input_dir = Input.get_vector("left", "right", "up", "down")
@@ -256,6 +271,11 @@ func try_dodge_roll(stats_component: Node, god_mode: bool) -> bool:
 	is_dodge_rolling = true
 	dodge_roll_timer = dodge_roll_duration
 	dodge_roll_cooldown_timer = dodge_roll_cooldown
+	
+	# Activate invincibility frames
+	dodge_roll_iframe_timer = dodge_roll_iframe_duration
+	if stats_component:
+		stats_component.set_invincible(true)
 	
 	print("Dodge roll!")
 	return true

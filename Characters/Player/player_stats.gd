@@ -20,7 +20,6 @@ var player: CharacterBody3D
 @export var max_stamina := 50
 @export var stamina_regen: float = 1.0  # Stamina per interval
 @export var stamina_regen_interval: float = 0.5  # Seconds between regen
-@export var sprint_stamina_cost: float = 1.5  # Stamina per second while sprinting
 
 @export var heat_resistence := 10
 @export var cold_resistence := 10
@@ -60,6 +59,7 @@ var time_since_last_health_regen: float = 0.0
 
 # Status
 var is_encumbered: bool = false
+var is_invincible: bool = false  # Invincibility frames (i-frames)
 
 # God Mode constants
 const GOD_CRIT_CHANCE := 1.0  # 100% crit
@@ -119,14 +119,8 @@ func _process_stamina_regen(delta: float):
 		time_since_last_stamina_regen = 0.0
 
 func update_sprint_state(is_sprinting: bool, delta: float):
-	"""Called by player to update sprint-related stamina"""
+	"""Called by player to update sprint-related timers (stamina consumption is in player_movement)"""
 	if is_sprinting:
-		if not player.god_mode:
-			# sprint_stamina_cost is defined in this script at line 23
-			if not "sprint_stamina_cost" in self:
-				push_error("ERROR: sprint_stamina_cost not found in player_stats! Using old version?")
-				return
-			use_stamina(sprint_stamina_cost * delta)
 		time_since_sprint_stopped = 0.0
 	else:
 		time_since_sprint_stopped += delta
@@ -135,6 +129,11 @@ func take_damage(amount: int):
 	"""Apply damage to player"""
 	if player.god_mode:
 		print("God Mode: Damage blocked")
+		return
+	
+	# Check invincibility frames
+	if is_invincible:
+		print("I-frames: Damage blocked")
 		return
 	
 	# Apply armor reduction
@@ -219,3 +218,11 @@ func _on_encumbered_status_changed(encumbered: bool):
 	is_encumbered = encumbered
 	var effects_active = is_encumbered and not player.god_mode
 	encumbered_changed.emit(is_encumbered, effects_active)
+
+func set_invincible(invincible: bool):
+	"""Set invincibility state (for i-frames, dodge roll, etc.)"""
+	is_invincible = invincible
+	if is_invincible:
+		print("I-frames: ACTIVE")
+	else:
+		print("I-frames: ended")

@@ -118,7 +118,7 @@ func _physics_process(delta):
 	
 	# Delegate all movement/rotation/camera to movement component
 	if movement:
-		movement.handle_physics(delta, is_sprinting, stats.is_encumbered, god_mode)
+		movement.handle_physics(delta, is_sprinting, stats.is_encumbered, god_mode, stats)
 
 # ===== COMBAT AREA SIGNALS =====
 
