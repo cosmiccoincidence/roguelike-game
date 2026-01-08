@@ -94,7 +94,8 @@ func _create_controls_panel():
 	# MOVEMENT section
 	_add_section_header("MOVEMENT", Color(0.6, 0.8, 1.0))
 	_add_control("W/A/S/D", "Move", Color(0.7, 0.9, 1.0))
-	_add_control("Shift", "Sprint", Color(0.8, 1.0, 1.0))
+	_add_control("CAPS", "Sprint", Color(0.8, 1.0, 1.0))
+	_add_control("Shift", "Dash", Color(0.8, 1.0, 1.0))
 	_add_control("Space", "Dodge", Color(0.8, 1.0, 1.0))
 	
 	# INVENTORY section

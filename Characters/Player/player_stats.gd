@@ -222,7 +222,3 @@ func _on_encumbered_status_changed(encumbered: bool):
 func set_invincible(invincible: bool):
 	"""Set invincibility state (for i-frames, dodge roll, etc.)"""
 	is_invincible = invincible
-	if is_invincible:
-		print("I-frames: ACTIVE")
-	else:
-		print("I-frames: ended")

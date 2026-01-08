@@ -14,10 +14,16 @@ var camera: Camera3D
 
 # Dodge roll
 @export var dodge_roll_speed: float = 15.0  # Speed during dodge roll
-@export var dodge_roll_duration: float = 0.3  # How long the roll lasts (seconds)
+@export var dodge_roll_duration: float = 0.25  # How long the roll lasts (seconds)
 @export var dodge_roll_cooldown: float = 1.0  # Cooldown between rolls (seconds)
 @export var dodge_roll_stamina_cost: float = 10.0  # Stamina cost per roll
 @export var dodge_roll_iframe_duration: float = 0.15  # Duration of invincibility frames (seconds)
+
+# Dash
+@export var dash_speed: float = 30.0  # Speed during dash (faster than roll)
+@export var dash_duration: float = 0.1  # How long the dash lasts (seconds, shorter than roll)
+@export var dash_cooldown: float = 3.0  # Cooldown between dashes (seconds, shorter than roll)
+@export var dash_stamina_cost: float = 15.0  # Stamina cost per dash (cheaper than roll)
 
 # Calculated movement speed (base + modifiers)
 var movement_speed: float = 5.0
@@ -28,6 +34,12 @@ var dodge_roll_timer: float = 0.0
 var dodge_roll_cooldown_timer: float = 0.0
 var dodge_roll_direction: Vector3 = Vector3.ZERO
 var dodge_roll_iframe_timer: float = 0.0  # Invincibility frame timer
+
+# Dash state
+var is_dashing: bool = false
+var dash_timer: float = 0.0
+var dash_cooldown_timer: float = 0.0
+var dash_direction: Vector3 = Vector3.ZERO
 
 # Encumbered penalties (only applied when not in god mode)
 const ENCUMBERED_SPEED_MULT: float = 0.2  # 20% speed
@@ -66,13 +78,17 @@ func initialize(player_node: CharacterBody3D, cam: Camera3D):
 	cam_offset = camera.global_transform.origin - player.global_transform.origin
 
 func _process(delta: float):
-	"""Handle camera zoom smoothing and dodge roll cooldown"""
+	"""Handle camera zoom smoothing and cooldowns"""
 	zoom_current = lerp(zoom_current, zoom_target, 1.0 - exp(-zoom_smooth * delta))
 	_update_camera_global()
 	
 	# Update dodge roll cooldown
 	if dodge_roll_cooldown_timer > 0:
 		dodge_roll_cooldown_timer -= delta
+	
+	# Update dash cooldown
+	if dash_cooldown_timer > 0:
+		dash_cooldown_timer -= delta
 
 func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_mode: bool, stats_component: Node):
 	"""Handle all movement physics"""
@@ -91,6 +107,13 @@ func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_m
 			is_dodge_rolling = false
 			dodge_roll_direction = Vector3.ZERO
 	
+	# Handle dash timer
+	if is_dashing:
+		dash_timer -= delta
+		if dash_timer <= 0:
+			is_dashing = false
+			dash_direction = Vector3.ZERO
+	
 	# Handle i-frame timer
 	if dodge_roll_iframe_timer > 0:
 		dodge_roll_iframe_timer -= delta
@@ -106,8 +129,12 @@ func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_m
 	# Calculate current speed
 	var current_speed = movement_speed
 	
+	# Override with dash if active (highest priority)
+	if is_dashing:
+		current_speed = dash_speed
+		direction = dash_direction
 	# Override with dodge roll if active
-	if is_dodge_rolling:
+	elif is_dodge_rolling:
 		current_speed = dodge_roll_speed
 		direction = dodge_roll_direction
 	else:
@@ -126,8 +153,8 @@ func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_m
 		player.velocity.x = move_toward(player.velocity.x, 0, current_speed)
 		player.velocity.z = move_toward(player.velocity.z, 0, current_speed)
 	
-	# Rotate toward mouse cursor (not during dodge roll)
-	if not is_dodge_rolling:
+	# Rotate toward mouse cursor (not during dodge roll or dash)
+	if not is_dodge_rolling and not is_dashing:
 		var encumbered_effects_active = is_encumbered and not god_mode
 		_rotate_toward_mouse(encumbered_effects_active, is_sprinting)
 	
@@ -279,6 +306,65 @@ func try_dodge_roll(stats_component: Node, god_mode: bool) -> bool:
 	
 	print("Dodge roll!")
 	return true
+
+func try_dash(stats_component: Node, god_mode: bool) -> bool:
+	"""
+	Attempt to perform a dash.
+	Returns true if successful, false if on cooldown or not enough stamina.
+	"""
+	# Can't dash while already dashing or dodge rolling
+	if is_dashing or is_dodge_rolling:
+		return false
+	
+	# Check cooldown
+	if dash_cooldown_timer > 0:
+		return false
+	
+	# Check stamina (unless god mode)
+	if not god_mode:
+		if stats_component.current_stamina < dash_stamina_cost:
+			print("Not enough stamina to dash!")
+			return false
+		# Consume stamina
+		stats_component.use_stamina(dash_stamina_cost)
+	
+	# Get current movement direction
+	var input_dir = Input.get_vector("left", "right", "up", "down")
+	
+	# If not moving, dash toward mouse cursor
+	if input_dir.length() < 0.1:
+		var mouse_pos = player.get_viewport().get_mouse_position()
+		var from = camera.project_ray_origin(mouse_pos)
+		var to = from + camera.project_ray_normal(mouse_pos) * 2000
+		var hit_pos = _intersect_ray_with_plane(from, to, player.global_position.y)
+		
+		if hit_pos != Vector3.ZERO:
+			var toward_dir = (hit_pos - player.global_position).normalized()
+			dash_direction = Vector3(toward_dir.x, 0, toward_dir.z)
+		else:
+			# Fallback: dash forward relative to player rotation
+			dash_direction = -player.global_transform.basis.z
+	else:
+		# Dash in movement direction
+		dash_direction = Vector3(input_dir.x, 0, input_dir.y).normalized()
+	
+	# Start dash
+	is_dashing = true
+	dash_timer = dash_duration
+	dash_cooldown_timer = dash_cooldown
+	
+	print("Dash!")
+	return true
+
+func is_dash_ready() -> bool:
+	"""Check if dash is off cooldown"""
+	return dash_cooldown_timer <= 0 and not is_dashing and not is_dodge_rolling
+
+func get_dash_cooldown_percent() -> float:
+	"""Get dash cooldown as percentage (0.0 = ready, 1.0 = just used)"""
+	if dash_cooldown <= 0:
+		return 0.0
+	return clamp(dash_cooldown_timer / dash_cooldown, 0.0, 1.0)
 
 func is_dodge_roll_ready() -> bool:
 	"""Check if dodge roll is off cooldown"""

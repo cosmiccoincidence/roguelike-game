@@ -139,6 +139,11 @@ func _input(event):
 	if is_dying:
 		return
 	
+	# Dash
+	if event.is_action_pressed("dash"):
+		if movement:
+			movement.try_dash(stats, god_mode)
+	
 	# Dodge roll
 	if event.is_action_pressed("dodge_roll"):
 		if movement:
