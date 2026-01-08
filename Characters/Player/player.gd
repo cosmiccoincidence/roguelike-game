@@ -16,6 +16,7 @@ const GOD_SPEED_MULT := 2.0
 @onready var combat: Node = $PlayerCombat
 @onready var inventory_handler: Node = $PlayerInventory
 @onready var movement: Node = $PlayerMovement
+@onready var state_machine: Node = $PlayerStateMachine
 
 # ===== CHARACTER TRAITS =====
 @export var hero_name: String = "Hero Name"
@@ -39,7 +40,11 @@ func _ready():
 	stats.initialize(self)
 	combat.initialize(self, stats, audio_combat)
 	inventory_handler.initialize(self, cam)
-	movement.initialize(self, cam)
+	# Movement and state machine - handle circular dependency
+	movement.initialize(self, cam)  # Third param is optional (defaults to null)
+	state_machine.initialize(self, movement)
+	# Link state machine to movement after both are initialized
+	movement.set("state_machine", state_machine)
 	
 	# Connect component signals
 	stats.health_changed.connect(_on_health_changed)
@@ -101,17 +106,26 @@ func _physics_process(delta):
 	if is_dying:
 		return
 	
-	# Sprint logic
-	var wants_to_sprint = Input.is_action_pressed("sprint")
+	# Get input for state machine
 	var input_dir = Input.get_vector("left", "right", "up", "down")
 	var is_moving = input_dir.length() > 0
+	var wants_to_sprint = Input.is_action_pressed("sprint")
 	var encumbered_effects_active = stats.is_encumbered and not god_mode
 	
-	# Can only sprint if moving, have stamina (or god mode), AND not encumbered (or god mode)
-	if wants_to_sprint and is_moving and (stats.current_stamina > 0 or god_mode) and not encumbered_effects_active:
-		is_sprinting = true
+	# Can only sprint if have stamina (or god mode) AND not encumbered (or god mode)
+	var can_sprint = (stats.current_stamina > 0 or god_mode) and not encumbered_effects_active
+	var wants_sprint = wants_to_sprint and is_moving and can_sprint
+	
+	# Update state machine
+	if state_machine:
+		state_machine.update_state(delta, input_dir, is_moving, wants_sprint)
+	
+	# Determine if we're actually sprinting based on state
+	if state_machine:
+		is_sprinting = state_machine.is_in_state(state_machine.State.SPRINTING)
 	else:
-		is_sprinting = false
+		# Fallback if no state machine
+		is_sprinting = wants_sprint
 	
 	# Update sprint state in stats component
 	stats.update_sprint_state(is_sprinting, delta)

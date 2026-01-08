@@ -4,6 +4,7 @@ extends Node
 
 var player: CharacterBody3D
 var camera: Camera3D
+var state_machine: Node  # Reference to state machine
 
 # ===== MOVEMENT =====
 @export_group("Movement")
@@ -67,6 +68,7 @@ func initialize(player_node: CharacterBody3D, cam: Camera3D):
 	"""Called by main player script to set references"""
 	player = player_node
 	camera = cam
+	# state_machine will be set after initialization via set()
 	
 	gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 	
@@ -258,7 +260,12 @@ func try_dodge_roll(stats_component: Node, god_mode: bool) -> bool:
 	Attempt to perform a dodge roll.
 	Returns true if successful, false if on cooldown or not enough stamina.
 	"""
-	# Can't dodge while already dodging
+	# Check if we can dodge roll in current state
+	if state_machine and not state_machine.can_dodge_roll():
+		print("Cannot dodge roll in current state!")
+		return false
+	
+	# Can't dodge while already dodging (fallback if no state machine)
 	if is_dodge_rolling:
 		return false
 	
@@ -304,7 +311,10 @@ func try_dodge_roll(stats_component: Node, god_mode: bool) -> bool:
 	if stats_component:
 		stats_component.set_invincible(true)
 	
-	print("Dodge roll!")
+	# Update state machine
+	if state_machine:
+		state_machine.change_state(state_machine.State.DODGE_ROLLING)
+	
 	return true
 
 func try_dash(stats_component: Node, god_mode: bool) -> bool:
@@ -312,7 +322,12 @@ func try_dash(stats_component: Node, god_mode: bool) -> bool:
 	Attempt to perform a dash.
 	Returns true if successful, false if on cooldown or not enough stamina.
 	"""
-	# Can't dash while already dashing or dodge rolling
+	# Check if we can dash in current state
+	if state_machine and not state_machine.can_dash():
+		print("Cannot dash in current state!")
+		return false
+	
+	# Can't dash while already dashing or dodge rolling (fallback if no state machine)
 	if is_dashing or is_dodge_rolling:
 		return false
 	
@@ -352,6 +367,10 @@ func try_dash(stats_component: Node, god_mode: bool) -> bool:
 	is_dashing = true
 	dash_timer = dash_duration
 	dash_cooldown_timer = dash_cooldown
+	
+	# Update state machine
+	if state_machine:
+		state_machine.change_state(state_machine.State.DASHING)
 	
 	print("Dash!")
 	return true
