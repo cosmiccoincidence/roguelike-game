@@ -20,9 +20,9 @@ var camera: Camera3D
 @export var dodge_roll_iframe_duration: float = 0.15  # Duration of invincibility frames (seconds)
 
 # Dash
-@export var dash_speed: float = 30.0  # Speed during dash (faster than roll)
-@export var dash_duration: float = 0.1  # How long the dash lasts (seconds, shorter than roll)
-@export var dash_cooldown: float = 3.0  # Cooldown between dashes (seconds, shorter than roll)
+@export var dash_speed: float = 40.0  # Speed during dash (faster than roll)
+@export var dash_duration: float = 0.15  # How long the dash lasts (seconds, shorter than roll)
+@export var dash_cooldown: float = 2.0  # Cooldown between dashes (seconds, shorter than roll)
 @export var dash_stamina_cost: float = 15.0  # Stamina cost per dash (cheaper than roll)
 
 # Calculated movement speed (base + modifiers)
