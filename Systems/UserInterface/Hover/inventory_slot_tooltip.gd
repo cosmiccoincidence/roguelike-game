@@ -244,16 +244,6 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 		_add_label(vbox, "Requires: %s" % ", ".join(req_parts), 14, Color("#ff6b6b"), HORIZONTAL_ALIGNMENT_CENTER)
 	
 	# === STATS ===
-	
-	# DEBUG: Show all keys in item_data
-	print("=== TOOLTIP DEBUG ===")
-	print("Item keys: %s" % str(item_data.keys()))
-	if item_data.has("weapon_damage"):
-		print("weapon_damage: %d" % item_data.weapon_damage)
-	else:
-		print("weapon_damage: NOT FOUND")
-	print("====================")
-	
 	if item_data.has("weapon_damage") and item_data.weapon_damage > 0:
 		_add_label(vbox, "Damage: %d" % item_data.weapon_damage, 14, Color("#ff6b6b"), HORIZONTAL_ALIGNMENT_CENTER)
 	
