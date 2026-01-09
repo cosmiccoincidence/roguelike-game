@@ -77,10 +77,6 @@ static func roll_weapon_stats(loot_item: Resource, item_level: int, item_quality
 			push_warning("Unknown weapon subtype '%s' with no weapon_damage or armor set!" % subtype)
 			return stats
 		
-		print("=== Rolling stats for: %s (subtype: %s) ===" % [loot_item.item_name, subtype])
-		print("  has_weapon_props: %s" % has_weapon_props)
-		print("  has_armor_props: %s" % has_armor_props)
-		
 		# Calculate multipliers
 		var level_mult = 1.0 + (item_level - 1) * 0.1  # 10% per level
 		var quality_mult = 1.0 + (item_quality * 0.2)  # 20% per quality tier
@@ -116,8 +112,6 @@ static func roll_weapon_stats(loot_item: Resource, item_level: int, item_quality
 		
 		# Add armor stats if present (for shields)
 		if has_armor_props:
-			print("  → Adding ARMOR stats for %s" % loot_item.item_name)
-			
 			# Also add blocking/parry stats for shields even if no weapon_damage
 			if loot_item.weapon_block_rating > 0:
 				stats.weapon_block_rating = loot_item.weapon_block_rating
@@ -146,10 +140,6 @@ static func roll_weapon_stats(loot_item: Resource, item_level: int, item_quality
 			stats.frost_resistance = type_mods.frost_resist * (1.0 + item_quality * 0.15)
 			stats.static_resistance = type_mods.static_resist * (1.0 + item_quality * 0.15)
 			stats.poison_resistance = type_mods.poison_resist * (1.0 + item_quality * 0.15)
-		
-		print("=== Final stats for %s ===" % loot_item.item_name)
-		for key in stats.keys():
-			print("  %s: %s" % [key, stats[key]])
 		
 		return stats
 	

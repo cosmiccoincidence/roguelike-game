@@ -284,7 +284,6 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 	
 	# Armor type (show material type)
 	if item_data.has("armor_type"):
-		print("TOOLTIP: armor_type found: %s (type: %s)" % [item_data.armor_type, typeof(item_data.armor_type)])
 		var armor_type_name = "Unknown"
 		# Check if it's a string or int
 		if typeof(item_data.armor_type) == TYPE_STRING:
@@ -297,9 +296,6 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 				2: armor_type_name = "Mail"
 				3: armor_type_name = "Plate"
 		_add_label(vbox, "Type: %s" % armor_type_name, 14, Color("#88aacc"), HORIZONTAL_ALIGNMENT_CENTER)
-	else:
-		print("TOOLTIP: armor_type NOT FOUND in item_data")
-		print("TOOLTIP: Available keys: %s" % str(item_data.keys()))
 	
 	# Resistances (show if item has any)
 	if item_data.has("fire_resistance") and item_data.fire_resistance != 0:

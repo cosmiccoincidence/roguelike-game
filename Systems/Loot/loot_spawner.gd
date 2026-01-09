@@ -175,13 +175,7 @@ static func _apply_item_properties(instance: BaseItem, item_dict: Dictionary):
 	
 	# Armor type
 	if "armor_type" in instance and "armor_type" in item_dict:
-		print("LOOT_SPAWNER: Setting armor_type to: %s" % item_dict.armor_type)
 		instance.armor_type = item_dict.armor_type
-		print("LOOT_SPAWNER: instance.armor_type is now: %s" % instance.armor_type)
-	else:
-		print("LOOT_SPAWNER: armor_type check failed")
-		print("  'armor_type' in instance: %s" % ("armor_type" in instance))
-		print("  'armor_type' in item_dict: %s" % ("armor_type" in item_dict))
 	
 	# Resistances
 	if "fire_resistance" in instance:
