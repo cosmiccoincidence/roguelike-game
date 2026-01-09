@@ -232,15 +232,12 @@ func _start_drag():
 	# Make this slot semi-transparent to show it's being dragged
 	modulate = Color(1, 1, 1, 0.5)
 	
-	# Highlight valid equipment slots if this item is from inventory
-	var is_equipment = get_meta("is_equipment_slot", false)
-	if not is_equipment:
-		# Get the equipment UI and highlight valid slots
-		var inventory_ui = get_tree().get_first_node_in_group("inventory_ui")
-		if inventory_ui and inventory_ui.has_node("EquipmentPanel"):
-			var equipment_ui = inventory_ui.get_node("EquipmentPanel")
-			if equipment_ui and equipment_ui.has_method("highlight_valid_slots"):
-				equipment_ui.highlight_valid_slots(item_data)
+	# Highlight valid equipment slots when dragging ANY item
+	var inventory_ui = get_tree().get_first_node_in_group("inventory_ui")
+	if inventory_ui and inventory_ui.has_node("EquipmentPanel"):
+		var equipment_ui = inventory_ui.get_node("EquipmentPanel")
+		if equipment_ui and equipment_ui.has_method("highlight_valid_slots"):
+			equipment_ui.highlight_valid_slots(item_data)
 
 func _drop_on_slot():
 	"""Drop the dragged item on this slot"""
