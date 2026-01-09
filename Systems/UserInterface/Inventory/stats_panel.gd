@@ -26,6 +26,18 @@ func set_player_reference(player: CharacterBody3D):
 	if player_ref:
 		_update_hero_name()
 		_update_stats_display()
+		
+		# Connect to stats updated signal
+		var stats = player_ref.get_node_or_null("PlayerStats")
+		if stats and stats.has_signal("stats_updated"):
+			if not stats.stats_updated.is_connected(_on_stats_updated):
+				stats.stats_updated.connect(_on_stats_updated)
+				print("Stats panel connected to stats_updated signal")
+
+func _on_stats_updated():
+	"""Called when player stats are recalculated"""
+	print("Stats panel: stats_updated signal received, refreshing display")
+	_update_stats_display()
 
 func _update_hero_name():
 	"""Update hero name from player"""
@@ -62,16 +74,14 @@ func _setup_stats_panel():
 	stats_container.name = "StatsContainer"
 	add_child(stats_container)
 	
-	# Core Stats Section
+	# Core Stats Section (6-stat system)
 	_create_section_label(stats_container, "Core Stats")
 	_create_stat_label(stats_container, "StrengthLabel", "Strength: 0", 16, Color.ORANGE_RED)
 	_create_stat_label(stats_container, "DexterityLabel", "Dexterity: 0", 16, Color.YELLOW)
 	_create_stat_label(stats_container, "FortitudeLabel", "Fortitude: 0", 16, Color.SLATE_GRAY)
-	_create_spacer(stats_container, 5)
 	_create_stat_label(stats_container, "VitalityLabel", "Vitality: 0", 16, Color.INDIAN_RED)
 	_create_stat_label(stats_container, "AgilityLabel", "Agility: 0", 16, Color.LIGHT_GREEN)
 	_create_stat_label(stats_container, "ArcaneLabel", "Arcane: 0", 16, Color.MEDIUM_PURPLE)
-	_create_spacer(stats_container, 5)
 	_create_stat_label(stats_container, "LuckLabel", "Luck: 0", 16, Color(0.5, 1.0, 0.5))
 	
 	_create_spacer(stats_container, 10)
@@ -137,6 +147,15 @@ func _update_stats_display():
 		_update_label("ArcaneLabel", "Arcane: N/A")
 		_update_luck_label_fallback()
 		return
+	
+	# Debug: Print current stats
+	print("Stats Panel Update:")
+	print("  Strength: %d (class: %d, gear: %d, buff: %d)" % [
+		stats.strength, stats.class_strength, stats.gear_strength, stats.buff_strength
+	])
+	print("  Armor: %d (base: %d, gear: %d)" % [
+		stats.armor, stats.base_armor, stats.gear_armor
+	])
 	
 	# Core Stats (6-stat system)
 	_update_label("StrengthLabel", "Strength: %d" % stats.strength)

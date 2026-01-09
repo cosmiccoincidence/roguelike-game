@@ -18,6 +18,9 @@ const GOD_SPEED_MULT := 2.0
 @onready var movement: Node = $PlayerMovement
 @onready var state_machine: Node = $PlayerStateMachine
 
+# Equipment stat applier (created dynamically)
+var equipment_stat_applier: Node
+
 # ===== CHARACTER TRAITS =====
 @export var hero_name: String = "Hero Name"
 
@@ -46,6 +49,9 @@ func _ready():
 	# Link state machine to movement after both are initialized
 	movement.set("state_machine", state_machine)
 	
+	# Create and initialize equipment stat applier
+	_setup_equipment_stat_applier()
+	
 	# Connect component signals
 	stats.health_changed.connect(_on_health_changed)
 	stats.stamina_changed.connect(_on_stamina_changed)
@@ -58,6 +64,30 @@ func _ready():
 		hud.update_health(stats.current_health, stats.max_health)
 		hud.update_stamina(stats.current_stamina, stats.max_stamina)
 		hud.update_mana(stats.current_mana, stats.max_mana)
+
+# ===== EQUIPMENT STAT APPLIER =====
+
+func _setup_equipment_stat_applier():
+	"""Create and initialize equipment stat applier to sync gear stats to player"""
+	# Load the script
+	var applier_script = load("res://Systems/Inventory/Equipment/equipment_stat_applier.gd")
+	if not applier_script:
+		push_warning("Could not load equipment_stat_applier.gd - equipment stats won't apply to player!")
+		return
+	
+	# Create instance
+	equipment_stat_applier = Node.new()
+	equipment_stat_applier.name = "EquipmentStatApplier"
+	equipment_stat_applier.set_script(applier_script)
+	add_child(equipment_stat_applier)
+	
+	# Get equipment component from inventory
+	var equipment = Equipment  # Global singleton
+	
+	# Initialize with stats and equipment
+	equipment_stat_applier.initialize(stats, equipment)
+	
+	print("Equipment stat applier initialized and connected")
 
 # ===== COMPONENT SIGNAL HANDLERS =====
 

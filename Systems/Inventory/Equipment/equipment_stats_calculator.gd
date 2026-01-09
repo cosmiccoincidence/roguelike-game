@@ -86,8 +86,31 @@ static func calculate_total_stats(equipped_items: Array, active_weapon_set: int 
 	# Process all equipped items
 	for i in range(equipped_items.size()):
 		var item = equipped_items[i]
+		
+		# Debug: what type is this?
+		if item != null:
+			var type_name = "Unknown"
+			if item is Node:
+				type_name = "Node"
+			elif item is Dictionary:
+				type_name = "Dictionary"
+			elif item is Resource:
+				type_name = "Resource"
+			
+			print("  Slot %d has item (type: %s)" % [i, type_name])
+			
+			if item is Node:
+				print("    Item is a Node: %s" % item.name)
+			elif item is Dictionary:
+				print("    Item is a Dictionary with keys: %s" % str(item.keys()))
+		
 		if not item or _is_twohand_placeholder(item):
 			continue
+		
+		print("  Processing item in slot %d: %s" % [i, item.get("item_name", "Unknown")])
+		print("    Has 'armor' property: %s" % str(item.has("armor")))
+		if item.has("armor"):
+			print("    Armor value: %d" % item.armor)
 		
 		# ===== CORE STAT BONUSES =====
 		_add_stat_bonus(stats, item, "strength")
@@ -110,9 +133,14 @@ static func calculate_total_stats(equipped_items: Array, active_weapon_set: int 
 		# ===== ARMOR (all pieces contribute) =====
 		if item.has("armor") and item.armor > 0:
 			stats.armor += item.armor
-		# Legacy support
+			print("    Added %d armor (total now: %d)" % [item.armor, stats.armor])
+		# Legacy support - check both old naming conventions
+		elif item.has("armor_rating") and item.armor_rating > 0:
+			stats.armor += item.armor_rating
+			print("    Added %d armor from armor_rating (total now: %d)" % [item.armor_rating, stats.armor])
 		elif item.has("base_armor_rating") and item.base_armor_rating > 0:
 			stats.armor += item.base_armor_rating
+			print("    Added %d armor from base_armor_rating (total now: %d)" % [item.base_armor_rating, stats.armor])
 		
 		# ===== RESISTANCES (all pieces contribute) =====
 		_add_stat_bonus(stats, item, "fire_resistance")

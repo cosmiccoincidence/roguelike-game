@@ -74,8 +74,13 @@ static func roll_armor_stats(loot_item: Resource, item_level: int, item_quality:
 	
 	# Roll armor rating
 	var base_armor = base_stats.base_armor
-	if loot_item.min_armor > 0:
+	
+	# Check for new properties first
+	if "min_armor" in loot_item and loot_item.min_armor > 0:
 		base_armor = randi_range(loot_item.min_armor, loot_item.max_armor)
+	# Fall back to old property
+	elif "base_armor_rating" in loot_item and loot_item.base_armor_rating > 0:
+		base_armor = loot_item.base_armor_rating
 	
 	stats.armor = max(1, int(base_armor * type_mods.armor_mult * level_mult * quality_mult))
 	
