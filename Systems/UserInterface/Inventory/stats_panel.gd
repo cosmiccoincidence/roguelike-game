@@ -244,15 +244,23 @@ func _update_combat_stats():
 	
 	# Crit chance (weapon + dexterity + gear bonuses)
 	var total_crit = weapon_stats.crit_chance
-	if stats:
+	if total_crit > 0 and stats:
 		total_crit += stats.dexterity * 0.01  # 1% per dex
-	_update_label("CritChanceLabel", "Crit Chance: %.1f%%" % (total_crit * 100))
+	
+	if total_crit > 0:
+		_update_label("CritChanceLabel", "Crit Chance: %.1f%%" % (total_crit * 100))
+	else:
+		_update_label("CritChanceLabel", "Crit Chance: --")
 	
 	# Crit damage (weapon multiplier + dexterity + gear bonuses)
 	var total_crit_mult = weapon_stats.crit_multiplier
-	if stats:
+	if total_crit_mult > 0 and stats:
 		total_crit_mult += stats.dexterity * 0.02  # 2% per dex
-	_update_label("CritDamageLabel", "Crit Damage: %.2fx" % total_crit_mult)
+	
+	if total_crit_mult > 0:
+		_update_label("CritDamageLabel", "Crit Damage: %.2fx" % total_crit_mult)
+	else:
+		_update_label("CritDamageLabel", "Crit Damage: --")
 	
 	# Block rating
 	if weapon_stats.block_rating > 0:
