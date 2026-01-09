@@ -49,7 +49,7 @@ const SPRINT_ROTATION_MULT: float = 0.9  # 90% rotation while sprinting (spec - 
 
 # ===== CAMERA =====
 @export_group("Camera")
-@export var zoom_min: int = 10
+@export var zoom_min: int = 75
 @export var zoom_max: int = 100
 @export var zoom_speed: float = 15.0
 @export var zoom_smooth: float = 8.0
