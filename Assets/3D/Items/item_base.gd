@@ -26,6 +26,7 @@ var weapon_class: String = ""  # Damage type: physical, fire, ice, etc.
 var weapon_damage: int = 0  # Only for weapons
 var armor_class: String = ""  # Resistance type: physical, fire, ice, etc.
 var armor_rating: int = 0  # Only for armor
+var armor_type: String = ""  # Armor material type: cloth, leather, mail, plate
 var weapon_hand: int = 0  # Weapon hand restriction (0=ANY, 1=PRIMARY, 2=OFFHAND, 3=TWOHAND)
 var weapon_range: float = 2.0  # Attack range in meters (default 2.0)
 var weapon_speed: float = 1.0  # Attack speed multiplier (default 1.0 = normal speed)
@@ -300,6 +301,7 @@ func pickup():
 		"weapon_damage": weapon_damage,
 		"armor_class": armor_class,
 		"armor_rating": armor_rating,
+		"armor_type": armor_type,
 		"weapon_hand": weapon_hand,
 		"weapon_range": weapon_range,
 		"weapon_speed": weapon_speed,

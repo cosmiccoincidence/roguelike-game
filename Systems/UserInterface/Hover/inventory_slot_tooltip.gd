@@ -244,30 +244,79 @@ func show_tooltip(slot: Control, item_data: Dictionary):
 		_add_label(vbox, "Requires: %s" % ", ".join(req_parts), 14, Color("#ff6b6b"), HORIZONTAL_ALIGNMENT_CENTER)
 	
 	# === STATS ===
+	# Check if this is a weapon (show weapon stats even if damage is 0, like shields)
+	var is_weapon = item_data.get("item_type", "") == "weapon" or item_data.has("weapon_damage")
+	
+	# Only show damage if > 0
 	if item_data.has("weapon_damage") and item_data.weapon_damage > 0:
 		_add_label(vbox, "Damage: %d" % item_data.weapon_damage, 14, Color("#ff6b6b"), HORIZONTAL_ALIGNMENT_CENTER)
 	
-	if item_data.has("weapon_range") and item_data.get("weapon_damage", 0) > 0:
+	# Show damage type if weapon has damage
+	if item_data.has("damage_type") and item_data.get("weapon_damage", 0) > 0:
+		var dtype = item_data.damage_type.capitalize()
+		_add_label(vbox, "Type: %s" % dtype, 14, Color("#ffaa55"), HORIZONTAL_ALIGNMENT_CENTER)
+	
+	# Only show if explicitly set and non-zero
+	if item_data.has("weapon_range") and is_weapon and item_data.weapon_range > 0:
 		_add_label(vbox, "Range: %.1f" % item_data.weapon_range, 14, Color("#ffaa55"), HORIZONTAL_ALIGNMENT_CENTER)
 	
-	if item_data.has("weapon_block_rating") and item_data.get("weapon_damage", 0) > 0 and item_data.weapon_block_rating > 0.0:
+	if item_data.has("weapon_speed") and is_weapon and item_data.weapon_speed > 0:
+		_add_label(vbox, "Speed: %.2fx" % item_data.weapon_speed, 14, Color("#77ff77"), HORIZONTAL_ALIGNMENT_CENTER)
+	
+	if item_data.has("weapon_block_rating") and is_weapon and item_data.weapon_block_rating > 0.0:
 		_add_label(vbox, "Block Rating: %.0f%%" % (item_data.weapon_block_rating * 100), 14, Color("#77ffff"), HORIZONTAL_ALIGNMENT_CENTER)
 	
-	if item_data.has("weapon_parry_window") and item_data.get("weapon_damage", 0) > 0 and item_data.weapon_parry_window > 0.0:
-		_add_label(vbox, "Parry Window: %.1fs" % item_data.weapon_parry_window, 14, Color("#77ffff"), HORIZONTAL_ALIGNMENT_CENTER)
+	if item_data.has("weapon_parry_window") and is_weapon and item_data.weapon_parry_window > 0.0:
+		_add_label(vbox, "Parry Window: %.2fs" % item_data.weapon_parry_window, 14, Color("#77ffff"), HORIZONTAL_ALIGNMENT_CENTER)
 	
-	if item_data.has("weapon_crit_chance") and item_data.get("weapon_damage", 0) > 0 and item_data.weapon_crit_chance > 0.0:
+	if item_data.has("weapon_crit_chance") and is_weapon and item_data.weapon_crit_chance > 0.0:
 		var crit_pct = item_data.weapon_crit_chance * 100
-		_add_label(vbox, "Crit Chance: %.0f%%" % crit_pct, 14, Color("#ff77ff"), HORIZONTAL_ALIGNMENT_CENTER)
+		_add_label(vbox, "Crit Chance: %.1f%%" % crit_pct, 14, Color("#ff77ff"), HORIZONTAL_ALIGNMENT_CENTER)
 	
-	if item_data.has("weapon_crit_multiplier") and item_data.get("weapon_damage", 0) > 0 and item_data.weapon_crit_multiplier > 1.0:
-		_add_label(vbox, "Crit Multiplier: %.1fx" % item_data.weapon_crit_multiplier, 14, Color("#ff55ff"), HORIZONTAL_ALIGNMENT_CENTER)
+	if item_data.has("weapon_crit_multiplier") and is_weapon and item_data.weapon_crit_multiplier > 1.0:
+		_add_label(vbox, "Crit Multiplier: %.2fx" % item_data.weapon_crit_multiplier, 14, Color("#ff55ff"), HORIZONTAL_ALIGNMENT_CENTER)
 	
 	# Armor/Defense (check both new and old property names)
 	if item_data.has("armor") and item_data.armor > 0:
 		_add_label(vbox, "Armor: %d" % item_data.armor, 14, Color("#6bb6ff"), HORIZONTAL_ALIGNMENT_CENTER)
 	elif item_data.has("armor_rating") and item_data.armor_rating > 0:
 		_add_label(vbox, "Defense: %d" % item_data.armor_rating, 14, Color("#6bb6ff"), HORIZONTAL_ALIGNMENT_CENTER)
+	
+	# Armor type (show material type)
+	if item_data.has("armor_type"):
+		print("TOOLTIP: armor_type found: %s (type: %s)" % [item_data.armor_type, typeof(item_data.armor_type)])
+		var armor_type_name = "Unknown"
+		# Check if it's a string or int
+		if typeof(item_data.armor_type) == TYPE_STRING:
+			armor_type_name = item_data.armor_type.capitalize()
+		else:
+			# It's an int enum
+			match item_data.armor_type:
+				0: armor_type_name = "Cloth"
+				1: armor_type_name = "Leather"
+				2: armor_type_name = "Mail"
+				3: armor_type_name = "Plate"
+		_add_label(vbox, "Type: %s" % armor_type_name, 14, Color("#88aacc"), HORIZONTAL_ALIGNMENT_CENTER)
+	else:
+		print("TOOLTIP: armor_type NOT FOUND in item_data")
+		print("TOOLTIP: Available keys: %s" % str(item_data.keys()))
+	
+	# Resistances (show if item has any)
+	if item_data.has("fire_resistance") and item_data.fire_resistance != 0:
+		var sign = "+" if item_data.fire_resistance > 0 else ""
+		_add_label(vbox, "%s%.0f%% Fire Resist" % [sign, item_data.fire_resistance * 100], 14, Color("#ff6644"), HORIZONTAL_ALIGNMENT_CENTER)
+	
+	if item_data.has("frost_resistance") and item_data.frost_resistance != 0:
+		var sign = "+" if item_data.frost_resistance > 0 else ""
+		_add_label(vbox, "%s%.0f%% Frost Resist" % [sign, item_data.frost_resistance * 100], 14, Color("#66ddff"), HORIZONTAL_ALIGNMENT_CENTER)
+	
+	if item_data.has("static_resistance") and item_data.static_resistance != 0:
+		var sign = "+" if item_data.static_resistance > 0 else ""
+		_add_label(vbox, "%s%.0f%% Static Resist" % [sign, item_data.static_resistance * 100], 14, Color("#ffff44"), HORIZONTAL_ALIGNMENT_CENTER)
+	
+	if item_data.has("poison_resistance") and item_data.poison_resistance != 0:
+		var sign = "+" if item_data.poison_resistance > 0 else ""
+		_add_label(vbox, "%s%.0f%% Poison Resist" % [sign, item_data.poison_resistance * 100], 14, Color("#44ff44"), HORIZONTAL_ALIGNMENT_CENTER)
 	
 	# === BREAK 3 ===
 	_add_spacer(vbox, 5)

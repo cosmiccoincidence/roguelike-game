@@ -135,14 +135,30 @@ static func _apply_item_properties(instance: BaseItem, item_dict: Dictionary):
 		instance.weapon_damage = item_dict.get("weapon_damage", 0)
 	if "damage_type" in instance:
 		instance.damage_type = item_dict.get("damage_type", "physical")
+	# Weapon stats (only set if present in item_dict, otherwise clear them)
 	if "weapon_range" in instance:
-		instance.weapon_range = item_dict.get("weapon_range", 1.5)
+		if "weapon_range" in item_dict:
+			instance.weapon_range = item_dict.weapon_range
+		else:
+			instance.weapon_range = 0.0  # Clear scene default
+	
 	if "weapon_speed" in instance:
-		instance.weapon_speed = item_dict.get("weapon_speed", 1.0)
+		if "weapon_speed" in item_dict:
+			instance.weapon_speed = item_dict.weapon_speed
+		else:
+			instance.weapon_speed = 0.0  # Clear scene default
+	
 	if "weapon_crit_chance" in instance:
-		instance.weapon_crit_chance = item_dict.get("weapon_crit_chance", 0.0)
+		if "weapon_crit_chance" in item_dict:
+			instance.weapon_crit_chance = item_dict.weapon_crit_chance
+		else:
+			instance.weapon_crit_chance = 0.0  # Clear scene default
+	
 	if "weapon_crit_multiplier" in instance:
-		instance.weapon_crit_multiplier = item_dict.get("weapon_crit_multiplier", 1.5)
+		if "weapon_crit_multiplier" in item_dict:
+			instance.weapon_crit_multiplier = item_dict.weapon_crit_multiplier
+		else:
+			instance.weapon_crit_multiplier = 0.0  # Clear scene default
 	if "weapon_block_rating" in instance:
 		instance.weapon_block_rating = item_dict.get("weapon_block_rating", 0.0)
 	if "weapon_parry_window" in instance:
@@ -156,6 +172,16 @@ static func _apply_item_properties(instance: BaseItem, item_dict: Dictionary):
 	# Legacy support
 	elif "armor_rating" in instance:
 		instance.armor_rating = item_dict.get("armor", 0)
+	
+	# Armor type
+	if "armor_type" in instance and "armor_type" in item_dict:
+		print("LOOT_SPAWNER: Setting armor_type to: %s" % item_dict.armor_type)
+		instance.armor_type = item_dict.armor_type
+		print("LOOT_SPAWNER: instance.armor_type is now: %s" % instance.armor_type)
+	else:
+		print("LOOT_SPAWNER: armor_type check failed")
+		print("  'armor_type' in instance: %s" % ("armor_type" in instance))
+		print("  'armor_type' in item_dict: %s" % ("armor_type" in item_dict))
 	
 	# Resistances
 	if "fire_resistance" in instance:

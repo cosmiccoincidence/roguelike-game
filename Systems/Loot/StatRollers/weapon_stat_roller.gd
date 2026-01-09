@@ -69,17 +69,40 @@ static func roll_weapon_stats(loot_item: Resource, item_level: int, item_quality
 	var base_stats = WEAPON_SUBTYPE_STATS.get(subtype, null)
 	
 	if not base_stats:
-		# Unknown subtype - use LootItem values if available
-		if loot_item.weapon_damage > 0:
-			# Calculate multipliers
-			var level_mult = 1.0 + (item_level - 1) * 0.1  # 10% per level
-			var quality_mult = 1.0 + (item_quality * 0.2)  # 20% per quality tier
-			
+		# Unknown subtype - check for any weapon/armor properties
+		var has_weapon_props = loot_item.weapon_damage > 0
+		var has_armor_props = "armor" in loot_item and loot_item.armor > 0
+		
+		if not has_weapon_props and not has_armor_props:
+			push_warning("Unknown weapon subtype '%s' with no weapon_damage or armor set!" % subtype)
+			return stats
+		
+		print("=== Rolling stats for: %s (subtype: %s) ===" % [loot_item.item_name, subtype])
+		print("  has_weapon_props: %s" % has_weapon_props)
+		print("  has_armor_props: %s" % has_armor_props)
+		
+		# Calculate multipliers
+		var level_mult = 1.0 + (item_level - 1) * 0.1  # 10% per level
+		var quality_mult = 1.0 + (item_quality * 0.2)  # 20% per quality tier
+		
+		# Add weapon stats if present
+		if has_weapon_props:
 			stats.weapon_damage = max(1, int(loot_item.weapon_damage * level_mult * quality_mult))
-			stats.weapon_range = loot_item.weapon_range if loot_item.weapon_range > 0 else 1.5
-			stats.weapon_speed = loot_item.weapon_speed if loot_item.weapon_speed > 0 else 1.0
-			stats.weapon_crit_chance = loot_item.weapon_crit_chance * quality_mult
-			stats.weapon_crit_multiplier = loot_item.weapon_crit_multiplier + (item_quality * 0.1)
+			
+			# Only add if explicitly set (non-zero)
+			if loot_item.weapon_range > 0:
+				stats.weapon_range = loot_item.weapon_range
+			if loot_item.weapon_speed > 0:
+				stats.weapon_speed = loot_item.weapon_speed
+			if loot_item.weapon_crit_chance > 0:
+				stats.weapon_crit_chance = loot_item.weapon_crit_chance * quality_mult
+			if loot_item.weapon_crit_multiplier > 0:
+				stats.weapon_crit_multiplier = loot_item.weapon_crit_multiplier + (item_quality * 0.1)
+			if loot_item.weapon_block_rating > 0:
+				stats.weapon_block_rating = loot_item.weapon_block_rating
+			if loot_item.weapon_parry_window > 0:
+				stats.weapon_parry_window = loot_item.weapon_parry_window
+			
 			stats.damage_type = "physical"  # Default
 			
 			# Add physical damage subtype
@@ -90,8 +113,43 @@ static func roll_weapon_stats(loot_item: Resource, item_level: int, item_quality
 					2: stats.physical_damage_type = "blunt"
 			else:
 				stats.physical_damage_type = "slash"  # Default
-		else:
-			push_warning("Unknown weapon subtype '%s' and no weapon_damage set in LootItem!" % subtype)
+		
+		# Add armor stats if present (for shields)
+		if has_armor_props:
+			print("  → Adding ARMOR stats for %s" % loot_item.item_name)
+			
+			# Also add blocking/parry stats for shields even if no weapon_damage
+			if loot_item.weapon_block_rating > 0:
+				stats.weapon_block_rating = loot_item.weapon_block_rating
+			if loot_item.weapon_parry_window > 0:
+				stats.weapon_parry_window = loot_item.weapon_parry_window
+			
+			var armor_type = "leather"
+			if "armor_type" in loot_item:
+				match loot_item.armor_type:
+					0: armor_type = "cloth"
+					1: armor_type = "leather"
+					2: armor_type = "mail"
+					3: armor_type = "plate"
+			
+			const ARMOR_TYPE_MODIFIERS = {
+				"cloth": {"armor_mult": 0.8, "fire_resist": 0.15, "frost_resist": 0.10, "static_resist": 0.12, "poison_resist": 0.08},
+				"leather": {"armor_mult": 1.0, "fire_resist": 0.05, "frost_resist": 0.05, "static_resist": 0.05, "poison_resist": 0.05},
+				"mail": {"armor_mult": 1.3, "fire_resist": 0.0, "frost_resist": 0.03, "static_resist": -0.05, "poison_resist": 0.0},
+				"plate": {"armor_mult": 1.5, "fire_resist": -0.05, "frost_resist": 0.08, "static_resist": -0.10, "poison_resist": -0.03}
+			}
+			
+			var type_mods = ARMOR_TYPE_MODIFIERS.get(armor_type, ARMOR_TYPE_MODIFIERS.leather)
+			stats.armor = max(1, int(loot_item.armor * type_mods.armor_mult * level_mult * quality_mult))
+			stats.armor_type = armor_type  # Add armor type to stats
+			stats.fire_resistance = type_mods.fire_resist * (1.0 + item_quality * 0.15)
+			stats.frost_resistance = type_mods.frost_resist * (1.0 + item_quality * 0.15)
+			stats.static_resistance = type_mods.static_resist * (1.0 + item_quality * 0.15)
+			stats.poison_resistance = type_mods.poison_resist * (1.0 + item_quality * 0.15)
+		
+		print("=== Final stats for %s ===" % loot_item.item_name)
+		for key in stats.keys():
+			print("  %s: %s" % [key, stats[key]])
 		
 		return stats
 	
@@ -129,6 +187,38 @@ static func roll_weapon_stats(loot_item: Resource, item_level: int, item_quality
 	stats.weapon_speed = base_stats.speed
 	stats.weapon_crit_chance = base_stats.crit_chance * quality_mult
 	stats.weapon_crit_multiplier = base_stats.crit_mult + (item_quality * 0.1)
+	
+	# === HYBRID WEAPON/ARMOR (Shields) ===
+	# If weapon has armor stats (shields), add them
+	if "armor" in loot_item and loot_item.armor > 0:
+		# Determine armor type
+		var armor_type = "leather"  # Default
+		if "armor_type" in loot_item:
+			match loot_item.armor_type:
+				0: armor_type = "cloth"
+				1: armor_type = "leather"
+				2: armor_type = "mail"
+				3: armor_type = "plate"
+		
+		# Get armor type modifiers
+		const ARMOR_TYPE_MODIFIERS = {
+			"cloth": {"armor_mult": 0.8, "fire_resist": 0.15, "frost_resist": 0.10, "static_resist": 0.12, "poison_resist": 0.08},
+			"leather": {"armor_mult": 1.0, "fire_resist": 0.05, "frost_resist": 0.05, "static_resist": 0.05, "poison_resist": 0.05},
+			"mail": {"armor_mult": 1.3, "fire_resist": 0.0, "frost_resist": 0.03, "static_resist": -0.05, "poison_resist": 0.0},
+			"plate": {"armor_mult": 1.5, "fire_resist": -0.05, "frost_resist": 0.08, "static_resist": -0.10, "poison_resist": -0.03}
+		}
+		
+		var type_mods = ARMOR_TYPE_MODIFIERS.get(armor_type, ARMOR_TYPE_MODIFIERS.leather)
+		
+		# Roll armor rating
+		stats.armor = max(1, int(loot_item.armor * type_mods.armor_mult * level_mult * quality_mult))
+		stats.armor_type = armor_type  # Add armor type to stats
+		
+		# Add resistances based on armor type
+		stats.fire_resistance = type_mods.fire_resist * (1.0 + item_quality * 0.15)
+		stats.frost_resistance = type_mods.frost_resist * (1.0 + item_quality * 0.15)
+		stats.static_resistance = type_mods.static_resist * (1.0 + item_quality * 0.15)
+		stats.poison_resistance = type_mods.poison_resist * (1.0 + item_quality * 0.15)
 	
 	return stats
 

@@ -96,6 +96,7 @@ func _create_item_entry(item_data: Dictionary, stack_size: int) -> Dictionary:
 		"weapon_damage": item_data.get("weapon_damage", 0),
 		"armor_class": item_data.get("armor_class", ""),
 		"armor_rating": item_data.get("armor_rating", 0),
+		"armor_type": item_data.get("armor_type", ""),
 		"weapon_hand": item_data.get("weapon_hand", 0),
 		"weapon_range": item_data.get("weapon_range", 2.0),
 		"weapon_speed": item_data.get("weapon_speed", 1.0),

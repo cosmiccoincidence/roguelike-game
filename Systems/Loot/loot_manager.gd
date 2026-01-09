@@ -57,7 +57,6 @@ func generate_loot(enemy_level: int, loot_profile: LootProfile, player_luck: flo
 	# STEP 2: Determine number of items to drop
 	var dropped_items: Array[Dictionary] = []
 	var num_drops = randi_range(loot_profile.min_drops, loot_profile.max_drops)
-	print("[LOOT MANAGER] Rolling for %d items" % num_drops)
 	
 	# STEP 3: Roll each item
 	for i in range(num_drops):
@@ -77,7 +76,6 @@ func generate_loot(enemy_level: int, loot_profile: LootProfile, player_luck: flo
 		else:
 			print("[LOOT MANAGER] ❌ Failed to roll item")
 	
-	print("[LOOT MANAGER] Total items generated: %d" % dropped_items.size())
 	return dropped_items
 
 func _roll_single_item(enemy_level: int, profile: LootProfile, player_luck: float) -> Dictionary:
@@ -231,7 +229,6 @@ func _filter_eligible_items(profile: LootProfile, selected_type: String = "") ->
 		
 		eligible.append(item)
 	
-	print("[LOOT MANAGER] Filtered to %d eligible items" % eligible.size())
 	return eligible
 
 func _weighted_select(items: Array[LootItem], profile: LootProfile) -> LootItem:
