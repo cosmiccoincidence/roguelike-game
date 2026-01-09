@@ -14,6 +14,7 @@ item_subtype = "Melee"
 base_value = 5
 required_strength = 2
 weapon_damage = 10
+physical_damage_type = 2
 weapon_speed = 2.0
 weapon_parry_window = 1.0
 weapon_hand = 1

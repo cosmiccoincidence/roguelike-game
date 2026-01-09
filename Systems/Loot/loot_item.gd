@@ -41,6 +41,14 @@ enum DamageType {
 }
 @export var damage_type: DamageType = DamageType.PHYSICAL
 
+# Physical damage subtype (only used if damage_type is PHYSICAL)
+enum PhysicalDamageType {
+	SLASH,   # Normal armor penetration
+	PIERCE,  # Ignores 10% armor
+	BLUNT    # Ignores 5% armor, +20% vs shields
+}
+@export var physical_damage_type: PhysicalDamageType = PhysicalDamageType.SLASH
+
 @export var weapon_range: float = 1.5
 @export var weapon_speed: float = 1.0
 @export_range(0.0, 1.0) var weapon_crit_chance: float = 0.0

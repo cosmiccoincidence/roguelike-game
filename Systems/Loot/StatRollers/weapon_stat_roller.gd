@@ -81,6 +81,15 @@ static func roll_weapon_stats(loot_item: Resource, item_level: int, item_quality
 			stats.weapon_crit_chance = loot_item.weapon_crit_chance * quality_mult
 			stats.weapon_crit_multiplier = loot_item.weapon_crit_multiplier + (item_quality * 0.1)
 			stats.damage_type = "physical"  # Default
+			
+			# Add physical damage subtype
+			if "physical_damage_type" in loot_item:
+				match loot_item.physical_damage_type:
+					0: stats.physical_damage_type = "slash"
+					1: stats.physical_damage_type = "pierce"
+					2: stats.physical_damage_type = "blunt"
+			else:
+				stats.physical_damage_type = "slash"  # Default
 		else:
 			push_warning("Unknown weapon subtype '%s' and no weapon_damage set in LootItem!" % subtype)
 		
@@ -98,6 +107,22 @@ static func roll_weapon_stats(loot_item: Resource, item_level: int, item_quality
 	
 	# Damage type
 	stats.damage_type = base_stats.damage_type
+	
+	# Physical damage subtype (only for physical weapons)
+	if stats.damage_type == "physical":
+		# Check if LootItem has it set
+		if "physical_damage_type" in loot_item:
+			match loot_item.physical_damage_type:
+				0: stats.physical_damage_type = "slash"
+				1: stats.physical_damage_type = "pierce"
+				2: stats.physical_damage_type = "blunt"
+		else:
+			# Assign based on weapon subtype
+			match subtype:
+				"sword", "axe", "greatsword": stats.physical_damage_type = "slash"
+				"dagger", "spear", "bow": stats.physical_damage_type = "pierce"
+				"mace": stats.physical_damage_type = "blunt"
+				_: stats.physical_damage_type = "slash"  # Default
 	
 	# Weapon properties
 	stats.weapon_range = base_stats.range
