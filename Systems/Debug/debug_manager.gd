@@ -1,5 +1,5 @@
 # debug_manager.gd
-# Core debug system manager - handles debug state and delegates to Systems
+# Core debug system manager - handles debug state and delegates to subsystems
 extends Node
 
 # Debug state
@@ -18,10 +18,10 @@ func _ready():
 	# Create debug UI
 	_setup_debug_ui()
 	
-	# Auto-create debug Systems
-	_setup_Systems()
+	# Auto-create debug subsystems
+	_setup_subsystems()
 
-func _setup_Systems():
+func _setup_subsystems():
 	"""Automatically create debug subsystem nodes"""
 	# Create DebugInputs (for input handling)
 	if not has_node("DebugInputs"):
@@ -99,26 +99,30 @@ func _setup_Systems():
 			add_child(debug_maps)
 		else:
 			push_warning("Could not load debug_maps.gd from Debug/Systems folder")
+	
+	# Create DebugPerformance
+	if not has_node("DebugPerformance"):
+		var debug_performance_script = load("res://Systems/Debug/Systems/debug_performance.gd")
+		if debug_performance_script:
+			var debug_performance = Node.new()
+			debug_performance.name = "DebugPerformance"
+			debug_performance.set_script(debug_performance_script)
+			add_child(debug_performance)
+		else:
+			push_warning("Could not load debug_performance.gd from Debug/Systems folder")
 
 func toggle_debug_system():
 	"""Toggle the entire debug system on/off"""
 	debug_enabled = !debug_enabled
 	
 	if debug_enabled:
-		print("\n" + "=".repeat(50))
 		print("🔧 DEBUG MODE ENABLED")
-		print("=".repeat(50))
-		print("F1: Toggle Debug Mode")
-		print("F2: Show/Hide Keybind Panel")
-		print("F3: Toggle God Mode")
-		print("F4: Skip Level")
-		print("=".repeat(50) + "\n")
 		
 		# Show enabled indicator
 		if debug_ui:
 			debug_ui.show_debug_enabled()
 	else:
-		print("\n🔧 DEBUG MODE DISABLED\n")
+		print("🔧 DEBUG MODE DISABLED")
 		
 		# Disable god mode if active (delegate to debug_player)
 		var debug_player = get_node_or_null("DebugPlayer")
@@ -135,6 +139,11 @@ func toggle_debug_system():
 				elif player.has_method("_update_combat_stats"):
 					player._update_combat_stats()
 				print("⚡ God mode disabled")
+		
+		# Hide performance stats
+		var debug_performance = get_node_or_null("DebugPerformance")
+		if debug_performance and debug_performance.has_method("hide_performance_stats"):
+			debug_performance.hide_performance_stats()
 		
 		# Hide all debug UI
 		keybind_panel_visible = false

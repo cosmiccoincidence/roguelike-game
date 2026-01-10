@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://docvfl8b2fe2f"]
+[gd_scene load_steps=6 format=3 uid="uid://docvfl8b2fe2f"]
 
 [ext_resource type="Script" uid="uid://bxt34c8k0klcm" path="res://Systems/UserInterface/HUD/hud.gd" id="1_uygrk"]
 [ext_resource type="Script" uid="uid://nyeg3tyuip6b" path="res://Systems/UserInterface/Hover/hover_tooltip_ui.gd" id="2_fsrcy"]
+[ext_resource type="Script" uid="uid://b3wsepdf1vbbu" path="res://Systems/Debug/performance_stats.gd" id="3_fmpj1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fsrcy"]
 bg_color = Color(0.19793725, 0.19793725, 0.19793719, 0.8392157)
@@ -240,3 +241,10 @@ theme_override_colors/font_color = Color(1, 0.3137255, 0.30980393, 1)
 theme_override_font_sizes/font_size = 16
 text = "HP: 10/10"
 horizontal_alignment = 1
+
+[node name="DebugStatsCanvas" type="CanvasLayer" parent="."]
+
+[node name="PanelContainer" type="PanelContainer" parent="DebugStatsCanvas"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_fmpj1")

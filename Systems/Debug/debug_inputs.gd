@@ -22,8 +22,11 @@ func _input(event):
 				debug_manager.toggle_keybind_panel()
 		KEY_F3:
 			if debug_manager.debug_enabled:
+				_delegate_to_subsystem("DebugPerformance", "toggle_performance_stats")
+		KEY_INSERT:
+			if debug_manager.debug_enabled:
 				_delegate_to_subsystem("DebugPlayer", "toggle_god_mode")
-		KEY_F4:
+		KEY_END:
 			if debug_manager.debug_enabled:
 				_delegate_to_subsystem("DebugMaps", "skip_level")
 		KEY_BACKSLASH:

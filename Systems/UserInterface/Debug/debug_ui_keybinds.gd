@@ -74,14 +74,15 @@ func _build_keybind_list():
 	# Core keybinds
 	_add_keybind("F1", "Toggle Debug Mode", Color.YELLOW)
 	_add_keybind("F2", "Debug Controls", Color.WHITE)
+	_add_keybind("F3", "Performance Stats", Color.WHITE)
 	
 	# Player System keybinds
 	_add_section_header("PLAYER", Color(1.0, 0.8, 0.2))
-	_add_keybind("F3", "Toggle God Mode", Color(1.0, 0.8, 0.2))
+	_add_keybind("INS", "Toggle God Mode", Color(1.0, 0.8, 0.2))
 	
 	# Map System keybinds
 	_add_section_header("MAP", Color(0.8, 0.8, 1.0))
-	_add_keybind("F4", "Skip Level", Color(0.8, 0.8, 1.0))
+	_add_keybind("END", "Skip Level", Color(0.8, 0.8, 1.0))
 	
 	# Loot System keybinds
 	_add_section_header("LOOT", Color(0.5, 1.0, 0.5))
