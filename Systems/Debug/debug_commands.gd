@@ -33,6 +33,8 @@ func process_command(command: String, output: Control):
 			_cmd_help(output)
 		"clear":
 			_cmd_clear(output)
+		"history":
+			_cmd_history(output)
 		"spawn-item":
 			_cmd_spawn_item(args, output)
 		"tp", "teleport":
@@ -59,6 +61,7 @@ func _cmd_help(output: Control):
 	output.print_line("[color=#4DAAFF]═══ AVAILABLE COMMANDS ═══[/color]")
 	output.print_line("[color=#7FFF7F]help[/color] - Show this help")
 	output.print_line("[color=#7FFF7F]clear[/color] - Clear console output")
+	output.print_line("[color=#7FFF7F]history[/color] - Show/clear command history")
 	output.print_line("[color=#7FFF7F]spawn-item [type] [subtype] [name] [level] [quality] x[qty][/color] - Spawn item")
 	output.print_line("  - All fields optional, order-independent")
 	output.print_line("  - Quality: common, uncommon, rare, epic, legendary, mythic")
@@ -76,6 +79,14 @@ func _cmd_clear(output: Control):
 	"""Clear console output"""
 	output.clear_output()
 	output.print_line("[color=#4DAAFF]Console cleared[/color]")
+
+func _cmd_history(output: Control):
+	"""Show or clear command history"""
+	if console and console.has_method("clear_history"):
+		console.clear_history()
+		output.print_line("[color=#7FFF7F]Command history cleared[/color]")
+	else:
+		output.print_line("[color=#FF4D4D]Error: Cannot access console history[/color]")
 
 func _cmd_spawn_item(args: Array, output: Control):
 	"""Spawn an item with flexible parameters"""
@@ -121,6 +132,8 @@ func _cmd_spawn_item(args: Array, output: Control):
 	
 	# Parse each argument
 	for arg in args:
+		# Strip any quotes from the argument
+		arg = arg.strip_edges().replace("'", "").replace('"', "")
 		var arg_lower = arg.to_lower()
 		var recognized = false
 		
@@ -173,7 +186,14 @@ func _cmd_spawn_item(args: Array, output: Control):
 	if not unrecognized_args.is_empty():
 		item_name = " ".join(unrecognized_args)
 	
-	output.print_line("[color=#CCCCCC]Final: name='%s', level=%d, quality=%d, qty=%d[/color]" % [item_name, level, quality, quantity])
+	# If no item name but we have type/subtype, use that for searching
+	if item_name == "":
+		if item_subtype != "":
+			item_name = item_subtype
+		elif item_type != "":
+			item_name = item_type
+	
+	output.print_line("[color=#CCCCCC]Final: name='%s', type='%s', subtype='%s', level=%d, quality=%d, qty=%d[/color]" % [item_name, item_type, item_subtype, level, quality, quantity])
 	
 	# Join unrecognized args as item name
 	if not unrecognized_args.is_empty():
@@ -207,7 +227,7 @@ func _cmd_spawn_item(args: Array, output: Control):
 	# Spawn the items
 	for i in range(quantity):
 		if debug_loot.has_method("spawn_specific_item"):
-			debug_loot.spawn_specific_item(item_name, level, quality)
+			debug_loot.spawn_specific_item(item_name, level, quality, item_type, item_subtype)
 		else:
 			output.print_line("[color=#FF4D4D]Error: spawn_specific_item() method not found[/color]")
 			return

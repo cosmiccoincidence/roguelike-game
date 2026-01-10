@@ -56,9 +56,9 @@ func spawn_test_loot():
 	# Try to load a test loot profile
 	var profile_paths = [
 		"res://Systems/Loot/Enemies/enemy1.tres",
-		"res://Systems/Loot/Enemies/enemy2.tres",
-		"res://Systems/Loot/Containers/chest.tres",
-		"res://Systems/Loot/Containers/chest_weapon.tres"
+		"res://Systems/Loot/Chests/chest_weapon.tres",
+		"res://Systems/Loot/test_loot_profile.tres",
+		"res://loot_profiles/test_profile.tres"
 	]
 	
 	var profile: LootProfile = null
@@ -155,8 +155,8 @@ func show_loot_manager_info():
 	
 	print("=".repeat(50) + "\n")
 
-func spawn_specific_item(item_name: String, level: int = 1, quality: int = 0):
-	"""Spawn a specific item by name with level and quality"""
+func spawn_specific_item(item_name: String, level: int = 1, quality: int = 0, item_type: String = "", item_subtype: String = ""):
+	"""Spawn a specific item by name/type/subtype with level and quality"""
 	if not debug_manager or not debug_manager.debug_enabled:
 		return
 	
@@ -183,33 +183,48 @@ func spawn_specific_item(item_name: String, level: int = 1, quality: int = 0):
 	
 	print("🔍 Searching for item: '%s'" % item_name)
 	
-	# First pass: exact name match
-	for item in loot_manager.all_items:
-		if item and item.item_name.to_lower() == item_name_lower:
-			found_item = item
-			print("✓ Found exact match: %s" % item.item_name)
-			break
+	# First pass: match by type (return random item of that type)
+	if not found_item and item_name != "":
+		var type_matches = []
+		for item in loot_manager.all_items:
+			if item and item.item_type.to_lower() == item_name_lower:
+				type_matches.append(item)
+		
+		if not type_matches.is_empty():
+			found_item = type_matches[randi() % type_matches.size()]
+			print("✓ Found random item by type: %s" % found_item.item_name)
 	
-	# Second pass: partial name match
+	# Second pass: match by subtype (return random item of that subtype)
+	if not found_item and item_name != "":
+		var subtype_matches = []
+		for item in loot_manager.all_items:
+			if item and item.get("item_subtype") and item.item_subtype.to_lower() == item_name_lower:
+				subtype_matches.append(item)
+		
+		if not subtype_matches.is_empty():
+			found_item = subtype_matches[randi() % subtype_matches.size()]
+			print("✓ Found random item by subtype: %s (%s)" % [found_item.item_name, found_item.item_subtype])
+	
+	# Third pass: exact name match
+	if not found_item:
+		for item in loot_manager.all_items:
+			if item and item.item_name.to_lower() == item_name_lower:
+				found_item = item
+				print("✓ Found exact name match: %s" % item.item_name)
+				break
+	
+	# Fourth pass: partial name match
 	if not found_item:
 		for item in loot_manager.all_items:
 			if item and item.item_name.to_lower().contains(item_name_lower):
 				found_item = item
-				print("✓ Found partial match: %s" % item.item_name)
+				print("✓ Found partial name match: %s" % item.item_name)
 				break
 	
-	# If not found by name, try to match by type
-	if not found_item and item_name != "":
-		for item in loot_manager.all_items:
-			if item and item.item_type.to_lower() == item_name_lower:
-				found_item = item
-				print("✓ Found by type: %s" % item.item_name)
-				break
-	
-	# If still not found, use random item
+	# Final fallback: completely random item
 	if not found_item:
 		found_item = loot_manager.all_items[randi() % loot_manager.all_items.size()]
-		print("⚠️  Item '%s' not found, using random: %s" % [item_name, found_item.item_name if found_item else "none"])
+		print("⚠️  No matches found, using completely random: %s" % (found_item.item_name if found_item else "none"))
 	
 	if not found_item or not found_item.item_scene:
 		print("❌ Item has no scene assigned!")
