@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bsxhkntrbcu7d" path="res://Maps/start.tscn" id="6_2o6r5"]
 [ext_resource type="PackedScene" uid="uid://bl5kby8ys2uft" path="res://Systems/UserInterface/Inventory/inventory_ui.tscn" id="6_dwbse"]
 [ext_resource type="PackedScene" uid="uid://bbkhrejni6xic" path="res://Maps/MapGen/map_1d.tscn" id="7_5xkvv"]
-[ext_resource type="Script" uid="uid://bhftitjhl280t" path="res://Systems/game_manager.gd" id="7_pkg7o"]
+[ext_resource type="Script" uid="uid://bhftitjhl280t" path="res://Systems/map_manager.gd" id="7_pkg7o"]
 [ext_resource type="PackedScene" uid="uid://bdatgtymbk87c" path="res://Maps/MapGen/map_1b.tscn" id="8_ic0uy"]
 [ext_resource type="PackedScene" uid="uid://d08me3cebt53q" path="res://Maps/MapGen/map_1e.tscn" id="8_kcyjf"]
 [ext_resource type="PackedScene" uid="uid://de1e8ihkli4jp" path="res://Maps/town_1.tscn" id="9_ioo17"]
