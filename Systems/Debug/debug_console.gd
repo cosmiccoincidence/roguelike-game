@@ -112,9 +112,11 @@ func _create_ui():
 	input_field = LineEdit.new()
 	input_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	input_field.placeholder_text = "Enter command... (type 'help' for commands)"
-	input_field.text_submitted.connect(_on_command_submitted)
 	input_field.mouse_filter = Control.MOUSE_FILTER_STOP  # Ensure it captures mouse
 	input_field.focus_mode = Control.FOCUS_ALL  # Ensure it can receive focus
+	input_field.clear_button_enabled = false  # Don't show clear button
+	input_field.context_menu_enabled = false  # Disable right-click menu
+	# Don't connect to text_submitted - we'll handle ENTER manually
 	input_container.add_child(input_field)
 	
 	# Initial help message
@@ -133,6 +135,10 @@ func _input(event):
 	# Only handle specific navigation/control keys
 	if event is InputEventKey and event.pressed:
 		match event.keycode:
+			KEY_ENTER, KEY_KP_ENTER:
+				# Handle ENTER manually to keep focus
+				_submit_command()
+				get_viewport().set_input_as_handled()
 			KEY_F1:
 				# Allow F1 to toggle debug mode (will also close console)
 				# Don't handle this event so it reaches debug_inputs
@@ -153,6 +159,40 @@ func _input(event):
 				# Let all other keys (letters, numbers, etc.) reach the input field
 				# Don't call set_input_as_handled() for typing keys
 				pass
+
+func _submit_command():
+	"""Submit command from input field (called manually on ENTER)"""
+	var command = input_field.text
+	
+	if command.is_empty():
+		return
+	
+	# Clear input but DON'T lose focus
+	input_field.text = ""
+	
+	# Add to history
+	_add_to_history(command)
+	
+	# Echo command
+	print_line("[color=#FFFF4D]> %s[/color]" % command)
+	
+	# Process command
+	if command_processor:
+		command_processor.process_command(command, self)
+	else:
+		print_line("[color=#FF4D4D]Error: Command processor not initialized[/color]")
+	
+	# Emit signal
+	command_entered.emit(command)
+	
+	# Scroll to bottom (don't await - just do it sync)
+	if output_label.get_parent() is ScrollContainer:
+		var scroll = output_label.get_parent() as ScrollContainer
+		call_deferred("_scroll_to_bottom", scroll)
+
+func _scroll_to_bottom(scroll: ScrollContainer):
+	"""Deferred scroll to bottom"""
+	scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
 
 func toggle_console():
 	"""Toggle console visibility"""
@@ -178,38 +218,6 @@ func hide_console():
 	is_visible = false
 	visible = false
 	input_field.release_focus()
-
-func _on_command_submitted(command: String):
-	"""Handle command submission"""
-	if command.is_empty():
-		return
-	
-	# Clear input
-	input_field.clear()
-	
-	# Add to history
-	_add_to_history(command)
-	
-	# Echo command
-	print_line("[color=#FFFF4D]> %s[/color]" % command)
-	
-	# Process command
-	if command_processor:
-		command_processor.process_command(command, self)
-	else:
-		print_line("[color=#FF4D4D]Error: Command processor not initialized[/color]")
-	
-	# Emit signal
-	command_entered.emit(command)
-	
-	# Keep focus on input field for next command
-	input_field.grab_focus()
-	
-	# Auto-scroll to bottom
-	await get_tree().process_frame
-	if output_label.get_parent() is ScrollContainer:
-		var scroll = output_label.get_parent() as ScrollContainer
-		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
 
 func print_line(text: String):
 	"""Print a line to the console output"""
