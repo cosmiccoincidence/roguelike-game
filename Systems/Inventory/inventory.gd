@@ -111,7 +111,7 @@ func add_item(item_data: Dictionary) -> bool:
 	var item_mass = item_data.get("mass", 1.0)
 	
 	# Special handling for gold
-	if item_name.to_lower() == "gold" or item_name.to_lower() == "coin":
+	if item_name.to_lower() == "gold":
 		add_gold(amount)
 		return true
 	

@@ -33,14 +33,12 @@ func process_command(command: String, output: Control):
 			_cmd_help(output)
 		"clear":
 			_cmd_clear(output)
-		"history":
-			_cmd_history(output)
 		"spawn-item":
 			_cmd_spawn_item(args, output)
 		"tp", "teleport":
 			_cmd_teleport(args, output)
-		"give":
-			_cmd_give(args, output)
+		"give-gold":
+			_cmd_give_gold(args, output)
 		"stat":
 			_cmd_stat(args, output)
 		"kill":
@@ -61,12 +59,11 @@ func _cmd_help(output: Control):
 	output.print_line("[color=#4DAAFF]═══ AVAILABLE COMMANDS ═══[/color]")
 	output.print_line("[color=#7FFF7F]help[/color] - Show this help")
 	output.print_line("[color=#7FFF7F]clear[/color] - Clear console output")
-	output.print_line("[color=#7FFF7F]history[/color] - Show/clear command history")
 	output.print_line("[color=#7FFF7F]spawn-item [type] [subtype] [name] [level] [quality] x[qty][/color] - Spawn item")
 	output.print_line("  - All fields optional, order-independent")
 	output.print_line("  - Quality: common, uncommon, rare, epic, legendary, mythic")
 	output.print_line("  - Ex: spawn-item Sword 10 epic x5")
-	output.print_line("[color=#7FFF7F]give <item> [amount][/color] - Add item to inventory")
+	output.print_line("[color=#7FFF7F]give-gold [amount][/color] - Give gold (default: 1000)")
 	output.print_line("[color=#7FFF7F]tp <x> <y> <z>[/color] - Teleport player")
 	output.print_line("[color=#7FFF7F]stat <name> <value>[/color] - Set player stat")
 	output.print_line("[color=#7FFF7F]heal [amount][/color] - Heal player")
@@ -80,13 +77,50 @@ func _cmd_clear(output: Control):
 	output.clear_output()
 	output.print_line("[color=#4DAAFF]Console cleared[/color]")
 
-func _cmd_history(output: Control):
-	"""Show or clear command history"""
-	if console and console.has_method("clear_history"):
-		console.clear_history()
-		output.print_line("[color=#7FFF7F]Command history cleared[/color]")
+func _cmd_give_gold(args: Array, output: Control):
+	"""Give gold to player"""
+	var amount = 1000  # Default amount
+	
+	# Parse amount if provided
+	if args.size() > 0 and args[0].is_valid_int():
+		amount = int(args[0])
+	
+	# Get Inventory autoload
+	var inventory = get_node_or_null("/root/Inventory")
+	if not inventory:
+		output.print_error("[color=#FF4D4D]Error: Inventory autoload not found[/color]")
+		output.print_line("[color=#FFFF4D]Make sure 'Inventory' is set up as an autoload[/color]")
+		return
+	
+	# Check if it has InventoryGold as a child or property
+	var inventory_gold = null
+	
+	# Try to get InventoryGold child node
+	if inventory.has_node("InventoryGold"):
+		inventory_gold = inventory.get_node("InventoryGold")
+	# Or check if inventory itself has the add_gold method
+	elif inventory.has_method("add_gold"):
+		inventory_gold = inventory
+	# Or check children for the gold script
 	else:
-		output.print_error("[color=#FF4D4D]Error: Cannot access console history[/color]")
+		for child in inventory.get_children():
+			if child.has_method("add_gold"):
+				inventory_gold = child
+				break
+	
+	if not inventory_gold:
+		output.print_error("[color=#FF4D4D]Error: Could not find gold system in Inventory autoload[/color]")
+		output.print_line("[color=#FFFF4D]Searched for add_gold() method in Inventory and its children[/color]")
+		return
+	
+	# Add gold
+	if inventory_gold.has_method("add_gold"):
+		var old_gold = inventory_gold.gold if "gold" in inventory_gold else 0
+		inventory_gold.add_gold(amount)
+		var new_gold = inventory_gold.gold if "gold" in inventory_gold else 0
+		output.print_line("[color=#7FFF7F]Gave %d gold to player (Total: %d)[/color]" % [amount, new_gold])
+	else:
+		output.print_error("[color=#FF4D4D]Error: No add_gold() method found[/color]")
 
 func _cmd_spawn_item(args: Array, output: Control):
 	"""Spawn an item with flexible parameters"""
@@ -249,18 +283,6 @@ func _cmd_teleport(args: Array, output: Control):
 	var pos = Vector3(float(args[0]), float(args[1]), float(args[2]))
 	player.global_position = pos
 	output.print_line("[color=#7FFF7F]Teleported to: (%.1f, %.1f, %.1f)[/color]" % [pos.x, pos.y, pos.z])
-
-func _cmd_give(args: Array, output: Control):
-	"""Give item to player inventory"""
-	if args.is_empty():
-		output.print_line("[color=#FFFF4D]Usage: give <item_name> [amount][/color]")
-		return
-	
-	var item_name = args[0]
-	var amount = int(args[1]) if args.size() > 1 else 1
-	
-	output.print_line("[color=#FFFF4D]Give command not yet implemented[/color]")
-	# TODO: Implement inventory addition
 
 func _cmd_stat(args: Array, output: Control):
 	"""Set player stat"""
