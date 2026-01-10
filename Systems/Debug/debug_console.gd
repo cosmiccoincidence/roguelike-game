@@ -186,13 +186,19 @@ func _submit_command():
 	# Emit signal
 	command_entered.emit(command)
 	
-	# Scroll to bottom (don't await - just do it sync)
+	# Scroll to bottom after processing (wait 2 frames for UI to update)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_scroll_to_bottom()
+
+func _scroll_to_bottom():
+	"""Scroll output to bottom"""
 	if output_label.get_parent() is ScrollContainer:
 		var scroll = output_label.get_parent() as ScrollContainer
-		call_deferred("_scroll_to_bottom", scroll)
+		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
 
-func _scroll_to_bottom(scroll: ScrollContainer):
-	"""Deferred scroll to bottom"""
+func _do_scroll(scroll: ScrollContainer):
+	"""Actually perform the scroll (deferred)"""
 	scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
 
 func toggle_console():
@@ -236,6 +242,13 @@ func print_line(text: String):
 		current_text = "\n".join(lines)
 	
 	output_label.text = current_text
+
+func print_error(text: String):
+	"""Print an error to both console and editor log"""
+	print_line(text)
+	# Also print to editor log (strip BBCode tags first)
+	var clean_text = text.replace("[color=#FF4D4D]", "").replace("[/color]", "")
+	push_error("Debug Console: " + clean_text)
 
 func clear_output():
 	"""Clear the console output"""

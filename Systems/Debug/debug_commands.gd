@@ -54,7 +54,7 @@ func process_command(command: String, output: Control):
 		"time":
 			_cmd_time(args, output)
 		_:
-			output.print_line("[color=#FF4D4D]Unknown command: '%s'. Type 'help' for available commands.[/color]" % cmd)
+			output.print_error("[color=#FF4D4D]Unknown command: '%s'. Type 'help' for available commands.[/color]" % cmd)
 
 func _cmd_help(output: Control):
 	"""Show help for all commands"""
@@ -86,7 +86,7 @@ func _cmd_history(output: Control):
 		console.clear_history()
 		output.print_line("[color=#7FFF7F]Command history cleared[/color]")
 	else:
-		output.print_line("[color=#FF4D4D]Error: Cannot access console history[/color]")
+		output.print_error("[color=#FF4D4D]Error: Cannot access console history[/color]")
 
 func _cmd_spawn_item(args: Array, output: Control):
 	"""Spawn an item with flexible parameters"""
@@ -220,7 +220,7 @@ func _cmd_spawn_item(args: Array, output: Control):
 	# Delegate to DebugLoot subsystem
 	var debug_loot = debug_manager.get_node_or_null("DebugLoot")
 	if not debug_loot:
-		output.print_line("[color=#FF4D4D]Error: DebugLoot subsystem not found[/color]")
+		output.print_error("[color=#FF4D4D]Error: DebugLoot subsystem not found[/color]")
 		output.print_line("[color=#FFFF4D]Make sure DebugLoot node exists under DebugManager[/color]")
 		return
 	
@@ -229,7 +229,7 @@ func _cmd_spawn_item(args: Array, output: Control):
 		if debug_loot.has_method("spawn_specific_item"):
 			debug_loot.spawn_specific_item(item_name, level, quality, item_type, item_subtype)
 		else:
-			output.print_line("[color=#FF4D4D]Error: spawn_specific_item() method not found[/color]")
+			output.print_error("[color=#FF4D4D]Error: spawn_specific_item() method not found[/color]")
 			return
 	
 	output.print_line("[color=#7FFF7F]Spawned: %s[/color]" % description)
