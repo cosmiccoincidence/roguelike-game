@@ -142,6 +142,11 @@ func _physics_process(delta):
 	if is_dying:
 		return
 	
+	# Block movement if debug console is open
+	const DebugConsole = preload("res://Systems/Debug/debug_console.gd")
+	if DebugConsole.is_console_open():
+		return
+	
 	# Get input for state machine
 	var input_dir = Input.get_vector("left", "right", "up", "down")
 	var is_moving = input_dir.length() > 0

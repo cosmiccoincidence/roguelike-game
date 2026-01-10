@@ -183,7 +183,8 @@ func toggle_debug_system():
 		# Hide console
 		var debug_commands = get_node_or_null("DebugCommands")
 		if debug_commands and debug_commands.console:
-			debug_commands.console.hide_console()
+			if debug_commands.console.visible:
+				debug_commands.console.hide_console()
 		
 		# Hide all debug UI
 		keybind_panel_visible = false

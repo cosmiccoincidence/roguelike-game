@@ -11,6 +11,9 @@ var command_history: Array[String] = []
 var history_index: int = -1
 var is_visible: bool = false
 
+# Static reference for checking from anywhere (like player movement)
+static var instance: Control = null
+
 # ===== NODE REFERENCES =====
 var output_label: RichTextLabel
 var input_field: LineEdit
@@ -20,6 +23,9 @@ var command_processor: Node  # Reference to DebugCommands
 signal command_entered(command: String)
 
 func _ready():
+	# Set static reference
+	instance = self
+	
 	# Setup panel style
 	_setup_panel_style()
 	
@@ -35,6 +41,12 @@ func _ready():
 	offset_right = 0
 	offset_top = -250  # 250 pixels tall
 	offset_bottom = 0
+	
+	# Make sure console processes input even when game is paused
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	# Set high z-index to be on top
+	z_index = 1000
 	
 	# Start hidden
 	visible = false
@@ -101,6 +113,8 @@ func _create_ui():
 	input_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	input_field.placeholder_text = "Enter command... (type 'help' for commands)"
 	input_field.text_submitted.connect(_on_command_submitted)
+	input_field.mouse_filter = Control.MOUSE_FILTER_STOP  # Ensure it captures mouse
+	input_field.focus_mode = Control.FOCUS_ALL  # Ensure it can receive focus
 	input_container.add_child(input_field)
 	
 	# Initial help message
@@ -111,17 +125,34 @@ func _input(event):
 	if not visible:
 		return
 	
+	# Allow mouse clicks to reach the input field
+	if event is InputEventMouseButton:
+		return
+	
+	# Allow text input to reach the LineEdit
+	# Only handle specific navigation/control keys
 	if event is InputEventKey and event.pressed:
 		match event.keycode:
+			KEY_F1:
+				# Allow F1 to toggle debug mode (will also close console)
+				# Don't handle this event so it reaches debug_inputs
+				pass
 			KEY_UP:
 				_history_up()
 				get_viewport().set_input_as_handled()
 			KEY_DOWN:
 				_history_down()
 				get_viewport().set_input_as_handled()
-			KEY_ESCAPE:
+			KEY_ESCAPE, KEY_F4:  # ESC or F4 to close
 				toggle_console()
 				get_viewport().set_input_as_handled()
+			KEY_TAB, KEY_CAPSLOCK, KEY_SHIFT, KEY_CTRL, KEY_ALT:
+				# Block modifier keys from game
+				get_viewport().set_input_as_handled()
+			_:
+				# Let all other keys (letters, numbers, etc.) reach the input field
+				# Don't call set_input_as_handled() for typing keys
+				pass
 
 func toggle_console():
 	"""Toggle console visibility"""
@@ -129,7 +160,10 @@ func toggle_console():
 	visible = is_visible
 	
 	if is_visible:
+		# Wait a frame then grab focus to ensure UI is ready
+		await get_tree().process_frame
 		input_field.grab_focus()
+		input_field.select_all()  # Select any existing text
 	else:
 		input_field.release_focus()
 
@@ -167,6 +201,9 @@ func _on_command_submitted(command: String):
 	
 	# Emit signal
 	command_entered.emit(command)
+	
+	# Keep focus on input field for next command
+	input_field.grab_focus()
 	
 	# Auto-scroll to bottom
 	await get_tree().process_frame
@@ -235,3 +272,7 @@ func _history_down():
 func set_command_processor(processor: Node):
 	"""Set the command processor reference"""
 	command_processor = processor
+
+static func is_console_open() -> bool:
+	"""Static helper to check if console is currently open"""
+	return instance != null and instance.is_visible

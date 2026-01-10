@@ -82,6 +82,11 @@ func initialize(player_node: CharacterBody3D, cam: Camera3D):
 
 func _process(delta: float):
 	"""Handle camera zoom smoothing and cooldowns"""
+	# Block processing if debug console is open
+	const DebugConsole = preload("res://Systems/Debug/debug_console.gd")
+	if DebugConsole.is_console_open():
+		return
+	
 	zoom_current = lerp(zoom_current, zoom_target, 1.0 - exp(-zoom_smooth * delta))
 	_update_camera_global()
 	
