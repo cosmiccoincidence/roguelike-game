@@ -25,6 +25,11 @@ func _ready():
 	hide_controls_panel()
 
 func _input(event):
+	# Block if console is open
+	const DebugConsole = preload("res://Systems/Debug/debug_console.gd")
+	if DebugConsole.is_console_open():
+		return
+	
 	if event is InputEventKey and event.pressed and event.keycode == KEY_QUOTELEFT:
 		toggle_controls_panel()
 
