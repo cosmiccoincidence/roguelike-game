@@ -10,17 +10,7 @@ func _ready():
 	_find_performance_panel()
 
 func _find_performance_panel():
-	"""Find the performance stats panel in the scene"""
-	# Method 1: Try to find by group
-	var canvas = get_tree().get_first_node_in_group("debug_stats_canvas")
-	if canvas:
-		performance_stats_panel = canvas.get_node_or_null("PanelContainer")
-	
-	# Method 2: Try to find directly by group
-	if not performance_stats_panel:
-		performance_stats_panel = get_tree().get_first_node_in_group("performance_stats")
-	
-	# Method 3: Search for DebugStatsCanvas by name
+	# Find the performance stats panel in the scene
 	if not performance_stats_panel:
 		var root = get_tree().root
 		performance_stats_panel = _find_node_recursive(root, "DebugStatsCanvas")
@@ -30,15 +20,6 @@ func _find_performance_panel():
 				if child is PanelContainer:
 					performance_stats_panel = child
 					break
-	
-	# Method 4: Search for any PanelContainer with performance_stats_hud script
-	if not performance_stats_panel:
-		performance_stats_panel = _find_performance_stats_node(get_tree().root)
-	
-	if performance_stats_panel:
-		print("✅ Performance stats panel found: %s" % performance_stats_panel.get_path())
-	else:
-		print("⚠️  Performance stats panel not found. Make sure DebugStatsCanvas/PanelContainer exists in your HUD scene.")
 
 func _find_node_recursive(node: Node, node_name: String) -> Node:
 	"""Recursively search for a node by name"""
