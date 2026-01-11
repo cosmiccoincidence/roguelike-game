@@ -82,11 +82,6 @@ func initialize(player_node: CharacterBody3D, cam: Camera3D):
 
 func _process(delta: float):
 	"""Handle camera zoom smoothing and cooldowns"""
-	# Block processing if debug console is open
-	const DebugConsole = preload("res://Systems/Debug/debug_console.gd")
-	if DebugConsole.is_console_open():
-		return
-	
 	zoom_current = lerp(zoom_current, zoom_target, 1.0 - exp(-zoom_smooth * delta))
 	_update_camera_global()
 	
@@ -266,6 +261,11 @@ func try_dodge_roll(stats_component: Node, god_mode: bool) -> bool:
 	Attempt to perform a dodge roll.
 	Returns true if successful, false if on cooldown or not enough stamina.
 	"""
+	# Don't dodge if console is open
+	var debug_console_script = load("res://Systems/Debug/debug_console.gd")
+	if debug_console_script and debug_console_script.is_console_open():
+		return false
+	
 	# Check if we can dodge roll in current state
 	if state_machine and not state_machine.can_dodge_roll():
 		print("Cannot dodge roll in current state!")
@@ -329,6 +329,11 @@ func try_dash(stats_component: Node, god_mode: bool) -> bool:
 	Attempt to perform a dash.
 	Returns true if successful, false if on cooldown or not enough stamina.
 	"""
+	# Don't dash if console is open
+	var debug_console_script = load("res://Systems/Debug/debug_console.gd")
+	if debug_console_script and debug_console_script.is_console_open():
+		return false
+	
 	# Check if we can dash in current state
 	if state_machine and not state_machine.can_dash():
 		print("Cannot dash in current state!")

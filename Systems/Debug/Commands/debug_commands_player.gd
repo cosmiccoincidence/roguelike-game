@@ -71,9 +71,33 @@ func cmd_stat(args: Array, output: Control):
 	
 	# Set the stat
 	if stat_name in stats:
+		var old_value = stats.get(stat_name)
 		stats.set(stat_name, value)
+		var new_value = stats.get(stat_name)
+		
+		print("[STAT DEBUG] %s changed from %s to %s" % [stat_name, old_value, new_value])
+		
+		# Force recalculate all stats
 		if stats.has_method("recalculate_all_stats"):
+			print("[STAT DEBUG] Calling recalculate_all_stats()")
 			stats.recalculate_all_stats()
+		else:
+			print("[STAT DEBUG] No recalculate_all_stats() method")
+		
+		# Check available signals
+		var signal_list = stats.get_signal_list()
+		print("[STAT DEBUG] Available signals: %s" % str(signal_list.map(func(s): return s.name)))
+		
+		# Emit stat changed signal if it exists
+		if stats.has_signal("stat_changed"):
+			print("[STAT DEBUG] Emitting stat_changed")
+			stats.stat_changed.emit(stat_name, value)
+		elif stats.has_signal("stats_changed"):
+			print("[STAT DEBUG] Emitting stats_changed")
+			stats.stats_changed.emit()
+		else:
+			print("[STAT DEBUG] No stat signals found")
+		
 		output.print_line("[color=#7FFF7F]Set %s to %d[/color]" % [stat_name, value])
 	else:
 		output.print_line("[color=#FF4D4D]Unknown stat: %s[/color]" % stat_name)

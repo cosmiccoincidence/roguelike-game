@@ -132,34 +132,35 @@ func _input(event):
 		return
 	
 	# Handle keyboard input
-	if event is InputEventKey and event.pressed:
-		match event.keycode:
-			KEY_ENTER, KEY_KP_ENTER:
-				# Handle ENTER manually to keep focus
-				_submit_command()
-				get_viewport().set_input_as_handled()
-			KEY_F1:
-				# Allow F1 to toggle debug mode (will also close console)
-				# Don't handle this event so it reaches debug_inputs
-				pass
-			KEY_F4:
-				# Allow F4 to toggle console
-				toggle_console()
-				get_viewport().set_input_as_handled()
-			KEY_UP:
-				_history_up()
-				get_viewport().set_input_as_handled()
-			KEY_DOWN:
-				_history_down()
-				get_viewport().set_input_as_handled()
-			KEY_ESCAPE:
-				# ESC closes console
-				toggle_console()
-				get_viewport().set_input_as_handled()
-			_:
-				# Let all other keys (letters, numbers, etc.) reach the input field
-				# Don't call set_input_as_handled() for typing keys
-				pass
+	if event is InputEventKey:
+		if event.pressed:
+			# Handle special keys on press
+			match event.keycode:
+				KEY_ENTER, KEY_KP_ENTER:
+					_submit_command()
+					get_viewport().set_input_as_handled()
+				KEY_F1:
+					# Allow F1 to toggle debug mode (will also close console)
+					pass
+				KEY_F4:
+					toggle_console()
+					get_viewport().set_input_as_handled()
+				KEY_UP:
+					_history_up()
+					get_viewport().set_input_as_handled()
+				KEY_DOWN:
+					_history_down()
+					get_viewport().set_input_as_handled()
+				KEY_ESCAPE:
+					toggle_console()
+					get_viewport().set_input_as_handled()
+				_:
+					# Let typing keys reach the LineEdit
+					pass
+		else:
+			# Block ALL release events to prevent actions like dodge/dash
+			get_viewport().set_input_as_handled()
+
 
 func _submit_command():
 	"""Submit command from input field (called manually on ENTER)"""
