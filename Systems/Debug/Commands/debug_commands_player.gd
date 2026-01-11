@@ -71,17 +71,31 @@ func cmd_stat(args: Array, output: Control):
 	
 	# Set the stat
 	if stat_name in stats:
-		stats.set(stat_name, value)
+		# For the 6 core stats, we need to set the class base, not the calculated value
+		var core_stats = ["strength", "dexterity", "fortitude", "vitality", "agility", "arcane"]
+		
+		if stat_name in core_stats:
+			var class_stat_name = "class_" + stat_name
+			stats.set(class_stat_name, value)
+		else:
+			stats.set(stat_name, value)
 		
 		# Force recalculate all stats
 		if stats.has_method("recalculate_all_stats"):
 			stats.recalculate_all_stats()
 		
 		# Emit stat changed signal if it exists
-		if stats.has_signal("stat_changed"):
+		if stats.has_signal("stats_updated"):
+			stats.stats_updated.emit()
+		elif stats.has_signal("stat_changed"):
 			stats.stat_changed.emit(stat_name, value)
 		elif stats.has_signal("stats_changed"):
 			stats.stats_changed.emit()
+		
+		# Try to find and manually refresh the stats panel
+		var stats_panel = get_tree().root.find_child("StatsPanel", true, false)
+		if stats_panel and stats_panel.has_method("_update_stats_display"):
+			stats_panel._update_stats_display()
 		
 		output.print_line("[color=#7FFF7F]Set %s to %d[/color]" % [stat_name, value])
 	else:
