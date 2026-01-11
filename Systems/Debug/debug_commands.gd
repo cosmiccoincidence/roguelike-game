@@ -108,6 +108,9 @@ func process_command(command: String, output: Control):
 		"heal":
 			if player_commands:
 				player_commands.cmd_heal(args, output)
+		"hurt":
+			if player_commands:
+				player_commands.cmd_hurt(args, output)
 		"kill":
 			if player_commands:
 				player_commands.cmd_kill(output)

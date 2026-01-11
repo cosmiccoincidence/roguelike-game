@@ -18,6 +18,7 @@ func cmd_help(output: Control, main_commands: Node):
 	output.print_line("[color=#7FFF7F]  tp <x> <z>[/color] - Teleport to grid coordinates")
 	output.print_line("[color=#7FFF7F]  god[/color] - Toggle god mode")
 	output.print_line("[color=#7FFF7F]  heal [amount][/color] - Heal player")
+	output.print_line("[color=#7FFF7F]  hurt [amount][/color] - Damage player (default: 10)")
 	output.print_line("[color=#7FFF7F]  kill[/color] - Kill player")
 	output.print_line("[color=#7FFF7F]  stat <name> <value>[/color] - Set player stat")
 	output.print_line("[color=#7FFF7F]  speed <multiplier>[/color] - Set movement speed")
