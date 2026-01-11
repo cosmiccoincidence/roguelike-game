@@ -29,23 +29,45 @@ func handle_attack_input():
 		return
 	
 	if nearby_enemy:
+		# Get attack range from equipped weapon
+		var attack_range = _get_attack_range()
+		
 		# Check if still in range
 		var distance = player.global_position.distance_to(nearby_enemy.global_position)
-		if distance <= stats.attack_range:
+		if distance <= attack_range:
 			_perform_attack()
 		else:
-			print("Enemy out of range (%.1f / %.1f)" % [distance, stats.attack_range])
+			print("Enemy out of range (%.1f / %.1f)" % [distance, attack_range])
 			play_combat("attack")
 	else:
 		play_combat("attack")
 
+func _get_attack_range() -> float:
+	"""Get current attack range from equipped weapon"""
+	# Try to get weapon manager
+	var weapon_manager = player.get_node_or_null("WeaponManager")
+	if weapon_manager and weapon_manager.has_method("get_attack_range"):
+		return weapon_manager.get_attack_range()
+	
+	# Fallback: check if stats has attack_range
+	if stats and "attack_range" in stats:
+		return stats.attack_range
+	
+	# Default melee range
+	return 2.0
+
 func _perform_attack():
 	"""Execute attack on nearby enemy"""
-	var is_crit = randf() < stats.crit_chance
-	var final_damage = stats.damage
+	# Get damage stats from weapon/stats
+	var base_damage = _get_damage()
+	var crit_chance = _get_crit_chance()
+	var crit_multiplier = _get_crit_multiplier()
+	
+	var is_crit = randf() < crit_chance
+	var final_damage = base_damage
 	
 	if is_crit:
-		final_damage = int(stats.damage * stats.crit_multiplier)
+		final_damage = int(base_damage * crit_multiplier)
 		print("Player CRITICAL HIT: %d damage" % final_damage)
 	else:
 		print("Player hit for %d damage" % final_damage)
@@ -55,11 +77,45 @@ func _perform_attack():
 	
 	play_combat("hit")
 
+func _get_damage() -> float:
+	"""Get current damage from weapon/stats"""
+	var weapon_manager = player.get_node_or_null("WeaponManager")
+	if weapon_manager and weapon_manager.has_method("get_damage"):
+		return weapon_manager.get_damage()
+	
+	# Fallback to stats
+	if stats and "damage" in stats:
+		return stats.damage
+	
+	# Default damage
+	return 10.0
+
+func _get_crit_chance() -> float:
+	"""Get current crit chance"""
+	# Check stats first (this is usually a derived stat)
+	if stats and "crit_chance" in stats:
+		return stats.crit_chance
+	
+	# Default crit chance
+	return 0.05
+
+func _get_crit_multiplier() -> float:
+	"""Get current crit multiplier"""
+	# Check stats first
+	if stats and "crit_multiplier" in stats:
+		return stats.crit_multiplier
+	
+	# Default crit multiplier
+	return 2.0
+
 func on_area_body_entered(body: Node3D):
 	"""Called when body enters player's attack area"""
 	if body.is_in_group("enemy"):
+		# Get attack range from equipped weapon
+		var attack_range = _get_attack_range()
+		
 		var distance = player.global_position.distance_to(body.global_position)
-		if distance <= stats.attack_range:
+		if distance <= attack_range:
 			nearby_enemy = body
 
 func on_area_body_exited(body: Node3D):
