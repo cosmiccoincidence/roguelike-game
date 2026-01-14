@@ -35,34 +35,46 @@ func _input(event):
 				_delegate_to_subsystem("DebugCommands", "toggle_console")
 		KEY_INSERT:
 			if debug_manager.debug_enabled:
-				_delegate_to_subsystem("DebugPlayer", "toggle_god_mode")
+				_execute_command("god")
 		KEY_END:
 			if debug_manager.debug_enabled:
-				_delegate_to_subsystem("DebugMaps", "skip_level")
+				_execute_command("skip-level")
 		KEY_BACKSLASH:
 			if debug_manager.debug_enabled:
-				_delegate_to_subsystem("DebugLoot", "spawn_test_loot")
+				_execute_command("spawn-item")
 		KEY_BRACKETLEFT:
 			if debug_manager.debug_enabled:
-				_delegate_to_subsystem("DebugCombat", "heal_player")
+				_execute_command("heal")
 		KEY_BRACKETRIGHT:
 			if debug_manager.debug_enabled:
-				_delegate_to_subsystem("DebugCombat", "damage_player")
+				_execute_command("hurt")
 		KEY_COMMA:
 			if debug_manager.debug_enabled:
-				_delegate_to_subsystem("DebugTime", "advance_time")
+				_execute_command("time")
 		KEY_PERIOD:
 			if debug_manager.debug_enabled:
-				_delegate_to_subsystem("DebugTime", "freeze_time")
+				_execute_command("time-freeze")
 		KEY_M:
 			if debug_manager.debug_enabled:
-				_delegate_to_subsystem("DebugFOV", "toggle_fov_system")
+				_execute_command("fov")
 		KEY_N:
 			if debug_manager.debug_enabled:
-				_delegate_to_subsystem("DebugFOV", "reset_explored_map")
+				_execute_command("unexplore")
 		KEY_B:
 			if debug_manager.debug_enabled:
-				_delegate_to_subsystem("DebugFOV", "reveal_entire_map")
+				_execute_command("explore")
+
+func _execute_command(command: String):
+	"""Execute a debug command programmatically"""
+	var debug_commands = debug_manager.get_node_or_null("DebugCommands")
+	if debug_commands and debug_commands.has_method("process_command"):
+		# Create a dummy output that doesn't display anything
+		var silent_output = Node.new()
+		silent_output.set_script(preload("res://Systems/Debug/debug_console.gd"))
+		debug_commands.process_command(command, silent_output)
+		silent_output.queue_free()
+	else:
+		print("⚠️  DebugCommands not found")
 
 func _delegate_to_subsystem(subsystem_name: String, method_name: String):
 	"""Helper to delegate to a subsystem method"""

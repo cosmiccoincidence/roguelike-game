@@ -124,6 +124,21 @@ func process_command(command: String, output: Control):
 		"time":
 			if world_commands:
 				world_commands.cmd_time(args, output)
+		"time-freeze":
+			if world_commands:
+				world_commands.cmd_time_freeze(output)
+		"skip-level":
+			if world_commands:
+				world_commands.cmd_skip_level(output)
+		"fov":
+			if world_commands:
+				world_commands.cmd_fov(output)
+		"explore":
+			if world_commands:
+				world_commands.cmd_explore(output)
+		"unexplore":
+			if world_commands:
+				world_commands.cmd_unexplore(output)
 		
 		_:
 			output.print_error("[color=#FF4D4D]Unknown command: '%s'. Type 'help' for available commands.[/color]" % cmd)
