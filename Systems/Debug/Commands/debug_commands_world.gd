@@ -105,40 +105,64 @@ func cmd_skip_level(output: Control):
 
 func cmd_fov(output: Control):
 	"""Toggle FOV system"""
-	# Try to find FOV manager
-	var fov_manager = get_node_or_null("/root/FOVManager")
-	if not fov_manager:
-		fov_manager = get_tree().root.find_child("FOVManager", true, false)
+	# Find FOV components in the scene
+	var fog_of_war = get_tree().root.find_child("FogOfWar", true, false)
+	var vision_cone = get_tree().root.find_child("VisionCone", true, false)
 	
-	if fov_manager and fov_manager.has_method("toggle_fov_system"):
-		fov_manager.toggle_fov_system()
-		output.print_line("[color=#FFFF4D]FOV system toggled[/color]")
-	elif "enabled" in fov_manager:
-		fov_manager.enabled = !fov_manager.enabled
-		output.print_line("[color=#FFFF4D]FOV system: %s[/color]" % ("ON" if fov_manager.enabled else "OFF"))
+	if not fog_of_war and not vision_cone:
+		output.print_line("[color=#FF4D4D]Error: FOV system not found[/color]")
+		return
+	
+	# Toggle both systems
+	var toggled = false
+	
+	if fog_of_war and fog_of_war.has_method("debug_toggle_system"):
+		fog_of_war.debug_toggle_system()
+		toggled = true
+	
+	if vision_cone and vision_cone.has_method("debug_toggle_system"):
+		vision_cone.debug_toggle_system()
+		toggled = true
+	
+	if toggled:
+		# Check the current state from one of them
+		var is_disabled = false
+		if fog_of_war and "debug_disabled" in fog_of_war:
+			is_disabled = fog_of_war.debug_disabled
+		elif vision_cone and "debug_disabled" in vision_cone:
+			is_disabled = vision_cone.debug_disabled
+		
+		if is_disabled:
+			output.print_line("[color=#FFFF4D]FOV system DISABLED[/color]")
+		else:
+			output.print_line("[color=#7FFF7F]FOV system ENABLED[/color]")
 	else:
-		output.print_line("[color=#FF4D4D]Error: FOV manager not found[/color]")
+		output.print_line("[color=#FF4D4D]Error: FOV system has no toggle method[/color]")
 
 func cmd_explore(output: Control):
 	"""Reveal entire fog of war"""
-	var fov_manager = get_node_or_null("/root/FOVManager")
-	if not fov_manager:
-		fov_manager = get_tree().root.find_child("FOVManager", true, false)
+	var fog_of_war = get_tree().root.find_child("FogOfWar", true, false)
 	
-	if fov_manager and fov_manager.has_method("reveal_entire_map"):
-		fov_manager.reveal_entire_map()
+	if not fog_of_war:
+		output.print_line("[color=#FF4D4D]Error: FogOfWar not found[/color]")
+		return
+	
+	if fog_of_war.has_method("reveal_all"):
+		fog_of_war.reveal_all()
 		output.print_line("[color=#7FFF7F]Entire map revealed[/color]")
 	else:
-		output.print_line("[color=#FF4D4D]Error: FOV manager not found or no reveal method[/color]")
+		output.print_line("[color=#FF4D4D]Error: FogOfWar has no reveal_all() method[/color]")
 
 func cmd_unexplore(output: Control):
 	"""Reset fog of war"""
-	var fov_manager = get_node_or_null("/root/FOVManager")
-	if not fov_manager:
-		fov_manager = get_tree().root.find_child("FOVManager", true, false)
+	var fog_of_war = get_tree().root.find_child("FogOfWar", true, false)
 	
-	if fov_manager and fov_manager.has_method("reset_explored_map"):
-		fov_manager.reset_explored_map()
+	if not fog_of_war:
+		output.print_line("[color=#FF4D4D]Error: FogOfWar not found[/color]")
+		return
+	
+	if fog_of_war.has_method("debug_reset_fog"):
+		fog_of_war.debug_reset_fog()
 		output.print_line("[color=#7FFF7F]Fog of war reset[/color]")
 	else:
-		output.print_line("[color=#FF4D4D]Error: FOV manager not found or no reset method[/color]")
+		output.print_line("[color=#FF4D4D]Error: FogOfWar has no debug_reset_fog() method[/color]")
