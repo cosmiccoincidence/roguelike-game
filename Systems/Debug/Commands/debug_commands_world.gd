@@ -80,19 +80,28 @@ func cmd_time_freeze(output: Control):
 
 func cmd_skip_level(output: Control):
 	"""Skip to next level"""
-	# Try to find level manager or map manager
-	var level_manager = get_node_or_null("/root/LevelManager")
-	if not level_manager:
-		level_manager = get_tree().root.find_child("LevelManager", true, false)
+	# Find MapManager - it's a child of World node
+	var map_manager = get_tree().root.find_child("MapManager", true, false)
 	
-	if level_manager and level_manager.has_method("next_level"):
-		level_manager.next_level()
-		output.print_line("[color=#7FFF7F]Skipped to next level[/color]")
-	elif level_manager and level_manager.has_method("skip_level"):
-		level_manager.skip_level()
-		output.print_line("[color=#7FFF7F]Skipped to next level[/color]")
+	if not map_manager:
+		output.print_line("[color=#FF4D4D]Error: MapManager not found[/color]")
+		return
+	
+	# Check if there's a next level
+	if "current_level_index" in map_manager and "level_sequence" in map_manager:
+		var next_index = map_manager.current_level_index + 1
+		if next_index >= map_manager.level_sequence.size():
+			output.print_line("[color=#FFAA55]Already at final level[/color]")
+			return
+		
+		# Trigger the exit (which loads next level)
+		if map_manager.has_method("_on_player_reached_exit"):
+			map_manager._on_player_reached_exit()
+			output.print_line("[color=#7FFF7F]Skipping to next level...[/color]")
+		else:
+			output.print_line("[color=#FF4D4D]Error: MapManager has no level progression method[/color]")
 	else:
-		output.print_line("[color=#FF4D4D]Error: Level manager not found or no skip method[/color]")
+		output.print_line("[color=#FF4D4D]Error: MapManager missing level tracking properties[/color]")
 
 func cmd_fov(output: Control):
 	"""Toggle FOV system"""
