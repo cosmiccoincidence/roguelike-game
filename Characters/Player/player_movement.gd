@@ -172,6 +172,11 @@ func handle_camera_zoom(event: InputEventMouseButton):
 	if not event.pressed:
 		return
 	
+	# Don't zoom if debug console is open
+	var debug_console_script = load("res://Systems/Debug/debug_console.gd")
+	if debug_console_script and debug_console_script.is_console_open():
+		return
+	
 	if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 		zoom_target -= zoom_speed
 	elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
