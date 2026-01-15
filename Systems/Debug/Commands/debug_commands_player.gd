@@ -169,6 +169,41 @@ func cmd_heal(args: Array, output: Control):
 	else:
 		output.print_line("[color=#7FFF7F]Fully healed[/color]")
 
+func cmd_mana(args: Array, output: Control):
+	"""Restore mana to the player"""
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		output.print_line("[color=#FF4D4D]Error: No player found[/color]")
+		return
+	
+	var amount = float(args[0]) if not args.is_empty() else -1.0
+	
+	# Get stats
+	var stats = player.get_node_or_null("PlayerStats")
+	if not stats:
+		output.print_line("[color=#FF4D4D]Error: PlayerStats not found[/color]")
+		return
+	
+	# Check if player has mana
+	if not "current_mana" in stats or not "max_mana" in stats:
+		output.print_line("[color=#FFAA55]Player has no mana system[/color]")
+		return
+	
+	# Restore mana
+	if amount > 0:
+		stats.current_mana = min(stats.current_mana + amount, stats.max_mana)
+	else:
+		stats.current_mana = stats.max_mana
+	
+	# Force emit signal if it exists
+	if stats.has_signal("mana_changed"):
+		stats.mana_changed.emit(stats.current_mana, stats.max_mana)
+	
+	if amount > 0:
+		output.print_line("[color=#7FFF7F]Restored %d mana[/color]" % int(amount))
+	else:
+		output.print_line("[color=#7FFF7F]Mana fully restored[/color]")
+
 func cmd_hurt(args: Array, output: Control):
 	"""Damage the player"""
 	var player = get_tree().get_first_node_in_group("player")

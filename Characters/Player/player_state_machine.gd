@@ -135,7 +135,7 @@ func _enter_state(state: State):
 				movement_component.is_dodge_rolling = true
 	
 	# Debug print
-	print("State: %s → %s" % [State.keys()[previous_state], State.keys()[state]])
+	print("[PlayerStateMachine] %s → %s" % [State.keys()[previous_state], State.keys()[state]])
 
 func _exit_state(state: State):
 	"""Called when exiting a state"""
