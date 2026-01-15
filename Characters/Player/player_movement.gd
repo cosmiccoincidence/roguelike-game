@@ -10,8 +10,6 @@ var state_machine: Node  # Reference to state machine
 @export_group("Movement")
 @export var base_movement_speed: float = 5.0  # Base movement speed (can be modified by buffs/items)
 @export var rotation_speed: float = 5.0
-@export var sprint_multiplier: float = 1.5  # Sprint speed multiplier (spec)
-@export var sprint_stamina_cost: float = 0.5  # Stamina per second while sprinting
 
 # Dodge roll
 @export var dodge_roll_speed: float = 20.0  # Speed during dodge roll
@@ -45,7 +43,6 @@ var dash_direction: Vector3 = Vector3.ZERO
 # Encumbered penalties (only applied when not in god mode)
 const ENCUMBERED_SPEED_MULT: float = 0.2  # 20% speed
 const ENCUMBERED_ROTATION_MULT: float = 0.75  # 75% rotation speed
-const SPRINT_ROTATION_MULT: float = 0.9  # 90% rotation while sprinting (spec - was 0.5)
 
 # ===== STATE =====
 var gravity: float
@@ -71,15 +68,11 @@ func _process(delta: float):
 	if dash_cooldown_timer > 0:
 		dash_cooldown_timer -= delta
 
-func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_mode: bool, stats_component: Node):
+func handle_physics(delta: float, is_encumbered: bool, god_mode: bool, stats_component: Node):
 	"""Handle all movement physics"""
 	# Gravity
 	if not player.is_on_floor():
 		player.velocity.y -= gravity * delta
-	
-	# Handle sprint stamina consumption
-	if is_sprinting and not god_mode and stats_component:
-		stats_component.use_stamina(sprint_stamina_cost * delta)
 	
 	# Handle dodge roll timer
 	if is_dodge_rolling:
@@ -119,10 +112,6 @@ func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_m
 		current_speed = dodge_roll_speed
 		direction = dodge_roll_direction
 	else:
-		# Apply sprint multiplier
-		if is_sprinting:
-			current_speed *= sprint_multiplier
-		
 		# Apply speed modifiers (god mode, encumbered)
 		current_speed *= _get_effective_speed_mult(is_encumbered, god_mode)
 	
@@ -137,7 +126,7 @@ func handle_physics(delta: float, is_sprinting: bool, is_encumbered: bool, god_m
 	# Rotate toward mouse cursor (not during dodge roll or dash)
 	if not is_dodge_rolling and not is_dashing:
 		var encumbered_effects_active = is_encumbered and not god_mode
-		_rotate_toward_mouse(encumbered_effects_active, is_sprinting)
+		_rotate_toward_mouse(encumbered_effects_active)
 	
 	# Move the body
 	player.move_and_slide()
@@ -155,7 +144,7 @@ func _get_effective_speed_mult(is_encumbered: bool, god_mode: bool) -> float:
 	
 	return mult
 
-func _rotate_toward_mouse(apply_encumbered_penalty: bool = false, is_sprinting: bool = false):
+func _rotate_toward_mouse(apply_encumbered_penalty: bool = false):
 	"""Rotate player toward mouse cursor"""
 	if not camera_controller:
 		return
@@ -187,10 +176,6 @@ func _rotate_toward_mouse(apply_encumbered_penalty: bool = false, is_sprinting: 
 	# Apply encumbered penalty
 	if apply_encumbered_penalty:
 		effective_rotation_speed *= ENCUMBERED_ROTATION_MULT
-	
-	# Apply sprint penalty (10% slower rotation while sprinting - spec)
-	if is_sprinting:
-		effective_rotation_speed *= SPRINT_ROTATION_MULT  # 0.9
 	
 	var new_angle = lerp_angle(current_angle, target_angle, effective_rotation_speed * player.get_physics_process_delta_time())
 	player.rotation.y = new_angle
@@ -228,7 +213,6 @@ func try_dodge_roll(stats_component: Node, god_mode: bool) -> bool:
 	
 	# Check if we can dodge roll in current state
 	if state_machine and not state_machine.can_dodge_roll():
-		print("Cannot dodge roll in current state!")
 		return false
 	
 	# Can't dodge while already dodging (fallback if no state machine)
@@ -239,23 +223,22 @@ func try_dodge_roll(stats_component: Node, god_mode: bool) -> bool:
 	if dodge_roll_cooldown_timer > 0:
 		return false
 	
+	# Get current movement direction
+	var input_dir = Input.get_vector("left", "right", "up", "down")
+	
+	# Require directional input to dodge roll
+	if input_dir.length() < 0.1:
+		return false
+	
 	# Check stamina (unless god mode)
 	if not god_mode:
 		if stats_component.current_stamina < dodge_roll_stamina_cost:
-			print("Not enough stamina to dodge roll!")
 			return false
 		# Consume stamina
 		stats_component.use_stamina(dodge_roll_stamina_cost)
 	
-	# Get current movement direction
-	var input_dir = Input.get_vector("left", "right", "up", "down")
-	
-	# If not moving, dodge backward (away from mouse)
-	if input_dir.length() < 0.1:
-		dodge_roll_direction = _get_direction_away_from_mouse()
-	else:
-		# Dodge in movement direction
-		dodge_roll_direction = Vector3(input_dir.x, 0, input_dir.y).normalized()
+	# Dodge in movement direction
+	dodge_roll_direction = Vector3(input_dir.x, 0, input_dir.y).normalized()
 	
 	# Start dodge roll
 	is_dodge_rolling = true
@@ -271,7 +254,6 @@ func try_dodge_roll(stats_component: Node, god_mode: bool) -> bool:
 	if state_machine:
 		state_machine.change_state(state_machine.State.DODGE_ROLLING)
 	
-	print("Dodge roll!")
 	return true
 
 func try_dash(stats_component: Node, god_mode: bool) -> bool:
@@ -286,7 +268,6 @@ func try_dash(stats_component: Node, god_mode: bool) -> bool:
 	
 	# Check if we can dash in current state
 	if state_machine and not state_machine.can_dash():
-		print("Cannot dash in current state!")
 		return false
 	
 	# Can't dash while already dashing or dodge rolling (fallback if no state machine)
@@ -297,23 +278,22 @@ func try_dash(stats_component: Node, god_mode: bool) -> bool:
 	if dash_cooldown_timer > 0:
 		return false
 	
+	# Get current movement direction
+	var input_dir = Input.get_vector("left", "right", "up", "down")
+	
+	# Require directional input to dash
+	if input_dir.length() < 0.1:
+		return false
+	
 	# Check stamina (unless god mode)
 	if not god_mode:
 		if stats_component.current_stamina < dash_stamina_cost:
-			print("Not enough stamina to dash!")
 			return false
 		# Consume stamina
 		stats_component.use_stamina(dash_stamina_cost)
 	
-	# Get current movement direction
-	var input_dir = Input.get_vector("left", "right", "up", "down")
-	
-	# If not moving, dash toward mouse cursor
-	if input_dir.length() < 0.1:
-		dash_direction = _get_direction_toward_mouse()
-	else:
-		# Dash in movement direction
-		dash_direction = Vector3(input_dir.x, 0, input_dir.y).normalized()
+	# Dash in movement direction
+	dash_direction = Vector3(input_dir.x, 0, input_dir.y).normalized()
 	
 	# Start dash
 	is_dashing = true
@@ -324,48 +304,7 @@ func try_dash(stats_component: Node, god_mode: bool) -> bool:
 	if state_machine:
 		state_machine.change_state(state_machine.State.DASHING)
 	
-	print("Dash!")
 	return true
-
-func _get_direction_toward_mouse() -> Vector3:
-	"""Get normalized direction vector toward mouse cursor"""
-	if not camera_controller:
-		return -player.global_transform.basis.z  # Fallback: forward
-	
-	var camera = camera_controller.get_camera()
-	if not camera:
-		return -player.global_transform.basis.z
-	
-	var mouse_pos = player.get_viewport().get_mouse_position()
-	var from = camera.project_ray_origin(mouse_pos)
-	var to = from + camera.project_ray_normal(mouse_pos) * 2000
-	var hit_pos = _intersect_ray_with_plane(from, to, player.global_position.y)
-	
-	if hit_pos != Vector3.ZERO:
-		var toward_dir = (hit_pos - player.global_position).normalized()
-		return Vector3(toward_dir.x, 0, toward_dir.z)
-	else:
-		return -player.global_transform.basis.z
-
-func _get_direction_away_from_mouse() -> Vector3:
-	"""Get normalized direction vector away from mouse cursor"""
-	if not camera_controller:
-		return player.global_transform.basis.z  # Fallback: backward
-	
-	var camera = camera_controller.get_camera()
-	if not camera:
-		return player.global_transform.basis.z
-	
-	var mouse_pos = player.get_viewport().get_mouse_position()
-	var from = camera.project_ray_origin(mouse_pos)
-	var to = from + camera.project_ray_normal(mouse_pos) * 2000
-	var hit_pos = _intersect_ray_with_plane(from, to, player.global_position.y)
-	
-	if hit_pos != Vector3.ZERO:
-		var away_dir = (player.global_position - hit_pos).normalized()
-		return Vector3(away_dir.x, 0, away_dir.z)
-	else:
-		return player.global_transform.basis.z
 
 func is_dash_ready() -> bool:
 	"""Check if dash is off cooldown"""

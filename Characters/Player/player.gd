@@ -30,7 +30,6 @@ var equipment_stat_applier: Node
 # ===== STATE VARIABLES =====
 var god_mode := false
 var is_dying: bool = false
-var is_sprinting: bool = false
 
 # ===== AUDIO =====
 var vocal_sounds = {
@@ -163,30 +162,14 @@ func _physics_process(delta):
 	# Get input for state machine
 	var input_dir = Input.get_vector("left", "right", "up", "down")
 	var is_moving = input_dir.length() > 0
-	var wants_to_sprint = Input.is_action_pressed("sprint")
-	var encumbered_effects_active = stats.is_encumbered and not god_mode
-	
-	# Can only sprint if have stamina (or god mode) AND not encumbered (or god mode)
-	var can_sprint = (stats.current_stamina > 0 or god_mode) and not encumbered_effects_active
-	var wants_sprint = wants_to_sprint and is_moving and can_sprint
 	
 	# Update state machine
 	if state_machine:
-		state_machine.update_state(delta, input_dir, is_moving, wants_sprint)
-	
-	# Determine if we're actually sprinting based on state
-	if state_machine:
-		is_sprinting = state_machine.is_in_state(state_machine.State.SPRINTING)
-	else:
-		# Fallback if no state machine
-		is_sprinting = wants_sprint
-	
-	# Update sprint state in stats component
-	stats.update_sprint_state(is_sprinting, delta)
+		state_machine.update_state(delta, input_dir, is_moving, false)
 	
 	# Delegate all movement/rotation to movement component
 	if movement:
-		movement.handle_physics(delta, is_sprinting, stats.is_encumbered, god_mode, stats)
+		movement.handle_physics(delta, stats.is_encumbered, god_mode, stats)
 
 # ===== COMBAT AREA SIGNALS =====
 
