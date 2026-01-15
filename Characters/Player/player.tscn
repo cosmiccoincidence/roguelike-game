@@ -41,7 +41,7 @@ transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 1.3596594, 0)
 shape = SubResource("SphereShape3D_4flbx")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1.25, 0, 0, 0, 0.4275252, 1.1746157, 0, -1.1746157, 0.4275252, 0, 121.0958, 66.76632)
+transform = Transform3D(1.25, 0, 0, 0, 0.4275252, 1.1746157, 0, -1.1746157, 0.4275252, 0, 121.0958, 65.01214)
 current = true
 fov = 20.0
 far = 800.0
