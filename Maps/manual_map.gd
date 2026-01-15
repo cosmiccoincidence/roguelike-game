@@ -130,10 +130,8 @@ func _cache_entry_exit_positions():
 		
 		if tile_id == entrance_tile_id:
 			cached_entrance_pos = map_to_local(cell_pos)
-			print("[ManualMap] Cached entrance position: ", cached_entrance_pos)
 		elif tile_id == exit_tile_id:
 			cached_exit_pos = map_to_local(cell_pos)
-			print("[ManualMap] Cached exit position: ", cached_exit_pos)
 	
 	has_cached_positions = true
 
@@ -308,7 +306,6 @@ func setup_exit_detection():
 	# Use cached exit position if available (after dual-grid processing clears tiles)
 	if has_cached_positions and cached_exit_pos != Vector3.ZERO:
 		_create_exit_detector_at_position(cached_exit_pos)
-		print("[ManualMap] Created exit detector at cached position: ", cached_exit_pos)
 		return
 	
 	# Fallback: search for exit tiles (for maps without dual-grid)
@@ -360,7 +357,6 @@ func get_entrance_zone_spawn_position() -> Vector3:
 	if has_cached_positions and cached_entrance_pos != Vector3.ZERO:
 		var spawn_pos = cached_entrance_pos
 		spawn_pos.y = 0.1  # player spawn height
-		print("Spawning at cached entrance: ", spawn_pos)
 		return spawn_pos
 	
 	# Fallback: search for entrance tiles (for maps without dual-grid)

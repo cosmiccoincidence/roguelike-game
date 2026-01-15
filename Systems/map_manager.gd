@@ -62,11 +62,10 @@ func load_map(map_scene: PackedScene) -> void:
 		# This must happen BEFORE FOV initializes
 		if map_gen.has_method("get_entrance_zone_spawn_position"):
 			var spawn_pos = map_gen.get_entrance_zone_spawn_position()
-			print("GameManager: Spawning player at: ", spawn_pos)
+			print("[MapManager] Spawning player at: ", spawn_pos)
 			
 			if player:
 				player.global_position = spawn_pos
-				print("GameManager: Player position set to: ", player.global_position)
 			if player_spawn:
 				player_spawn.global_position = spawn_pos
 		
@@ -85,7 +84,7 @@ func load_map(map_scene: PackedScene) -> void:
 func update_map_label(map_gen: Node):
 	"""Update the HUD map label with current map info"""
 	if not player or not player.hud:
-		print("GameManager: No player or HUD found")
+		print("[MapManager] No player or HUD found")
 		return
 	
 	var act_num = 1  # Default
@@ -104,7 +103,7 @@ func update_map_label(map_gen: Node):
 	if map_gen.get("map_name") != null:
 		map_name = map_gen.get("map_name")
 	
-	print("GameManager: Updating HUD to Map ", act_num, ":", map_num, " - ", map_name)
+	print("[MapManager] Map ", act_num, ":", map_num, " - ", map_name)
 	
 	# Update the HUD
 	if player.hud.has_method("_on_map_loaded"):
@@ -131,21 +130,21 @@ func find_map_generator(map_root: Node) -> Node:
 	for child in map_root.get_children():
 		# Check if it's a ManualMap
 		if child is ManualMap:
-			print("GameManager: Found ManualMap: ", child.name)
+			print("[MapManager] Found ManualMap: ", child.name)
 			return child
 		
 		# Check if it's a GridMap with generation capabilities
 		if child is GridMap and child.has_method("start_generation"):
-			print("GameManager: Found GridMap with generation: ", child.name)
+			print("[MapManager] Found GridMap with generation: ", child.name)
 			return child
 	
 	# Fallback: just find any GridMap
 	for child in map_root.get_children():
 		if child is GridMap:
-			print("GameManager: Found GridMap (fallback): ", child.name)
+			print("[MapManager] Found GridMap (fallback): ", child.name)
 			return child
 	
-	push_warning("GameManager: No map generator found in ", map_root.name)
+	push_warning("[MapManager] No map generator found in ", map_root.name)
 	return null
 
 func _on_player_reached_exit():
