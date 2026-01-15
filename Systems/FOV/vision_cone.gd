@@ -1,3 +1,4 @@
+# vision_cone.gd
 extends Node3D
 class_name VisionCone
 

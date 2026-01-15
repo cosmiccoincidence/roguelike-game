@@ -1,3 +1,4 @@
+# entity_culling.gd
 extends Node3D
 class_name EntityCullingSystem
 

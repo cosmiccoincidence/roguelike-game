@@ -1,3 +1,4 @@
+# fog_of_war.gd
 extends Node3D
 class_name FogOfWar
 
