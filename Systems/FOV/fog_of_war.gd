@@ -1,6 +1,6 @@
-# fog_of_war.gd
+# fog_of_war_multimesh.gd
 extends Node3D
-class_name FogOfWar
+class_name FogOfWarMultiMesh
 
 ## High-performance fog of war using MultiMeshInstance3D
 ## Same visual result as original, 10-50x faster
@@ -11,7 +11,7 @@ class_name FogOfWar
 @export var fog_height: float = 1.75
 @export var update_interval: float = 0.2
 @export var reveal_radius: float = 30.0
-@export var map_padding: int = 50
+@export var map_padding: int = 10  # Reduced from 30
 
 var map_generator: GridMap
 var multimesh_instance: MultiMeshInstance3D
@@ -61,11 +61,12 @@ func find_gridmap_recursive(node: Node) -> GridMap:
 	return null
 
 func create_box_mesh() -> ArrayMesh:
-	"""Create a box mesh matching original fog tile dimensions"""
+	"""Create a 0.5x0.5 box mesh for fog quadrants"""
 	var surface_tool = SurfaceTool.new()
 	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
 	
-	var half_size = 0.5
+	# 0.5x0.5 tile = 0.25 half-size
+	var half_size = 0.25
 	
 	# Front face (+Z)
 	var v1 = Vector3(-half_size, 0, half_size)
@@ -168,13 +169,22 @@ func create_fog_tiles():
 	var index = 0
 	for x in range(int(min_x), int(max_x) + 1):
 		for z in range(int(min_z), int(max_z) + 1):
-			var tile_key = Vector2i(x, z)
-			var world_pos = map_generator.map_to_local(Vector3i(x, 0, z))
-			
-			tile_positions.append(world_pos)
-			tile_keys[tile_key] = index
-			revealed_tiles[tile_key] = false
-			index += 1
+			# Create 4 fog quadrants per tile (0.5x0.5 each)
+			# This gives us finer control, especially for thin building walls
+			for sub_x in range(2):
+				for sub_z in range(2):
+					var world_pos = map_generator.map_to_local(Vector3i(x, 0, z))
+					# Offset to create quadrants: -0.25, +0.25 from center
+					var offset_x = (sub_x - 0.5) * 0.5
+					var offset_z = (sub_z - 0.5) * 0.5
+					var sub_pos = Vector3(world_pos.x + offset_x, world_pos.y, world_pos.z + offset_z)
+					
+					tile_positions.append(sub_pos)
+					# Use sub-key to track quadrants: tile coords * 2 + quadrant
+					var sub_key = Vector2i(x * 2 + sub_x, z * 2 + sub_z)
+					tile_keys[sub_key] = index
+					revealed_tiles[sub_key] = false
+					index += 1
 	
 	# Create box mesh
 	box_mesh = create_box_mesh()
@@ -268,32 +278,67 @@ func update_fog():
 	for x_offset in range(-reveal_tiles, reveal_tiles + 1):
 		for z_offset in range(-reveal_tiles, reveal_tiles + 1):
 			var check_pos = Vector3i(player_grid.x + x_offset, 0, player_grid.z + z_offset)
-			var world_pos = map_generator.map_to_local(check_pos)
-			var dist = Vector2(world_pos.x - player.global_position.x, world_pos.z - player.global_position.z).length()
+			var tile_id = map_generator.get_cell_item(check_pos)
 			
-			if dist > reveal_radius:
-				continue
+			# Check if this is a non-walkable tile (wall)
+			var is_walkable = false
+			if tile_id == -1 and map_generator.has_method("is_position_walkable"):
+				is_walkable = map_generator.is_position_walkable(check_pos.x, check_pos.z)
 			
-			var tile_key = Vector2i(check_pos.x, check_pos.z)
+			var is_non_walkable_wall = (tile_id != -1 and not is_walkable)
 			
-			# Skip if already revealed or not in our multimesh
-			if not tile_keys.has(tile_key):
-				continue
-			if revealed_tiles.get(tile_key, false):
-				continue
-			
-			# Check if tile should be revealed
-			if not should_reveal_tile(check_pos, world_pos):
-				continue
-			
-			# Hide this instance by scaling it to zero
-			var instance_index = tile_keys[tile_key]
-			var current_transform = multimesh_instance.multimesh.get_instance_transform(instance_index)
-			current_transform = current_transform.scaled(Vector3(0.001, 0.001, 0.001))
-			multimesh_instance.multimesh.set_instance_transform(instance_index, current_transform)
-			
-			revealed_tiles[tile_key] = true
-			tiles_revealed += 1
+			# Check each quadrant of this tile individually
+			for sub_x in range(2):
+				for sub_z in range(2):
+					var sub_key = Vector2i(check_pos.x * 2 + sub_x, check_pos.z * 2 + sub_z)
+					
+					# Skip if already revealed or not in our multimesh
+					if not tile_keys.has(sub_key):
+						continue
+					if revealed_tiles.get(sub_key, false):
+						continue
+					
+					# Get world position of THIS QUADRANT (not tile center)
+					var tile_world = map_generator.map_to_local(check_pos)
+					var offset_x = (sub_x - 0.5) * 0.5
+					var offset_z = (sub_z - 0.5) * 0.5
+					var quadrant_world = Vector3(tile_world.x + offset_x, tile_world.y, tile_world.z + offset_z)
+					
+					# Check distance to THIS QUADRANT
+					var dist = Vector2(quadrant_world.x - player.global_position.x, 
+									   quadrant_world.z - player.global_position.z).length()
+					
+					if dist > reveal_radius:
+						continue
+					
+					# For non-walkable tiles only: only reveal quadrants on player-facing side
+					if is_non_walkable_wall:
+						# Get direction from tile center to player
+						var to_player = Vector2(player.global_position.x - tile_world.x, 
+												player.global_position.z - tile_world.z).normalized()
+						
+						# Get direction from tile center to this quadrant
+						var to_quadrant = Vector2(offset_x, offset_z).normalized()
+						
+						# Check if quadrant is on same side as player (dot product > 0)
+						var dot = to_player.dot(to_quadrant)
+						
+						# If dot product is negative or near zero, quadrant is on far side
+						if dot <= 0.1:
+							continue
+					
+					# Check line of sight to THIS QUADRANT
+					if not should_reveal_tile(check_pos, quadrant_world):
+						continue
+					
+					# Hide this quadrant
+					var instance_index = tile_keys[sub_key]
+					var current_transform = multimesh_instance.multimesh.get_instance_transform(instance_index)
+					current_transform = current_transform.scaled(Vector3(0.001, 0.001, 0.001))
+					multimesh_instance.multimesh.set_instance_transform(instance_index, current_transform)
+					
+					revealed_tiles[sub_key] = true
+					tiles_revealed += 1
 
 func should_reveal_tile(check_pos: Vector3i, world_pos: Vector3) -> bool:
 	var tile_id = map_generator.get_cell_item(check_pos)
@@ -394,6 +439,36 @@ func is_door_open_at_position(world_pos: Vector3) -> bool:
 				return true
 	return false
 
+func is_building_wall_tile(tile_id: int) -> bool:
+	"""Check if a tile is a building interior wall"""
+	if tile_id == -1:
+		return false
+	
+	var interior_wall_id = map_generator.get("interior_wall_tile_id")
+	if interior_wall_id != null and tile_id == interior_wall_id:
+		return true
+	
+	# Also check wall connector tiles
+	var wall_connector = map_generator.get("interior_wall_connector")
+	if wall_connector:
+		if tile_id == wall_connector.o_tile_id: return true
+		if tile_id == wall_connector.u_tile_id: return true
+		if tile_id == wall_connector.i_tile_id: return true
+		if tile_id == wall_connector.l_none_tile_id: return true
+		if tile_id == wall_connector.l_single_tile_id: return true
+		if tile_id == wall_connector.t_none_tile_id: return true
+		if tile_id == wall_connector.t_single_right_tile_id: return true
+		if tile_id == wall_connector.t_single_left_tile_id: return true
+		if tile_id == wall_connector.t_double_tile_id: return true
+		if tile_id == wall_connector.x_none_tile_id: return true
+		if tile_id == wall_connector.x_single_tile_id: return true
+		if tile_id == wall_connector.x_side_tile_id: return true
+		if tile_id == wall_connector.x_opposite_tile_id: return true
+		if tile_id == wall_connector.x_triple_tile_id: return true
+		if tile_id == wall_connector.x_quad_tile_id: return true
+	
+	return false
+
 func is_wall_tile(tile_id: int) -> bool:
 	if tile_id == -1:
 		return true
@@ -440,8 +515,12 @@ func reveal_map_tiles():
 	
 	var tiles_revealed = 0
 	
-	for tile_key in tile_keys.keys():
-		var check_pos = Vector3i(tile_key.x, 0, tile_key.y)
+	# Iterate through all tile keys (which are now quadrant keys)
+	for sub_key in tile_keys.keys():
+		# Convert quadrant key back to tile coords
+		var tile_x = int(sub_key.x / 2)
+		var tile_z = int(sub_key.y / 2)
+		var check_pos = Vector3i(tile_x, 0, tile_z)
 		var tile_id = map_generator.get_cell_item(check_pos)
 		
 		# Check if this tile has actual geometry
@@ -455,11 +534,11 @@ func reveal_map_tiles():
 		
 		# Only reveal if tile exists
 		if has_tile:
-			var instance_index = tile_keys[tile_key]
+			var instance_index = tile_keys[sub_key]
 			var current_transform = multimesh_instance.multimesh.get_instance_transform(instance_index)
 			current_transform = current_transform.scaled(Vector3(0.001, 0.001, 0.001))
 			multimesh_instance.multimesh.set_instance_transform(instance_index, current_transform)
-			revealed_tiles[tile_key] = true
+			revealed_tiles[sub_key] = true
 			tiles_revealed += 1
 
 func reveal_all():
