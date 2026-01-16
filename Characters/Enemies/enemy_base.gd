@@ -75,7 +75,7 @@ func scale_stats_to_level():
 	damage_amount = base_damage + int(damage_per_level * (enemy_level - 1))
 	current_health = max_health
 	
-	print(display_name, " scaled to level ", enemy_level, " - HP: ", max_health, ", Damage: ", damage_amount)
+	print("[EnemyBase] ", display_name, " scaled to level ", enemy_level, " - HP: ", max_health, ", Damage: ", damage_amount)
 
 func _physics_process(delta):
 	if is_dying:
