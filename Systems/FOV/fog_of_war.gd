@@ -23,6 +23,7 @@ var last_map_instance_id: int = -1
 var box_mesh: ArrayMesh
 var last_player_position: Vector3 = Vector3.ZERO
 var movement_threshold: float = 0.5  # Only update fog when player moves this far
+var debug_disabled: bool = false  # For debug toggle
 
 func _ready():
 	if not player or not map_container:
@@ -236,7 +237,7 @@ func _process(delta):
 		create_fog_tiles()
 		return
 	
-	if is_passive_mode:
+	if is_passive_mode or debug_disabled:
 		return
 	
 	# Check if player has moved enough to warrant an update
@@ -367,13 +368,59 @@ func reveal_map_tiles():
 
 func reveal_all():
 	"""Reveal everything (debug/fallback)"""
+	if not multimesh_instance or not map_generator:
+		return
+	
+	for key in tile_keys.keys():
+		var check_pos = Vector3i(key.x, 0, key.y)
+		var tile_id = map_generator.get_cell_item(check_pos)
+		
+		# Check if this tile has actual geometry
+		var has_tile = false
+		if tile_id != -1:
+			has_tile = true
+		else:
+			# Check if it's a walkable floor or door
+			if map_generator.has_method("is_position_walkable"):
+				has_tile = map_generator.is_position_walkable(check_pos.x, check_pos.z)
+			if not has_tile and map_generator.has_method("has_door_at_position"):
+				has_tile = map_generator.has_door_at_position(check_pos.x, check_pos.z)
+		
+		# Only reveal if tile exists
+		if has_tile:
+			var instance_index = tile_keys[key]
+			var current_transform = multimesh_instance.multimesh.get_instance_transform(instance_index)
+			current_transform = current_transform.scaled(Vector3(0.001, 0.001, 0.001))
+			multimesh_instance.multimesh.set_instance_transform(instance_index, current_transform)
+			revealed_tiles[key] = true
+
+func debug_reset_fog():
+	"""Reset all fog tiles to hidden (debug)"""
 	if not multimesh_instance:
 		return
 	
 	for i in range(tile_positions.size()):
-		var current_transform = multimesh_instance.multimesh.get_instance_transform(i)
-		current_transform = current_transform.scaled(Vector3(0.001, 0.001, 0.001))
-		multimesh_instance.multimesh.set_instance_transform(i, current_transform)
+		var pos = tile_positions[i]
+		var transform = Transform3D(Basis(), pos)
+		multimesh_instance.multimesh.set_instance_transform(i, transform)
 	
 	for key in revealed_tiles.keys():
-		revealed_tiles[key] = true
+		revealed_tiles[key] = false
+	
+	# Force immediate update to reveal area around player
+	if player:
+		last_player_position = player.global_position
+		update_fog()
+
+func debug_toggle_system():
+	"""Toggle fog system on/off (debug)"""
+	debug_disabled = not debug_disabled
+	
+	if debug_disabled:
+		# Hide the multimesh when disabled
+		if multimesh_instance:
+			multimesh_instance.visible = false
+	else:
+		# Show the multimesh when enabled
+		if multimesh_instance:
+			multimesh_instance.visible = true
