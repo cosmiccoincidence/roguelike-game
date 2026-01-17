@@ -8,7 +8,7 @@ var camera: Camera3D
 # ===== ZOOM =====
 @export_group("Zoom")
 @export var zoom_min: int = 25
-@export var zoom_max: int = 75
+@export var zoom_max: int = 175
 @export var zoom_speed: float = 15.0
 @export var zoom_smooth: float = 8.0
 

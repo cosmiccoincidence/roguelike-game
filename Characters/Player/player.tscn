@@ -40,19 +40,19 @@ shape = SubResource("CapsuleShape3D_hqtel")
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 1.3596594, 0)
 shape = SubResource("SphereShape3D_4flbx")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D-angle" type="Camera3D" parent="."]
 transform = Transform3D(1.25, 0, 0, 0, 0.4275252, 1.1746157, 0, -1.1746157, 0.4275252, 0, 121.0958, 65.01214)
-current = true
 fov = 20.0
+far = 800.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1.25, 0, 0, 0, 0.049421635, 1.2490226, 0, -1.2490226, 0.049421635, 0, 48.462124, 2.8362303)
+current = true
+fov = 10.0
 far = 800.0
 
 [node name="PlayerCamera" type="Node" parent="Camera3D"]
 script = ExtResource("7_klx3t")
-
-[node name="Camera3D-top" type="Camera3D" parent="."]
-transform = Transform3D(1.25, 0, 0, 0, 0.049421635, 1.2490226, 0, -1.2490226, 0.049421635, 0, 48.462124, 2.8362303)
-fov = 10.0
-far = 800.0
 
 [node name="AudioListener3D" type="AudioListener3D" parent="."]
 current = true
@@ -63,7 +63,7 @@ current = true
 
 [node name="HoverTooltipManager" type="Node" parent="." node_paths=PackedStringArray("camera") groups=["tooltip_manager"]]
 script = ExtResource("3_cue0d")
-camera = NodePath("../Camera3D-top")
+camera = NodePath("../Camera3D")
 tooltip_delay = 0.0
 
 [node name="PlayerInventory" type="Node" parent="."]
