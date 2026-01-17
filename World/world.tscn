@@ -34,6 +34,7 @@ town_1 = ExtResource("9_ioo17")
 ending_map = ExtResource("11_ic0uy")
 
 [node name="Player" parent="." instance=ExtResource("4_aqk2v")]
+hero_name = "Hero Name"
 
 [node name="PlayerSpawn" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.251314, 0)

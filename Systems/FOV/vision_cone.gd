@@ -6,7 +6,7 @@ class_name VisionCone
 
 @export var player: CharacterBody3D
 @export var map_container: Node3D
-@export var vision_radius: float = 35.0
+@export var vision_radius: float = 45.0
 @export var vision_angle: float = 130.0
 @export var near_vision_radius: float = 3.0
 @export var fog_color: Color = Color(0, 0, 0, 0.5)
